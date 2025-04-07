@@ -1,27 +1,25 @@
-object FormLogin: TFormLogin
+object FormForgotPassword: TFormForgotPassword
   Width = 640
   Height = 480
-  Align = alClient
-  object loginPassword: TWebEdit
-    Left = 271
-    Top = 256
-    Width = 96
-    Height = 25
-    ElementID = 'loginPassword'
+  object lnkLogin: TWebLinkLabel
+    Left = 68
+    Top = 55
+    Width = 3
+    Height = 15
+    ElementID = 'lnkLogin'
     ElementFont = efCSS
-    ElementPosition = epIgnore
     HeightStyle = ssAuto
-    HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
+    HeightPercent = 100.000000000000000000
     WidthPercent = 100.000000000000000000
   end
-  object rememberMe: TWebCheckBox
-    Left = 271
-    Top = 384
+  object txtEmail: TWebEdit
+    Left = 101
+    Top = 0
     Width = 96
     Height = 25
     ChildOrder = 1
-    ElementID = 'rememberMe'
+    ElementID = 'txtEmail'
     ElementFont = efCSS
     ElementPosition = epIgnore
     HeightStyle = ssAuto
@@ -29,52 +27,45 @@ object FormLogin: TFormLogin
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
   end
-  object submitLogin: TWebButton
-    Left = 271
-    Top = 328
+  object btnForgot: TWebButton
+    Left = 202
+    Top = 0
     Width = 96
     Height = 25
     ChildOrder = 2
-    ElementID = 'submitLogin'
+    ElementID = 'btnForgot'
     ElementFont = efCSS
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
-    OnClick = submitLoginClick
   end
-  object loginEmail: TWebEdit
-    Left = 271
-    Top = 168
+  object TWebHTMLDiv
+    Left = 303
+    Top = 0
     Width = 96
     Height = 25
+    ElementID = 'alertMsg'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
     ChildOrder = 3
-    ElementID = 'loginEmail'
-    ElementFont = efCSS
     ElementPosition = epIgnore
-    HeightStyle = ssAuto
-    HeightPercent = 100.000000000000000000
-    WidthStyle = ssAuto
-    WidthPercent = 100.000000000000000000
+    ElementFont = efCSS
+    Role = ''
   end
-  object forgotPassword: TWebButton
-    Left = 120
-    Top = 167
+  object WebButton1: TWebButton
+    Left = 202
+    Top = 80
     Width = 96
     Height = 25
-    ChildOrder = 4
-    ElementID = 'forgotPassword'
+    ChildOrder = 2
+    ElementID = 'lnkLogins'
     ElementFont = efCSS
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
-    OnClick = forgotPasswordClick
-  end
-  object RequestLogin: TWebHttpRequest
-    Left = 192
-    Top = 248
   end
 end

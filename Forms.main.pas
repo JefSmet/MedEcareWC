@@ -16,6 +16,7 @@ type
     WebButton4: TWebButton;
     FormContainer: TWebPanel;
     procedure WebButton1Click(Sender: TObject);
+    procedure WebButton2Click(Sender: TObject);
   private
     loadedForm : TWebForm;
   public
@@ -29,7 +30,7 @@ implementation
 
 {$R *.dfm}
 
-uses Forms.login;
+uses Forms.login, Forms.forgotPassword;
 
 
 procedure TFormMain.WebButton1Click(Sender: TObject);
@@ -37,6 +38,13 @@ begin
   if assigned(loadedForm) then
     loadedForm.free;
   Application.CreateForm(TFormLogin,FormContainer.ElementID,loadedForm);
+end;
+
+procedure TFormMain.WebButton2Click(Sender: TObject);
+begin
+  if assigned(loadedForm) then
+    loadedForm.free;
+  Application.CreateForm(TFormForgotPassword,FormContainer.ElementID,loadedForm);
 end;
 
 end.

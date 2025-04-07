@@ -1,6 +1,7 @@
 var CACHE_NAME = "MedEcareWC";
 var CACHED_URLS = [
   "MedEcare.html",
+  "Forms.forgotPassword.html",
   "Forms.login.html",
   "Forms.main.html",
   "IconResHigh.png",

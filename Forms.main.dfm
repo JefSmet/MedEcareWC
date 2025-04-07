@@ -33,6 +33,7 @@ object FormMain: TFormMain
       ChildOrder = 1
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
+      OnClick = WebButton2Click
       ExplicitWidth = 48
     end
     object WebButton3: TWebButton

@@ -14,10 +14,11 @@ type
     submitLogin: TWebButton;
     loginEmail: TWebEdit;
     RequestLogin: TWebHttpRequest;
+    forgotPassword: TWebButton;
     procedure submitLoginClick(Sender: TObject);
     procedure RequestLoginRequestResponse(Sender: TObject;
       ARequest: TJSXMLHttpRequestRecord; AResponse: string);
-    procedure WebButton1Click(Sender: TObject);
+    procedure forgotPasswordClick(Sender: TObject);
   private
     { Private declarations }
     femail : string;
@@ -31,6 +32,11 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TFormLogin.forgotPasswordClick(Sender: TObject);
+begin
+//
+end;
 
 procedure TFormLogin.RequestLoginRequestResponse(Sender: TObject;
   ARequest: TJSXMLHttpRequestRecord; AResponse: string);
@@ -59,7 +65,6 @@ begin
   requestLogin.PostData := jsonBody;
   requestLogin.Execute(procedure(AResponse: string; ARequest: TJSXMLHttpRequest)
   begin
-  WebEdit1.Text := aresponse;
   femail:= aresponse;
     if ARequest.Status = 200 then
     ShowMessage('Login gelukt: ' + AResponse)
@@ -70,10 +75,5 @@ begin
 
 end;
 
-
-procedure TFormLogin.WebButton1Click(Sender: TObject);
-begin
-WebEdit1.Text := femail;
-end;
 
 end.
