@@ -9,10 +9,8 @@ uses
 
 type
   TFormForgotPassword = class(TWebForm)
-    lnkLogin: TWebLinkLabel;
     txtEmail: TWebEdit;
     btnForgot: TWebButton;
-    WebButton1: TWebButton;
   private
     { Private declarations }
   public

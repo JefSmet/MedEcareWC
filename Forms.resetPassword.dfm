@@ -1,0 +1,75 @@
+object FormResetPassword: TFormResetPassword
+  Width = 640
+  Height = 480
+  OnCreate = WebFormCreate
+  object txtConfirmPassword: TWebEdit
+    Left = 0
+    Top = 0
+    Width = 96
+    Height = 25
+    ElementID = 'txtConfirmPassword'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'txtConfirmPassword'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object btnReset: TWebButton
+    Left = 101
+    Top = 0
+    Width = 96
+    Height = 25
+    ChildOrder = 1
+    ElementID = 'btnReset'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object alertMsg: TWebHTMLDiv
+    Left = 202
+    Top = 0
+    Width = 96
+    Height = 25
+    ElementID = 'alertMsg'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 2
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
+  object lnkLogin: TWebButton
+    Left = 303
+    Top = 0
+    Width = 96
+    Height = 25
+    ChildOrder = 3
+    ElementID = 'lnkLogin'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object txtNewPassword: TWebEdit
+    Left = 404
+    Top = 0
+    Width = 96
+    Height = 25
+    ChildOrder = 4
+    ElementID = 'txtNewPassword'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'txtNewPassword'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+end

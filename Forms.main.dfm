@@ -21,7 +21,6 @@ object FormMain: TFormMain
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
       OnClick = WebButton1Click
-      ExplicitWidth = 48
     end
     object WebButton2: TWebButton
       Left = 3
@@ -34,7 +33,6 @@ object FormMain: TFormMain
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
       OnClick = WebButton2Click
-      ExplicitWidth = 48
     end
     object WebButton3: TWebButton
       Left = 3
@@ -46,7 +44,6 @@ object FormMain: TFormMain
       ChildOrder = 2
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
-      ExplicitWidth = 48
     end
     object WebButton4: TWebButton
       Left = 3
@@ -58,7 +55,6 @@ object FormMain: TFormMain
       ChildOrder = 3
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
-      ExplicitWidth = 48
     end
   end
   object FormContainer: TWebPanel
@@ -69,9 +65,5 @@ object FormMain: TFormMain
     Align = alClient
     ChildOrder = 1
     TabOrder = 1
-    ExplicitLeft = 384
-    ExplicitTop = 320
-    ExplicitWidth = 150
-    ExplicitHeight = 60
   end
 end

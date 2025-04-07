@@ -4,6 +4,7 @@ var CACHED_URLS = [
   "Forms.forgotPassword.html",
   "Forms.login.html",
   "Forms.main.html",
+  "Forms.resetPassword.html",
   "IconResHigh.png",
   "IconResLow.png",
   "IconResMid.png",

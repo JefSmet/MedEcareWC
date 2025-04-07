@@ -57368,43 +57368,24 @@ rtl.module("Forms.forgotPassword",["System","SysUtils","Classes","JS","Web","WEB
   rtl.createClass(this,"TFormForgotPassword",pas["WEBLib.Forms"].TForm,function () {
     this.$init = function () {
       pas["WEBLib.Forms"].TForm.$init.call(this);
-      this.lnkLogin = null;
       this.txtEmail = null;
       this.btnForgot = null;
-      this.WebButton1 = null;
     };
     this.$final = function () {
-      this.lnkLogin = undefined;
       this.txtEmail = undefined;
       this.btnForgot = undefined;
-      this.WebButton1 = undefined;
       pas["WEBLib.Forms"].TForm.$final.call(this);
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
-      this.lnkLogin = pas["WEBLib.ExtCtrls"].TLinkLabel.$create("Create$2",["lnkLogin"]);
       this.txtEmail = pas["WEBLib.StdCtrls"].TEdit.$create("Create$2",["txtEmail"]);
       this.btnForgot = pas["WEBLib.StdCtrls"].TButton.$create("Create$2",["btnForgot"]);
-      this.WebButton1 = pas["WEBLib.StdCtrls"].TButton.$create("Create$2",["lnkLogins"]);
-      this.lnkLogin.BeforeLoadDFMValues();
       this.txtEmail.BeforeLoadDFMValues();
       this.btnForgot.BeforeLoadDFMValues();
-      this.WebButton1.BeforeLoadDFMValues();
       try {
         this.SetName("FormForgotPassword");
         this.SetWidth(640);
         this.SetHeight(480);
-        this.lnkLogin.SetParentComponent(this);
-        this.lnkLogin.SetName("lnkLogin");
-        this.lnkLogin.SetLeft(68);
-        this.lnkLogin.SetTop(55);
-        this.lnkLogin.SetWidth(3);
-        this.lnkLogin.SetHeight(15);
-        this.lnkLogin.SetElementFont(pas["WEBLib.Controls"].TElementFont.efCSS);
-        this.lnkLogin.SetHeightStyle$1(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
-        this.lnkLogin.SetWidthStyle$1(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
-        this.lnkLogin.SetHeightPercent$1(100.000000000000000000);
-        this.lnkLogin.SetWidthPercent$1(100.000000000000000000);
         this.txtEmail.SetParentComponent(this);
         this.txtEmail.SetName("txtEmail");
         this.txtEmail.SetLeft(101);
@@ -57441,35 +57422,147 @@ rtl.module("Forms.forgotPassword",["System","SysUtils","Classes","JS","Web","WEB
         this.SetElementPosition(pas["WEBLib.Controls"].TElementPosition.epIgnore);
         this.SetElementFont(pas["WEBLib.Controls"].TElementFont.efCSS);
         this.SetRole("");
-        this.WebButton1.SetParentComponent(this);
-        this.WebButton1.SetName("WebButton1");
-        this.WebButton1.SetLeft(202);
-        this.WebButton1.SetTop(80);
-        this.WebButton1.SetWidth(96);
-        this.WebButton1.SetHeight(25);
-        this.WebButton1.SetChildOrderEx(2);
-        this.WebButton1.SetElementFont(pas["WEBLib.Controls"].TElementFont.efCSS);
-        this.WebButton1.SetElementPosition(pas["WEBLib.Controls"].TElementPosition.epIgnore);
-        this.WebButton1.SetHeightStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
-        this.WebButton1.SetHeightPercent(100.000000000000000000);
-        this.WebButton1.SetWidthStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
-        this.WebButton1.SetWidthPercent(100.000000000000000000);
       } finally {
-        this.lnkLogin.AfterLoadDFMValues();
         this.txtEmail.AfterLoadDFMValues();
         this.btnForgot.AfterLoadDFMValues();
-        this.WebButton1.AfterLoadDFMValues();
       };
     };
     rtl.addIntf(this,pas["WEBLib.Controls"].IControl);
     rtl.addIntf(this,pas.System.IUnknown);
     var $r = this.$rtti;
-    $r.addField("lnkLogin",pas["WEBLib.ExtCtrls"].$rtti["TLinkLabel"]);
     $r.addField("txtEmail",pas["WEBLib.StdCtrls"].$rtti["TEdit"]);
     $r.addField("btnForgot",pas["WEBLib.StdCtrls"].$rtti["TButton"]);
-    $r.addField("WebButton1",pas["WEBLib.StdCtrls"].$rtti["TButton"]);
   });
   this.FormForgotPassword = null;
+});
+rtl.module("Forms.resetPassword",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs","WEBLib.Controls","WEBLib.WebCtrls","WEBLib.StdCtrls","WEBLib.StdCtrls"],function () {
+  "use strict";
+  var $mod = this;
+  rtl.createClass(this,"TFormResetPassword",pas["WEBLib.Forms"].TForm,function () {
+    this.$init = function () {
+      pas["WEBLib.Forms"].TForm.$init.call(this);
+      this.txtConfirmPassword = null;
+      this.btnReset = null;
+      this.alertMsg = null;
+      this.lnkLogin = null;
+      this.txtNewPassword = null;
+    };
+    this.$final = function () {
+      this.txtConfirmPassword = undefined;
+      this.btnReset = undefined;
+      this.alertMsg = undefined;
+      this.lnkLogin = undefined;
+      this.txtNewPassword = undefined;
+      pas["WEBLib.Forms"].TForm.$final.call(this);
+    };
+    this.WebFormCreate = function (Sender) {
+      this.txtConfirmPassword.SetText("");
+      this.txtNewPassword.SetText("");
+      this.btnReset.SetCaption("");
+      this.lnkLogin.SetCaption("");
+      this.alertMsg.FHTML.SetTextStr("");
+    };
+    this.LoadDFMValues = function () {
+      pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
+      this.txtConfirmPassword = pas["WEBLib.StdCtrls"].TEdit.$create("Create$2",["txtConfirmPassword"]);
+      this.btnReset = pas["WEBLib.StdCtrls"].TButton.$create("Create$2",["btnReset"]);
+      this.alertMsg = pas["WEBLib.WebCtrls"].THTMLDiv.$create("Create$2",["alertMsg"]);
+      this.lnkLogin = pas["WEBLib.StdCtrls"].TButton.$create("Create$2",["lnkLogin"]);
+      this.txtNewPassword = pas["WEBLib.StdCtrls"].TEdit.$create("Create$2",["txtNewPassword"]);
+      this.txtConfirmPassword.BeforeLoadDFMValues();
+      this.btnReset.BeforeLoadDFMValues();
+      this.alertMsg.BeforeLoadDFMValues();
+      this.lnkLogin.BeforeLoadDFMValues();
+      this.txtNewPassword.BeforeLoadDFMValues();
+      try {
+        this.SetName("FormResetPassword");
+        this.SetWidth(640);
+        this.SetHeight(480);
+        this.SetEvent(this,"OnCreate","WebFormCreate");
+        this.txtConfirmPassword.SetParentComponent(this);
+        this.txtConfirmPassword.SetName("txtConfirmPassword");
+        this.txtConfirmPassword.SetLeft(0);
+        this.txtConfirmPassword.SetTop(0);
+        this.txtConfirmPassword.SetWidth(96);
+        this.txtConfirmPassword.SetHeight(25);
+        this.txtConfirmPassword.SetElementFont(pas["WEBLib.Controls"].TElementFont.efCSS);
+        this.txtConfirmPassword.SetElementPosition(pas["WEBLib.Controls"].TElementPosition.epIgnore);
+        this.txtConfirmPassword.SetHeightStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.txtConfirmPassword.SetHeightPercent(100.000000000000000000);
+        this.txtConfirmPassword.SetText("txtConfirmPassword");
+        this.txtConfirmPassword.SetWidthStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.txtConfirmPassword.SetWidthPercent(100.000000000000000000);
+        this.btnReset.SetParentComponent(this);
+        this.btnReset.SetName("btnReset");
+        this.btnReset.SetLeft(101);
+        this.btnReset.SetTop(0);
+        this.btnReset.SetWidth(96);
+        this.btnReset.SetHeight(25);
+        this.btnReset.SetChildOrderEx(1);
+        this.btnReset.SetElementFont(pas["WEBLib.Controls"].TElementFont.efCSS);
+        this.btnReset.SetElementPosition(pas["WEBLib.Controls"].TElementPosition.epIgnore);
+        this.btnReset.SetHeightStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.btnReset.SetHeightPercent(100.000000000000000000);
+        this.btnReset.SetWidthStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.btnReset.SetWidthPercent(100.000000000000000000);
+        this.alertMsg.SetParentComponent(this);
+        this.alertMsg.SetName("alertMsg");
+        this.alertMsg.SetLeft(202);
+        this.alertMsg.SetTop(0);
+        this.alertMsg.SetWidth(96);
+        this.alertMsg.SetHeight(25);
+        this.alertMsg.SetHeightStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.alertMsg.SetWidthStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.alertMsg.SetChildOrderEx(2);
+        this.alertMsg.SetElementPosition(pas["WEBLib.Controls"].TElementPosition.epIgnore);
+        this.alertMsg.SetElementFont(pas["WEBLib.Controls"].TElementFont.efCSS);
+        this.alertMsg.SetRole("");
+        this.lnkLogin.SetParentComponent(this);
+        this.lnkLogin.SetName("lnkLogin");
+        this.lnkLogin.SetLeft(303);
+        this.lnkLogin.SetTop(0);
+        this.lnkLogin.SetWidth(96);
+        this.lnkLogin.SetHeight(25);
+        this.lnkLogin.SetChildOrderEx(3);
+        this.lnkLogin.SetElementFont(pas["WEBLib.Controls"].TElementFont.efCSS);
+        this.lnkLogin.SetElementPosition(pas["WEBLib.Controls"].TElementPosition.epIgnore);
+        this.lnkLogin.SetHeightStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.lnkLogin.SetHeightPercent(100.000000000000000000);
+        this.lnkLogin.SetWidthStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.lnkLogin.SetWidthPercent(100.000000000000000000);
+        this.txtNewPassword.SetParentComponent(this);
+        this.txtNewPassword.SetName("txtNewPassword");
+        this.txtNewPassword.SetLeft(404);
+        this.txtNewPassword.SetTop(0);
+        this.txtNewPassword.SetWidth(96);
+        this.txtNewPassword.SetHeight(25);
+        this.txtNewPassword.SetChildOrderEx(4);
+        this.txtNewPassword.SetElementFont(pas["WEBLib.Controls"].TElementFont.efCSS);
+        this.txtNewPassword.SetElementPosition(pas["WEBLib.Controls"].TElementPosition.epIgnore);
+        this.txtNewPassword.SetHeightStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.txtNewPassword.SetHeightPercent(100.000000000000000000);
+        this.txtNewPassword.SetText("txtNewPassword");
+        this.txtNewPassword.SetWidthStyle(pas["WEBLib.Controls"].TSizeStyle.ssAuto);
+        this.txtNewPassword.SetWidthPercent(100.000000000000000000);
+      } finally {
+        this.txtConfirmPassword.AfterLoadDFMValues();
+        this.btnReset.AfterLoadDFMValues();
+        this.alertMsg.AfterLoadDFMValues();
+        this.lnkLogin.AfterLoadDFMValues();
+        this.txtNewPassword.AfterLoadDFMValues();
+      };
+    };
+    rtl.addIntf(this,pas["WEBLib.Controls"].IControl);
+    rtl.addIntf(this,pas.System.IUnknown);
+    var $r = this.$rtti;
+    $r.addField("txtConfirmPassword",pas["WEBLib.StdCtrls"].$rtti["TEdit"]);
+    $r.addField("btnReset",pas["WEBLib.StdCtrls"].$rtti["TButton"]);
+    $r.addField("alertMsg",pas["WEBLib.WebCtrls"].$rtti["THTMLDiv"]);
+    $r.addField("lnkLogin",pas["WEBLib.StdCtrls"].$rtti["TButton"]);
+    $r.addField("txtNewPassword",pas["WEBLib.StdCtrls"].$rtti["TEdit"]);
+    $r.addMethod("WebFormCreate",0,[["Sender",pas.System.$rtti["TObject"]]]);
+  });
+  this.FormResetPassword = null;
 });
 rtl.module("Forms.main",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs","WEBLib.Menus","WEBLib.Menus","WEBLib.Controls","WEBLib.ExtCtrls","WEBLib.StdCtrls","WEBLib.StdCtrls"],function () {
   "use strict";
@@ -57505,7 +57598,7 @@ rtl.module("Forms.main",["System","SysUtils","Classes","JS","Web","WEBLib.Graphi
     };
     this.WebButton2Click = function (Sender) {
       if (this.loadedForm != null) rtl.free(this,"loadedForm");
-      pas["WEBLib.Forms"].Application.CreateForm$1(pas["Forms.forgotPassword"].TFormForgotPassword,this.FormContainer.GetID(),{p: this, get: function () {
+      pas["WEBLib.Forms"].Application.CreateForm$1(pas["Forms.resetPassword"].TFormResetPassword,this.FormContainer.GetID(),{p: this, get: function () {
           return this.p.loadedForm;
         }, set: function (v) {
           this.p.loadedForm = v;
@@ -57613,8 +57706,8 @@ rtl.module("Forms.main",["System","SysUtils","Classes","JS","Web","WEBLib.Graphi
     $r.addMethod("WebButton2Click",0,[["Sender",pas.System.$rtti["TObject"]]]);
   });
   this.FormMain = null;
-},["Forms.login","Forms.forgotPassword"]);
-rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","Forms.main","Forms.login","Forms.forgotPassword"],function () {
+},["Forms.login","Forms.forgotPassword","Forms.resetPassword"]);
+rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","Forms.main","Forms.login","Forms.forgotPassword","Forms.resetPassword"],function () {
   "use strict";
   var $mod = this;
   $mod.$implcode = function () {
@@ -57633,11 +57726,6 @@ rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","Forms.main","Forms
         return this.p.FormMain;
       }, set: function (v) {
         this.p.FormMain = v;
-      }});
-    pas["WEBLib.Forms"].Application.CreateForm(pas["Forms.forgotPassword"].TFormForgotPassword,{p: pas["Forms.forgotPassword"], get: function () {
-        return this.p.FormForgotPassword;
-      }, set: function (v) {
-        this.p.FormForgotPassword = v;
       }});
     pas["WEBLib.Forms"].Application.Run();
   };

@@ -126,6 +126,11 @@
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms.resetPassword.pas">
+            <Form>FormResetPassword</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TWebForm</DesignClass>
+        </DCCReference>
         <None Include="MedEcare.html"/>
         <None Include="Manifest.json"/>
         <None Include="serviceworker.js"/>

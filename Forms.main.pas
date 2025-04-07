@@ -30,7 +30,7 @@ implementation
 
 {$R *.dfm}
 
-uses Forms.login, Forms.forgotPassword;
+uses Forms.login, Forms.forgotPassword, Forms.resetPassword;
 
 
 procedure TFormMain.WebButton1Click(Sender: TObject);
@@ -44,7 +44,7 @@ procedure TFormMain.WebButton2Click(Sender: TObject);
 begin
   if assigned(loadedForm) then
     loadedForm.free;
-  Application.CreateForm(TFormForgotPassword,FormContainer.ElementID,loadedForm);
+  Application.CreateForm(TFormResetPassword,FormContainer.ElementID,loadedForm);
 end;
 
 end.
