@@ -1,6 +1,7 @@
 object FormMain: TFormMain
   Width = 640
   Height = 520
+  OnCreate = WebFormCreate
   object WebPanel1: TWebPanel
     Left = 0
     Top = 0

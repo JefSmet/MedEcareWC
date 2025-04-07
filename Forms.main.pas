@@ -17,6 +17,7 @@ type
     FormContainer: TWebPanel;
     procedure WebButton1Click(Sender: TObject);
     procedure WebButton2Click(Sender: TObject);
+    procedure WebFormCreate(Sender: TObject);
   private
     loadedForm : TWebForm;
   public
@@ -30,7 +31,7 @@ implementation
 
 {$R *.dfm}
 
-uses Forms.login, Forms.forgotPassword, Forms.resetPassword;
+uses Forms.login, Forms.forgotPassword, Forms.resetPassword, Forms.home;
 
 
 procedure TFormMain.WebButton1Click(Sender: TObject);
@@ -45,6 +46,11 @@ begin
   if assigned(loadedForm) then
     loadedForm.free;
   Application.CreateForm(TFormResetPassword,FormContainer.ElementID,loadedForm);
+end;
+
+procedure TFormMain.WebFormCreate(Sender: TObject);
+begin
+  Application.CreateForm(TFormHome,FormContainer.ElementID,loadedForm);
 end;
 
 end.

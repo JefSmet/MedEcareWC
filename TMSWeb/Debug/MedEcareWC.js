@@ -57564,6 +57564,24 @@ rtl.module("Forms.resetPassword",["System","SysUtils","Classes","JS","Web","WEBL
   });
   this.FormResetPassword = null;
 });
+rtl.module("Forms.home",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs"],function () {
+  "use strict";
+  var $mod = this;
+  rtl.createClass(this,"TFormHome",pas["WEBLib.Forms"].TForm,function () {
+    this.LoadDFMValues = function () {
+      pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
+      try {
+        this.SetName("FormHome");
+        this.SetWidth(640);
+        this.SetHeight(480);
+      } finally {
+      };
+    };
+    rtl.addIntf(this,pas["WEBLib.Controls"].IControl);
+    rtl.addIntf(this,pas.System.IUnknown);
+  });
+  this.FormHome = null;
+});
 rtl.module("Forms.main",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Dialogs","WEBLib.Menus","WEBLib.Menus","WEBLib.Controls","WEBLib.ExtCtrls","WEBLib.StdCtrls","WEBLib.StdCtrls"],function () {
   "use strict";
   var $mod = this;
@@ -57604,6 +57622,13 @@ rtl.module("Forms.main",["System","SysUtils","Classes","JS","Web","WEBLib.Graphi
           this.p.loadedForm = v;
         }});
     };
+    this.WebFormCreate = function (Sender) {
+      pas["WEBLib.Forms"].Application.CreateForm$1(pas["Forms.home"].TFormHome,this.FormContainer.GetID(),{p: this, get: function () {
+          return this.p.loadedForm;
+        }, set: function (v) {
+          this.p.loadedForm = v;
+        }});
+    };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
       this.WebPanel1 = pas["WEBLib.ExtCtrls"].TPanel.$create("Create$1",[this]);
@@ -57622,6 +57647,7 @@ rtl.module("Forms.main",["System","SysUtils","Classes","JS","Web","WEBLib.Graphi
         this.SetName("FormMain");
         this.SetWidth(640);
         this.SetHeight(520);
+        this.SetEvent(this,"OnCreate","WebFormCreate");
         this.WebPanel1.SetParentComponent(this);
         this.WebPanel1.SetName("WebPanel1");
         this.WebPanel1.SetLeft(0);
@@ -57704,10 +57730,11 @@ rtl.module("Forms.main",["System","SysUtils","Classes","JS","Web","WEBLib.Graphi
     $r.addField("FormContainer",pas["WEBLib.ExtCtrls"].$rtti["TPanel"]);
     $r.addMethod("WebButton1Click",0,[["Sender",pas.System.$rtti["TObject"]]]);
     $r.addMethod("WebButton2Click",0,[["Sender",pas.System.$rtti["TObject"]]]);
+    $r.addMethod("WebFormCreate",0,[["Sender",pas.System.$rtti["TObject"]]]);
   });
   this.FormMain = null;
-},["Forms.login","Forms.forgotPassword","Forms.resetPassword"]);
-rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","Forms.main","Forms.login","Forms.forgotPassword","Forms.resetPassword"],function () {
+},["Forms.login","Forms.forgotPassword","Forms.resetPassword","Forms.home"]);
+rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","Forms.main","Forms.login","Forms.forgotPassword","Forms.resetPassword","Forms.home"],function () {
   "use strict";
   var $mod = this;
   $mod.$implcode = function () {
@@ -57726,6 +57753,11 @@ rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","Forms.main","Forms
         return this.p.FormMain;
       }, set: function (v) {
         this.p.FormMain = v;
+      }});
+    pas["WEBLib.Forms"].Application.CreateForm(pas["Forms.home"].TFormHome,{p: pas["Forms.home"], get: function () {
+        return this.p.FormHome;
+      }, set: function (v) {
+        this.p.FormHome = v;
       }});
     pas["WEBLib.Forms"].Application.Run();
   };
