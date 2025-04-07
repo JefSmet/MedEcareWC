@@ -1,6 +1,7 @@
 object FormLogin: TFormLogin
   Width = 640
   Height = 480
+  Align = alClient
   object loginPassword: TWebEdit
     Left = 271
     Top = 256
@@ -56,27 +57,6 @@ object FormLogin: TFormLogin
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
-  end
-  object WebEdit1: TWebEdit
-    Left = 112
-    Top = 128
-    Width = 121
-    Height = 22
-    ChildOrder = 4
-    HeightPercent = 100.000000000000000000
-    Text = 'WebEdit1'
-    WidthPercent = 100.000000000000000000
-  end
-  object WebButton1: TWebButton
-    Left = 112
-    Top = 167
-    Width = 96
-    Height = 25
-    Caption = 'WebButton1'
-    ChildOrder = 5
-    HeightPercent = 100.000000000000000000
-    WidthPercent = 100.000000000000000000
-    OnClick = WebButton1Click
   end
   object RequestLogin: TWebHttpRequest
     Left = 192

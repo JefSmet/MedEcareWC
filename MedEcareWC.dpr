@@ -5,7 +5,7 @@ program MedEcareWC;
 uses
   Vcl.Forms,
   WEBLib.Forms,
-  Forms.main in 'Forms.main.pas' {Form1: TWebForm} {*.html},
+  Forms.main in 'Forms.main.pas' {FormMain: TWebForm} {*.html},
   Forms.login in 'Forms.login.pas' {FormLogin: TWebForm} {*.html};
 
 {$R *.res}
@@ -13,7 +13,6 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFormLogin, FormLogin);
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TFormMain, FormMain);
   Application.Run;
 end.

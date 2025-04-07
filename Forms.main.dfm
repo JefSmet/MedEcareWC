@@ -1,4 +1,76 @@
-object Form1: TForm1
+object FormMain: TFormMain
   Width = 640
-  Height = 480
+  Height = 520
+  object WebPanel1: TWebPanel
+    Left = 0
+    Top = 0
+    Width = 81
+    Height = 520
+    Align = alLeft
+    TabOrder = 0
+    DesignSize = (
+      81
+      520)
+    object WebButton1: TWebButton
+      Left = 3
+      Top = 3
+      Width = 72
+      Height = 25
+      Anchors = [akLeft, akTop, akRight]
+      Caption = 'btn'
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = WebButton1Click
+      ExplicitWidth = 48
+    end
+    object WebButton2: TWebButton
+      Left = 3
+      Top = 40
+      Width = 72
+      Height = 25
+      Anchors = [akLeft, akTop, akRight]
+      Caption = 'btn'
+      ChildOrder = 1
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      ExplicitWidth = 48
+    end
+    object WebButton3: TWebButton
+      Left = 3
+      Top = 77
+      Width = 72
+      Height = 25
+      Anchors = [akLeft, akTop, akRight]
+      Caption = 'btn'
+      ChildOrder = 2
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      ExplicitWidth = 48
+    end
+    object WebButton4: TWebButton
+      Left = 3
+      Top = 114
+      Width = 72
+      Height = 25
+      Anchors = [akLeft, akTop, akRight]
+      Caption = 'btn'
+      ChildOrder = 3
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      ExplicitWidth = 48
+    end
+  end
+  object FormContainer: TWebPanel
+    Left = 81
+    Top = 0
+    Width = 559
+    Height = 520
+    Align = alClient
+    ChildOrder = 1
+    TabOrder = 1
+    ExplicitLeft = 384
+    ExplicitTop = 320
+    ExplicitWidth = 150
+    ExplicitHeight = 60
+  end
 end

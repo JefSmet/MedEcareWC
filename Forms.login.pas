@@ -14,8 +14,6 @@ type
     submitLogin: TWebButton;
     loginEmail: TWebEdit;
     RequestLogin: TWebHttpRequest;
-    WebEdit1: TWebEdit;
-    WebButton1: TWebButton;
     procedure submitLoginClick(Sender: TObject);
     procedure RequestLoginRequestResponse(Sender: TObject;
       ARequest: TJSXMLHttpRequestRecord; AResponse: string);
