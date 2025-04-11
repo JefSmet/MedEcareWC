@@ -68,7 +68,14 @@ __recovery/
 # Boss dependency manager vendor folder https://github.com/HashLoad/boss
 modules/
 
-#TMS WEB Core
+# TMS WEB Core - only ignore generated content, not our source structure
 TMSWeb/
 Win32/
 Win64/
+
+# Keep our structure folders even if empty
+!Source/
+!Assets/
+!Tests/
+!Docs/
+!Project/

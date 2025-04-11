@@ -111,30 +111,35 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="Forms.main.pas">
+        <DCCReference Include="Source\Forms\Common\Forms.main.pas">
             <Form>FormMain</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Forms.login.pas">
+        <DCCReference Include="Source\Forms\Auth\Forms.login.pas">
             <Form>FormLogin</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Forms.forgotPassword.pas">
+        <DCCReference Include="Source\Forms\Auth\Forms.forgotPassword.pas">
             <Form>FormForgotPassword</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Forms.resetPassword.pas">
+        <DCCReference Include="Source\Forms\Auth\Forms.resetPassword.pas">
             <Form>FormResetPassword</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Forms.home.pas">
+        <DCCReference Include="Source\Forms\Common\Forms.home.pas">
             <Form>FormHome</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Source\Services\Auth\Module.Auth.Data.pas">
+            <Form>AuthData</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TWebDataModule</DesignClass>
         </DCCReference>
         <None Include="MedEcare.html"/>
         <None Include="Manifest.json"/>
