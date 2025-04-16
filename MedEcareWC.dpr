@@ -14,8 +14,9 @@ uses
   Forms.home in 'Source\Forms\Common\Forms.home.pas' {FormHome: TWebForm} {*.html},
   Module.Auth.Data in 'Source\Services\Auth\Module.Auth.Data.pas' {AuthData: TWebDataModule},
   view.base in 'Views\view.base.pas' {ViewBase: TWebForm} {*.html},
-  model.appcontroller in 'Models\model.appcontroller.pas' {AppController: TWebDataModule},
-  controller.formbase in 'Controllers\controller.formbase.pas';
+  viewcontroller.base in 'Controllers\viewcontroller.base.pas',
+  model.AppController in 'Models\model.AppController.pas',
+  model.Authorisation in 'Models\model.Authorisation.pas' {Authorisation: TWebDataModule};
 
 {$R *.res}
 
@@ -23,5 +24,6 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFormMain, FormMain);
+  Application.CreateForm(TAuthorisation, Authorisation);
   Application.Run;
 end.

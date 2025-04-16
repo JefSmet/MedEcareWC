@@ -1,25 +1,64 @@
-unit model.appcontroller;
+unit model.AppController;
 
 interface
 
-uses
-  System.SysUtils, System.Classes, JS, Web, WEBLib.Modules;
+uses model.Authorisation;
 
 type
-  TAppController = class(TWebDataModule)
+  TAppController = class
+  strict private
+    class var FInstance: TAppController;
+    constructor CreatePrivate;
+    class destructor Destroy;
   private
-    { Private declarations }
+    FAuth: TAuthorisation;
   public
-    { Public declarations }
-  end;
+    constructor Create; deprecated 'Use TAppController.GetInstance instead of Create.';
+    destructor Destroy; override;
+    class function GetInstance: TAppController;
 
-var
-  AppController: TAppController;
+    property Auth: TAuthorisation read FAuth;
+  end;
 
 implementation
 
-{%CLASSGROUP 'Vcl.Controls.TControl'}
+uses
+  System.SysUtils, System.Classes;
 
-{$R *.dfm}
+{ TAppController }
+
+constructor TAppController.CreatePrivate;
+begin
+  inherited Create;
+  FAuth:=TAuthorisation.Create(nil);
+end;
+
+constructor TAppController.Create;
+begin
+  // Prevent direct call
+  raise EInvalidOperation.Create(
+    'Use TAppController.GetInstance instead of TAppController.Create.'
+  );
+end;
+
+destructor TAppController.Destroy;
+begin
+  FAuth.Free;
+  inherited Destroy;
+end;
+
+class function TAppController.GetInstance: TAppController;
+begin
+  if not Assigned(FInstance) then
+    FInstance := TAppController.CreatePrivate;
+  Result := FInstance;
+end;
+
+class destructor TAppController.Destroy;
+begin
+  if Assigned(FInstance) then
+    FInstance.Free;
+end;
 
 end.
+

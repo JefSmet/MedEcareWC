@@ -148,12 +148,13 @@
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Models\model.appcontroller.pas">
-            <Form>AppController</Form>
+        <DCCReference Include="Controllers\viewcontroller.base.pas"/>
+        <DCCReference Include="Models\model.AppController.pas"/>
+        <DCCReference Include="Models\model.Authorisation.pas">
+            <Form>Authorisation</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Controllers\controller.formbase.pas"/>
         <None Include="MedEcare.html"/>
         <None Include="Manifest.json"/>
         <None Include="serviceworker.js"/>

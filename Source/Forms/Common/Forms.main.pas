@@ -19,7 +19,8 @@ type
     procedure WebButton2Click(Sender: TObject);
     procedure WebFormCreate(Sender: TObject);
   private
-    loadedForm : TWebForm;
+    FLoadedForm : TWebForm;
+    procedure ShowForm( AForm: TWebFormClass );
   public
     { Public declarations }
   end;
@@ -34,23 +35,26 @@ implementation
 uses Forms.login, Forms.forgotPassword, Forms.resetPassword, Forms.home;
 
 
+procedure TFormMain.ShowForm(AForm: TWebFormClass);
+begin
+  if Assigned(FLoadedForm) then
+    FLoadedForm.free;
+  Application.CreateForm(AForm,FormContainer.ElementID,FLoadedForm);
+end;
+
 procedure TFormMain.WebButton1Click(Sender: TObject);
 begin
-  if assigned(loadedForm) then
-    loadedForm.free;
-  Application.CreateForm(TFormLogin,FormContainer.ElementID,loadedForm);
+  ShowForm(TFormLogin);
 end;
 
 procedure TFormMain.WebButton2Click(Sender: TObject);
 begin
-  if assigned(loadedForm) then
-    loadedForm.free;
-  Application.CreateForm(TFormResetPassword,FormContainer.ElementID,loadedForm);
+  ShowForm(TFormResetPassword);
 end;
 
 procedure TFormMain.WebFormCreate(Sender: TObject);
 begin
-  Application.CreateForm(TFormHome,FormContainer.ElementID,loadedForm);
+  ShowForm(TFormHome);
 end;
 
 end.
