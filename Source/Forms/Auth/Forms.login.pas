@@ -33,9 +33,12 @@ implementation
 
 {$R *.dfm}
 
+uses model.AppManager;
+
+
 procedure TFormLogin.forgotPasswordClick(Sender: TObject);
 begin
-//
+ TAppManager.GetInstance.Auth.DoLogin;
 end;
 
 procedure TFormLogin.RequestLoginRequestResponse(Sender: TObject;

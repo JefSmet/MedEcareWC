@@ -5,17 +5,17 @@ interface
 uses model.Authorisation;
 
 type
-  TAppController = class
+  TAppManager = class
   strict private
-    class var FInstance: TAppController;
+    class var FInstance: TAppManager;
     constructor CreatePrivate;
     class destructor Destroy;
+    constructor Create; deprecated 'Use TAppController.GetInstance instead of Create.';
   private
     FAuth: TAuthorisation;
   public
-    constructor Create; deprecated 'Use TAppController.GetInstance instead of Create.';
     destructor Destroy; override;
-    class function GetInstance: TAppController;
+    class function GetInstance: TAppManager;
 
     property Auth: TAuthorisation read FAuth;
   end;
@@ -23,17 +23,18 @@ type
 implementation
 
 uses
-  System.SysUtils, System.Classes;
+  System.SysUtils, System.Classes, Vcl.Dialogs;
 
-{ TAppController }
+{ TAppManager }
 
-constructor TAppController.CreatePrivate;
+constructor TAppManager.CreatePrivate;
 begin
   inherited Create;
   FAuth:=TAuthorisation.Create(nil);
+  ShowMessage('AppManager Constructed');
 end;
 
-constructor TAppController.Create;
+constructor TAppManager.Create;
 begin
   // Prevent direct call
   raise EInvalidOperation.Create(
@@ -41,20 +42,21 @@ begin
   );
 end;
 
-destructor TAppController.Destroy;
+destructor TAppManager.Destroy;
 begin
   FAuth.Free;
   inherited Destroy;
 end;
 
-class function TAppController.GetInstance: TAppController;
+class function TAppManager.GetInstance: TAppManager;
 begin
   if not Assigned(FInstance) then
-    FInstance := TAppController.CreatePrivate;
+    FInstance := TAppManager.CreatePrivate;
   Result := FInstance;
 end;
 
-class destructor TAppController.Destroy;
+
+class destructor TAppManager.Destroy;
 begin
   if Assigned(FInstance) then
     FInstance.Free;

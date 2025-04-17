@@ -15,7 +15,7 @@ uses
   Module.Auth.Data in 'Source\Services\Auth\Module.Auth.Data.pas' {AuthData: TWebDataModule},
   view.base in 'Views\view.base.pas' {ViewBase: TWebForm} {*.html},
   viewcontroller.base in 'Controllers\viewcontroller.base.pas',
-  model.AppController in 'Models\model.AppController.pas',
+  model.AppManager in 'Models\model.AppManager.pas',
   model.Authorisation in 'Models\model.Authorisation.pas' {Authorisation: TWebDataModule};
 
 {$R *.res}

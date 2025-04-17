@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, Vcl.Menus, WEBLib.Menus, Vcl.Controls,
-  WEBLib.ExtCtrls, Vcl.StdCtrls, WEBLib.StdCtrls;
+  WEBLib.ExtCtrls, Vcl.StdCtrls, WEBLib.StdCtrls, model.AppManager;
 
 type
   TFormMain = class(TWebForm)
@@ -19,6 +19,7 @@ type
     procedure WebButton2Click(Sender: TObject);
     procedure WebFormCreate(Sender: TObject);
   private
+    FAppManager : TAppManager;
     FLoadedForm : TWebForm;
     procedure ShowForm( AForm: TWebFormClass );
   public
@@ -54,6 +55,7 @@ end;
 
 procedure TFormMain.WebFormCreate(Sender: TObject);
 begin
+  FAppManager := TAppManager.GetInstance;
   ShowForm(TFormHome);
 end;
 

@@ -6,7 +6,14 @@ object Authorisation: TAuthorisation
     Top = 40
   end
   object WebLocalStorage1: TWebLocalStorage
-    Left = 184
+    Left = 64
+    Top = 136
+  end
+  object WebHttpRequest1: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type:application/json')
+    URL = 'http://localhost:3000'
+    Left = 224
     Top = 40
   end
 end
