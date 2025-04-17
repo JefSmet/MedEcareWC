@@ -114,42 +114,36 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="Source\Forms\Common\Forms.main.pas">
+        <DCCReference Include="Views\Forms.main.pas">
             <Form>FormMain</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Source\Forms\Auth\Forms.login.pas">
+        <DCCReference Include="Views\Forms.login.pas">
             <Form>FormLogin</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Source\Forms\Auth\Forms.forgotPassword.pas">
+        <DCCReference Include="Views\Forms.forgotPassword.pas">
             <Form>FormForgotPassword</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Source\Forms\Auth\Forms.resetPassword.pas">
+        <DCCReference Include="Views\Forms.resetPassword.pas">
             <Form>FormResetPassword</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Source\Forms\Common\Forms.home.pas">
+        <DCCReference Include="Views\Forms.home.pas">
             <Form>FormHome</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
-        </DCCReference>
-        <DCCReference Include="Source\Services\Auth\Module.Auth.Data.pas">
-            <Form>AuthData</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TWebDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Views\view.base.pas">
             <Form>ViewBase</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Controllers\viewcontroller.base.pas"/>
         <DCCReference Include="Models\model.AppManager.pas"/>
         <DCCReference Include="Models\model.Authorisation.pas">
             <Form>Authorisation</Form>
@@ -196,7 +190,7 @@
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment Version="4">
+            <Deployment Version="5">
                 <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -249,16 +243,6 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
-                    </Platform>
-                </DeployClass>
-                <DeployClass Name="AndroidClasses">
-                    <Platform Name="Android">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
-                    </Platform>
-                    <Platform Name="Android64">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">
