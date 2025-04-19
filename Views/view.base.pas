@@ -10,8 +10,9 @@ type
   TViewBase = class(TWebForm)
   private
     FAppManager: TAppManager;
+  protected
+    procedure DoCreate; override;
   public
-    constructor Create(AOwner: TComponent); override;
     property AppManager: TAppManager read FAppManager;
   end;
 
@@ -21,9 +22,9 @@ implementation
 
 { TFormBase }
 
-constructor TViewBase.Create(AOwner: TComponent);
+procedure TViewBase.DoCreate;
 begin
-  inherited Create(AOwner);
+  inherited;
   FAppManager:=TAppManager.GetInstance;
 end;
 
