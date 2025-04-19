@@ -1,4 +1,4 @@
-unit model.Authorisation;
+Ôªøunit model.Authorisation;
 
 interface
 
@@ -12,9 +12,9 @@ type
     WebHttpRequest1: TWebHttpRequest;
   private
     function PerformRequestWithCredentials(ARequest: TWebHttpRequest) : TJSPromise;
-    procedure setRequest(AEmail : string; APassword : string; APlatform : string);
+    procedure setLoginRequest(AEmail : string; APassword : string; APlatform : string);
   public
-    [async] function DoLogin(AEmail : string; APassword : string; APlatform : string) : TJSValue;
+    [async] function DoLogin(AEmail : string; APassword : string; APlatform : string = 'web') : TJSXMLHttpRequest;
     function ListUsers : string;
   end;
 
@@ -25,6 +25,7 @@ implementation
 
 uses
   WEBLib.WebTools, vcl.dialogs;
+  const url='http://localhost:3000';
 
 function HttpCommandToString(ACommand: THTTPCommand; const ACustom: string): string;
 begin
@@ -51,46 +52,14 @@ end;
 { TAuthorisation }
 
 
-
-{ TAuthorisation }
-
-//function TAuthorisation.DoLogin(AEmail : string; APassword : string; APlatform : string) : TJSValue;
-//var
-//    req: TJSXMLHttpRequest;
-//    jsObjectResponse : TJSObject;
-//    jsonResponse : TJSONObject;
-//    userPair: TJSONPair;
-//    userObject: TJSONObject;
-//    userID : string ;
-//begin
-//WebHttpRequest1.URL := WebHttpRequest1.URL + '/auth/login';
-//WebHttpRequest1.Command := THTTPCommand.httpPOST;
-//setRequest(AEmail, APassword, APlatform);
-//req := await (TJSXMLHttpRequest , PerformRequestWithCredentials(WebHttpRequest1));
-//jsObjectResponse := TJSObject(req.response);
-//jsonResponse := TJSONObject(jsObjectResponse);
-//userPair := jsonResponse.Get('user');
-//userID := userObject.Get('id').JsonString.ToString;
-//WebSessionStorage1.SetValue('userID',userID);
-//showmessage(userID);
-//result := req.response;
-//end;
-
-function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string): TJSValue;
+function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string): TJSXMLHttpRequest;
 var
   req: TJSXMLHttpRequest;
   jsObj, userObj: TJSObject;
   userID: string;
 begin
-  // Stel de URL in
-  WebHttpRequest1.URL := WebHttpRequest1.URL + '/auth/login';
-  // Gebruik POST
-  WebHttpRequest1.Command := THTTPCommand.httpPOST;
-  // Zet de response type op JSON
-  WebHttpRequest1.ResponseType := rtJSON;
-
   // Eventueel je headers of body instellen (implementatie van setRequest)
-  setRequest(AEmail, APassword, APlatform);
+  setLoginRequest(AEmail, APassword, APlatform);
 
   // Voer de asynchrone request uit en wacht tot deze klaar is
   req := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
@@ -101,17 +70,14 @@ begin
   // Haal het 'user'-object op binnenin 'jsObj'
   userObj := TJSObject(jsObj['user']);
 
-  // Haal de 'id'?waarde eruit
+  // Haal de 'id'‚Äêwaarde eruit
   userID := string(userObj['id']);
 
   // Sla op in SessionStorage
   WebSessionStorage1.SetValue('userID', userID);
 
-  // Voor debugging
-  ShowMessage('UserID: ' + userID);
-
-  // Geef het hele response (JS-object) terug
-  Result := req.response;
+  // Geef het hele request (JS-object) terug
+  Result := req;
 end;
 
 
@@ -161,8 +127,8 @@ begin
     req.setRequestHeader(headerKey, headerValue);
   end;
 
-  // 7) Promise maken die ìafgaatî bij readyState = DONE (4)
-  //    en dan op basis van req.Status wel/niet ëresolveí
+  // 7) Promise maken die ‚Äúafgaat‚Äù bij readyState = DONE (4)
+  //    en dan op basis van req.Status wel/niet ‚Äòresolve‚Äô
   Result := TJSPromise.New(
     procedure(Resolve, Reject: TJSPromiseResolver)
     begin
@@ -191,8 +157,14 @@ end;
 
 
 
-procedure TAuthorisation.setRequest(AEmail : string; APassword : string; APlatform : string);
+procedure TAuthorisation.setLoginRequest(AEmail : string; APassword : string; APlatform : string);
 begin
+  // Stel de URL in
+  WebHttpRequest1.URL := url + '/auth/login';
+  // Gebruik POST
+  WebHttpRequest1.Command := THTTPCommand.httpPOST;
+  // Zet de response type op JSON
+  WebHttpRequest1.ResponseType := rtJSON;
   WebHttpRequest1.PostData := Format('{"email": "%s","password": "%s", "platform": "%s"}',[AEmail,APassword,APlatform])  ;
 end;
 

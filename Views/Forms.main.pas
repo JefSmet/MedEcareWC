@@ -20,8 +20,6 @@ type
     procedure WebFormCreate(Sender: TObject);
   private
     FAppManager : TAppManager;
-    FLoadedForm : TWebForm;
-    procedure ShowForm( AForm: TWebFormClass );
   public
     { Public declarations }
   end;
@@ -36,27 +34,23 @@ implementation
 uses Forms.login, Forms.forgotPassword, Forms.resetPassword, Forms.home;
 
 
-procedure TFormMain.ShowForm(AForm: TWebFormClass);
-begin
-  if Assigned(FLoadedForm) then
-    FLoadedForm.free;
-  Application.CreateForm(AForm,FormContainer.ElementID,FLoadedForm);
-end;
+
 
 procedure TFormMain.WebButton1Click(Sender: TObject);
 begin
-  ShowForm(TFormLogin);
+//
 end;
 
 procedure TFormMain.WebButton2Click(Sender: TObject);
 begin
-  ShowForm(TFormResetPassword);
+//
 end;
 
 procedure TFormMain.WebFormCreate(Sender: TObject);
 begin
   FAppManager := TAppManager.GetInstance;
-  ShowForm(TFormHome);
+  FAppManager.SetFormContainerID(FormContainer.ElementID);
+  FAppManager.ShowLogin();
 end;
 
 end.

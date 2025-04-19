@@ -8,17 +8,11 @@ uses
 
 type
   TViewBase = class(TWebForm)
-    procedure WebFormCreate(Sender: TObject);
-    procedure WebFormDestroy(Sender: TObject);
   private
-    FAppController: TAppManager;
-//    FViewController: TViewControllerBase;
-  protected
-    procedure DoCreateViewController; virtual; abstract;
+    FAppManager: TAppManager;
   public
-    constructor Create(AOwner: TComponent; AAppController: TAppManager); reintroduce;
-//    property AppController: TAppController read FAppController;
-//    property ViewController: TViewControllerBase read FViewController;
+    constructor Create(AOwner: TComponent); override;
+    property AppManager: TAppManager read FAppManager;
   end;
 
 implementation
@@ -27,21 +21,10 @@ implementation
 
 { TFormBase }
 
-constructor TViewBase.Create(AOwner: TComponent; AAppController: TAppManager);
+constructor TViewBase.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FAppController:=AAppController;
-end;
-
-procedure TViewBase.WebFormCreate(Sender: TObject);
-begin
-  DoCreateViewController;
-end;
-
-procedure TViewBase.WebFormDestroy(Sender: TObject);
-begin
-//  if Assigned(FViewController) then
-//    FViewController.Free;
+  FAppManager:=TAppManager.GetInstance;
 end;
 
 end.
