@@ -3,7 +3,7 @@ unit model.Authorisation;
 interface
 
 uses
-  System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.Storage, WEBLib.REST;
+  System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.Storage, WEBLib.REST, jsdelphisystem, WEBLib.JSON;
 
 type
   TAuthorisation = class(TWebDataModule)
@@ -12,8 +12,9 @@ type
     WebHttpRequest1: TWebHttpRequest;
   private
     function PerformRequestWithCredentials(ARequest: TWebHttpRequest) : TJSPromise;
+    procedure setRequest(AEmail : string; APassword : string; APlatform : string);
   public
-    [async] procedure DoLogin;
+    [async] function DoLogin(AEmail : string; APassword : string; APlatform : string) : TJSValue;
     function ListUsers : string;
   end;
 
@@ -53,20 +54,68 @@ end;
 
 { TAuthorisation }
 
-procedure TAuthorisation.DoLogin;
+//function TAuthorisation.DoLogin(AEmail : string; APassword : string; APlatform : string) : TJSValue;
+//var
+//    req: TJSXMLHttpRequest;
+//    jsObjectResponse : TJSObject;
+//    jsonResponse : TJSONObject;
+//    userPair: TJSONPair;
+//    userObject: TJSONObject;
+//    userID : string ;
+//begin
+//WebHttpRequest1.URL := WebHttpRequest1.URL + '/auth/login';
+//WebHttpRequest1.Command := THTTPCommand.httpPOST;
+//setRequest(AEmail, APassword, APlatform);
+//req := await (TJSXMLHttpRequest , PerformRequestWithCredentials(WebHttpRequest1));
+//jsObjectResponse := TJSObject(req.response);
+//jsonResponse := TJSONObject(jsObjectResponse);
+//userPair := jsonResponse.Get('user');
+//userID := userObject.Get('id').JsonString.ToString;
+//WebSessionStorage1.SetValue('userID',userID);
+//showmessage(userID);
+//result := req.response;
+//end;
+
+function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string): TJSValue;
 var
-    req: TJSXMLHttpRequest;
+  req: TJSXMLHttpRequest;
+  jsObj, userObj: TJSObject;
+  userID: string;
 begin
-WebHttpRequest1.URL := WebHttpRequest1.URL + '/auth/login';
-WebHttpRequest1.Command := THTTPCommand.httpPOST;
-WebHttpRequest1.PostData := '{'+
-  '"email": "jef.smet@telenet.be",'+
-  '"password": "0QxpWjS2dvsa.", '+
-  '"platform": "web" '+
-'}'  ;
-req := await (TJSXMLHttpRequest , PerformRequestWithCredentials(WebHttpRequest1));
-ShowMessage(string (req.response));
+  // Stel de URL in
+  WebHttpRequest1.URL := WebHttpRequest1.URL + '/auth/login';
+  // Gebruik POST
+  WebHttpRequest1.Command := THTTPCommand.httpPOST;
+  // Zet de response type op JSON
+  WebHttpRequest1.ResponseType := rtJSON;
+
+  // Eventueel je headers of body instellen (implementatie van setRequest)
+  setRequest(AEmail, APassword, APlatform);
+
+  // Voer de asynchrone request uit en wacht tot deze klaar is
+  req := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+
+  // Omdat ResponseType = rtJSON is, is req.response direct een JS-object
+  jsObj := TJSObject(req.response);
+
+  // Haal het 'user'-object op binnenin 'jsObj'
+  userObj := TJSObject(jsObj['user']);
+
+  // Haal de 'id'?waarde eruit
+  userID := string(userObj['id']);
+
+  // Sla op in SessionStorage
+  WebSessionStorage1.SetValue('userID', userID);
+
+  // Voor debugging
+  ShowMessage('UserID: ' + userID);
+
+  // Geef het hele response (JS-object) terug
+  Result := req.response;
 end;
+
+
+
 
 function TAuthorisation.ListUsers: string;
 begin
@@ -141,5 +190,10 @@ begin
 end;
 
 
+
+procedure TAuthorisation.setRequest(AEmail : string; APassword : string; APlatform : string);
+begin
+  WebHttpRequest1.PostData := Format('{"email": "%s","password": "%s", "platform": "%s"}',[AEmail,APassword,APlatform])  ;
+end;
 
 end.

@@ -38,7 +38,7 @@ uses model.AppManager;
 
 procedure TFormLogin.forgotPasswordClick(Sender: TObject);
 begin
- TAppManager.GetInstance.Auth.DoLogin;
+ TAppManager.GetInstance.Auth.DoLogin('jef.smet@telenet.be','0QxpWjS2dvsa.','web');
 end;
 
 procedure TFormLogin.RequestLoginRequestResponse(Sender: TObject;
