@@ -30,6 +30,8 @@ var
 
 implementation
 
+uses System.StrUtils;
+
 {$R *.dfm}
 
 
@@ -43,9 +45,11 @@ procedure TFormLogin.submitLoginClick(Sender: TObject);
 var
   password, email, jsonBody: string;
   response : TJSXMLHttpRequest;
+  var remember: Boolean;
 begin
   email := Trim(loginEmail.Text);
   password := loginPassword.Text;
+   remember := rememberMe.Checked;
 
   // Basisvalidatie
   if email = '' then
@@ -60,7 +64,10 @@ begin
     Exit;
   end;
 
-response := await(AppManager.Auth.DoLogin(loginEmail.Text,loginPassword.Text));
+response := await( AppManager.Auth.DoLogin(
+                       loginEmail.Text, loginPassword.Text,
+                       ifthen(remember, 'web-persist', 'web')
+                     ) );
 if response.Status = 200 then
   begin
     AppManager.ShowHome();

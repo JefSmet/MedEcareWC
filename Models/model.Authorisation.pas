@@ -16,6 +16,8 @@ type
   public
     [async] function DoLogin(AEmail : string; APassword : string; APlatform : string = 'web') : TJSXMLHttpRequest;
     function ListUsers : string;
+    [async]
+    function TryAutoLogin : Boolean;
   end;
 
 var
@@ -159,13 +161,40 @@ end;
 
 procedure TAuthorisation.setLoginRequest(AEmail : string; APassword : string; APlatform : string);
 begin
-  // Stel de URL in
   WebHttpRequest1.URL := url + '/auth/login';
-  // Gebruik POST
   WebHttpRequest1.Command := THTTPCommand.httpPOST;
-  // Zet de response type op JSON
   WebHttpRequest1.ResponseType := rtJSON;
   WebHttpRequest1.PostData := Format('{"email": "%s","password": "%s", "platform": "%s"}',[AEmail,APassword,APlatform])  ;
+end;
+
+function TAuthorisation.TryAutoLogin: Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  jsObj, userObj: TJSObject;
+begin
+  // 1) call /auth/refresh (refreshToken zit in de HttpOnly cookie)
+  WebHttpRequest1.URL        := url + '/auth/refresh';
+  WebHttpRequest1.Command    := httpPOST;
+  WebHttpRequest1.ResponseType := rtJSON;
+  WebHttpRequest1.PostData   := '{}';
+
+  try
+  xhr   := await( TJSXMLHttpRequest,
+                  PerformRequestWithCredentials(WebHttpRequest1) );
+  except
+  exit(False);
+
+  end;
+
+  if xhr.status = 200 then
+  begin
+//    jsObj  := TJSObject(xhr.response);
+//    userObj:= TJSObject(jsObj['user']);        // ← laat backend evt. user terugsturen
+//    WebSessionStorage1.SetValue('userID', string(userObj['id']));
+    Exit(True);
+  end;
+
+  Exit(False);
 end;
 
 end.

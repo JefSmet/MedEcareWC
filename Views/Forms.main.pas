@@ -17,7 +17,7 @@ type
     FormContainer: TWebPanel;
     procedure WebButton1Click(Sender: TObject);
     procedure WebButton2Click(Sender: TObject);
-    procedure WebFormCreate(Sender: TObject);
+    [async] procedure WebFormCreate(Sender: TObject);
   private
     FAppManager : TAppManager;
   public
@@ -50,7 +50,11 @@ procedure TFormMain.WebFormCreate(Sender: TObject);
 begin
   FAppManager := TAppManager.GetInstance;
   FAppManager.SetFormContainerID(FormContainer.ElementID);
-  FAppManager.ShowLogin();
+  // probeer eerst de refreshflow
+  if await( Boolean, FAppManager.Auth.TryAutoLogin ) then
+    FAppManager.ShowHome
+  else
+    FAppManager.ShowLogin;
 end;
 
 end.
