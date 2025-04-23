@@ -4,10 +4,10 @@ interface
 
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
-  WEBLib.Forms, WEBLib.Dialogs;
+  WEBLib.Forms, WEBLib.Dialogs, view.base;
 
 type
-  TFormHome = class(TWebForm)
+  TFormHome = class(TViewBase)
   private
     { Private declarations }
   public

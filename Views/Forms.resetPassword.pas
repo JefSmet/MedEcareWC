@@ -5,10 +5,10 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, Vcl.Controls, WEBLib.WebCtrls, Vcl.StdCtrls,
-  WEBLib.StdCtrls;
+  WEBLib.StdCtrls, view.base;
 
 type
-  TFormResetPassword = class(TWebForm)
+  TFormResetPassword = class(TViewBase)
     txtConfirmPassword: TWebEdit;
     btnReset: TWebButton;
     alertMsg: TWebHTMLDiv;
