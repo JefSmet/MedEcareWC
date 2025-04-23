@@ -14,7 +14,7 @@ type
     function PerformRequestWithCredentials(ARequest: TWebHttpRequest) : TJSPromise;
     procedure setLoginRequest(AEmail : string; APassword : string; APlatform : string);
   public
-    [async] function DoLogin(AEmail : string; APassword : string; APlatform : string = 'web') : TJSXMLHttpRequest;
+    [async] function DoLogin(AEmail : string; APassword : string; APlatform : string) : TJSXMLHttpRequest;
     function ListUsers : string;
     [async]
     function TryAutoLogin : Boolean;
@@ -176,7 +176,7 @@ begin
   WebHttpRequest1.URL        := url + '/auth/refresh';
   WebHttpRequest1.Command    := httpPOST;
   WebHttpRequest1.ResponseType := rtJSON;
-  WebHttpRequest1.PostData   := '{}';
+  WebHttpRequest1.PostData   := '{platform: "web-persist"}';
 
   try
   xhr   := await( TJSXMLHttpRequest,
