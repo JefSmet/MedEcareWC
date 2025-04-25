@@ -66,17 +66,17 @@ begin
   // Voer de asynchrone request uit en wacht tot deze klaar is
   req := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
 
-  // Omdat ResponseType = rtJSON is, is req.response direct een JS-object
-  jsObj := TJSObject(req.response);
-
-  // Haal het 'user'-object op binnenin 'jsObj'
-  userObj := TJSObject(jsObj['user']);
-
-  // Haal de 'id'‐waarde eruit
-  userID := string(userObj['id']);
-
-  // Sla op in SessionStorage
-  WebSessionStorage1.SetValue('userID', userID);
+//  // Omdat ResponseType = rtJSON is, is req.response direct een JS-object
+//  jsObj := TJSObject(req.response);
+//
+//  // Haal het 'user'-object op binnenin 'jsObj'
+//  userObj := TJSObject(jsObj['user']);
+//
+//  // Haal de 'id'‐waarde eruit
+//  userID := string(userObj['id']);
+//
+//  // Sla op in SessionStorage
+//  WebSessionStorage1.SetValue('userID', userID);
 
   // Geef het hele request (JS-object) terug
   Result := req;
@@ -144,7 +144,7 @@ begin
           if (req.Status >= 200) and (req.Status < 300) then
             Resolve(req)  // geef xhr object terug
           else
-            Reject('HTTP Error: ' + IntToStr(req.Status) + ' ' + req.StatusText);
+            Reject(Exception.CreateFmt('{"status": %d,"message": %s}',[req.Status,req.StatusText]));
         end;
       end;
 

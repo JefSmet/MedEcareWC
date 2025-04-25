@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, Vcl.StdCtrls, WEBLib.StdCtrls, Vcl.Controls,
-  WEBLib.REST, view.base;
+  WEBLib.REST, view.base, Weblib.JSON, jsdelphisystem;
 
 type
   TFormLogin = class(TViewBase)
@@ -15,12 +15,13 @@ type
     loginEmail: TWebEdit;
     RequestLogin: TWebHttpRequest;
     forgotPassword: TWebButton;
-   [async]
-   procedure submitLoginClick(Sender: TObject);
+    [async]
+    procedure submitLoginClick(Sender: TObject);
     procedure forgotPasswordClick(Sender: TObject);
   private
     { Private declarations }
-    femail : string;
+    femail: string;
+    function IsValidEmail(const Email: string): Boolean;
   public
     { Public declarations }
   end;
@@ -30,49 +31,84 @@ var
 
 implementation
 
-uses System.StrUtils;
+uses System.StrUtils, WEBLib.RegularExpressions;
 
 {$R *.dfm}
 
+function TFormLogin.IsValidEmail(const Email: string): Boolean;
+const
+  EmailRegex = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$';
+begin
+  Result := TRegEx.IsMatch(Email, EmailRegex);
+end;
 
 procedure TFormLogin.forgotPasswordClick(Sender: TObject);
 begin
-//
+  //
 end;
-
 
 procedure TFormLogin.submitLoginClick(Sender: TObject);
 var
-  password, email, jsonBody: string;
-  response : TJSXMLHttpRequest;
-  var remember: Boolean;
+  password, Email, jsonBody: string;
+  response: TJSXMLHttpRequest;
+  remember: Boolean;
+  emailErrorElement, passwordErrorElement: TJSHTMLElement;
+  errorMessage : string;
+  errorStatus : integer;
+  errorObject : TJSObject;
+  errorValue : TJSValue;
 begin
-  email := Trim(loginEmail.Text);
-  password := loginPassword.Text;
-   remember := rememberMe.Checked;
+  // Get references to error message elements
+  emailErrorElement := document.getElementById('emailError') as TJSHTMLElement;
+  passwordErrorElement := document.getElementById('passwordError')
+    as TJSHTMLElement;
 
-  // Basisvalidatie
-  if email = '' then
+  // Hide error messages initially
+  emailErrorElement.classList.add('d-none');
+  passwordErrorElement.classList.add('d-none');
+
+  Email := Trim(loginEmail.Text);
+  password := loginPassword.Text;
+  remember := rememberMe.Checked;
+
+  // Validate email
+
+  if not IsValidEmail(Email) then
   begin
-    ShowMessage('Vul een e-mailadres in.');
+    emailErrorElement.textContent := 'Vul een geldig e-mailadres in.';
+    emailErrorElement.classList.remove('d-none');
     Exit;
   end;
 
+  if IsValidEmail(Email) then
+  begin
+    emailErrorElement.classList.add('d-none');
+  end;
+  // Validate password
   if password = '' then
   begin
-    ShowMessage('Vul een wachtwoord in.');
+    passwordErrorElement.textContent := 'Vul een wachtwoord in.';
+    passwordErrorElement.classList.remove('d-none');
     Exit;
   end;
-
-response := await( AppManager.Auth.DoLogin(
-                       loginEmail.Text, loginPassword.Text,
-                       ifthen(remember, 'web-persist', 'web')
-                     ) );
-if response.Status = 200 then
+  try
+    response := await(AppManager.Auth.DoLogin(loginEmail.Text,
+      loginPassword.Text, ifthen(remember, 'web-persist', 'web')));
+    if response.Status = 200 then
+    begin
+      AppManager.ShowHome();
+    end;
+  except
+  on e : Exception do
   begin
-    AppManager.ShowHome();
+  TJSValue.Create('teerling');
+    errorValue := tjsValue.create(e.Message);
+    errorObject := toObject(ErrorValue);
+    errorMessage := js.toString(errorObject['message']);
+    errorStatus := js.toInteger(errorObject['status']);
+           ShowMessage(errorStatus.ToString + ' ' +errorMessage);
+  end;
   end;
 end;
-
 
 end.
