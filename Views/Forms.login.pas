@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, Vcl.StdCtrls, WEBLib.StdCtrls, Vcl.Controls,
-  WEBLib.REST, view.base, Weblib.JSON, jsdelphisystem;
+  WEBLib.REST, view.base, WEBLib.JSON, jsdelphisystem;
 
 type
   TFormLogin = class(TViewBase)
@@ -53,10 +53,10 @@ var
   response: TJSXMLHttpRequest;
   remember: Boolean;
   emailErrorElement, passwordErrorElement: TJSHTMLElement;
-  errorMessage : string;
-  errorStatus : integer;
-  errorObject : TJSObject;
-  errorValue : TJSValue;
+  errorMessage: string;
+  errorStatus: integer;
+  errorObject: TJSObject;
+  errorValue: TJSValue;
 begin
   // Get references to error message elements
   emailErrorElement := document.getElementById('emailError') as TJSHTMLElement;
@@ -99,15 +99,13 @@ begin
       AppManager.ShowHome();
     end;
   except
-  on e : Exception do
-  begin
-  TJSValue.Create('teerling');
-    errorValue := tjsValue.create(e.Message);
-    errorObject := toObject(ErrorValue);
-    errorMessage := js.toString(errorObject['message']);
-    errorStatus := js.toInteger(errorObject['status']);
-           ShowMessage(errorStatus.ToString + ' ' +errorMessage);
-  end;
+    on e: Exception do
+    begin
+      errorObject := TJSJSON.parseObject(e.Message);
+      errorMessage := JS.toString(errorObject['message']);
+      errorStatus := JS.toInteger(errorObject['status']);
+      ShowMessage(errorStatus.toString + ' ' + errorMessage);
+    end;
   end;
 end;
 

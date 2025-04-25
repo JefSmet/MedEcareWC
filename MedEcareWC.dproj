@@ -189,56 +189,21 @@
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment Version="4">
+            <Deployment Version="5">
                 <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
+                <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="IconResLow.png" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="IconResLow.png" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
+                <DeployFile LocalName="IconResLow.png" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="IconResMid.png" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="IconResMid.png" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
+                <DeployFile LocalName="IconResMid.png" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="Manifest.json" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="Manifest.json" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
+                <DeployFile LocalName="Manifest.json" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="MedEcare.html" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="MedEcare.html" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
+                <DeployFile LocalName="MedEcare.html" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="Win32\Debug\MedEcareWC.exe" Configuration="Debug" Class="ProjectOutput"/>
-                <DeployFile LocalName="Win32\Debug\MedEcareWC.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>MedEcareWC.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
+                <DeployFile LocalName="Win32\Debug\MedEcareWC.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="serviceworker.js" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="serviceworker.js" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
+                <DeployFile LocalName="serviceworker.js" Configuration="Debug" Class="ProjectFile"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
@@ -249,16 +214,6 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
-                    </Platform>
-                </DeployClass>
-                <DeployClass Name="AndroidClasses">
-                    <Platform Name="Android">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
-                    </Platform>
-                    <Platform Name="Android64">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">

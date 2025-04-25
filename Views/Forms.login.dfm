@@ -21,6 +21,7 @@ object FormLogin: TFormLogin
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
+    Text = 'g=lfqkhn:lsnsw:nhb'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
   end
@@ -64,6 +65,7 @@ object FormLogin: TFormLogin
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
+    Text = 'jef.smet@telenet.be'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
   end
