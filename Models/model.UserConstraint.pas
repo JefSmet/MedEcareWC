@@ -7,35 +7,31 @@ uses
 
 type
   TUserConstraint = record
-    Id                          : string;
-    PersonId                    : string;
-    MaxNightShiftsPerWeek       : Integer;
-    MaxConsecutiveNightShifts   : Integer;
-    MinRestHoursBetweenShifts   : Integer;
-    CreatedAt                   : TDateTime;
-    UpdatedAt                   : TDateTime;
-    class function FromJSON(const S: string): TUserConstraint; static;
+    Id                            : string;
+    PersonId                      : string;
+    MaxNightShiftsPerWeek         : Integer;
+    MaxConsecutiveNightShifts     : Integer;
+    MinRestHoursBetweenShifts     : Integer;
+    CreatedAt                     : TDateTime;
+    UpdatedAt                     : TDateTime;
+    class function FromJSON(const AJson: string): TUserConstraint; static;
   end;
 
 implementation
 
-class function TUserConstraint.FromJSON(const S: string): TUserConstraint;
+class function TUserConstraint.FromJSON(const AJson: string): TUserConstraint;
 var
   o: TJSObject;
 begin
-  o := TJSJSON.parseObject(S);
-  if o.hasOwnProperty('id') then Result.Id := string(o['id']);
-  if o.hasOwnProperty('personId') then Result.PersonId := string(o['personId']);
-  if o.hasOwnProperty('maxNightShiftsPerWeek') then
-    Result.MaxNightShiftsPerWeek := Integer(o['maxNightShiftsPerWeek']);
-  if o.hasOwnProperty('maxConsecutiveNightShifts') then
-    Result.MaxConsecutiveNightShifts := Integer(o['maxConsecutiveNightShifts']);
-  if o.hasOwnProperty('minRestHoursBetweenShifts') then
-    Result.MinRestHoursBetweenShifts := Integer(o['minRestHoursBetweenShifts']);
-  if o.hasOwnProperty('createdAt') then
-    Result.CreatedAt := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
-  if o.hasOwnProperty('updatedAt') then
-    Result.UpdatedAt := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
+  o := TJSJSON.parseObject(AJson);
+
+  if o.hasOwnProperty('id')                         then Result.Id                        := string(o['id']);
+  if o.hasOwnProperty('personId')                   then Result.PersonId                  := string(o['personId']);
+  if o.hasOwnProperty('maxNightShiftsPerWeek')      then Result.MaxNightShiftsPerWeek     := Integer(o['maxNightShiftsPerWeek']);
+  if o.hasOwnProperty('maxConsecutiveNightShifts')  then Result.MaxConsecutiveNightShifts := Integer(o['maxConsecutiveNightShifts']);
+  if o.hasOwnProperty('minRestHoursBetweenShifts')  then Result.MinRestHoursBetweenShifts := Integer(o['minRestHoursBetweenShifts']);
+  if o.hasOwnProperty('createdAt')                  then Result.CreatedAt                 := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
+  if o.hasOwnProperty('updatedAt')                  then Result.UpdatedAt                 := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
 end;
 
 end.

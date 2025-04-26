@@ -15,28 +15,25 @@ type
     ShiftTypeId  : string;
     CreatedAt    : TDateTime;
     UpdatedAt    : TDateTime;
-    class function FromJSON(const S: string): TActivity; static;
+    class function FromJSON(const AJson: string): TActivity; static;
   end;
 
 implementation
 
-class function TActivity.FromJSON(const S: string): TActivity;
+class function TActivity.FromJSON(const AJson: string): TActivity;
 var
   o: TJSObject;
 begin
-  o := TJSJSON.parseObject(S);
-  if o.hasOwnProperty('id') then Result.Id := string(o['id']);
+  o := TJSJSON.parseObject(AJson);
+
+  if o.hasOwnProperty('id')           then Result.Id           := string(o['id']);
   if o.hasOwnProperty('activityType') then Result.ActivityType := string(o['activityType']);
-  if o.hasOwnProperty('start') then
-    Result.Start := TWebRESTClient.IsoToDateTime(string(o['start']));
-  if o.hasOwnProperty('end') then
-    Result.EndTime := TWebRESTClient.IsoToDateTime(string(o['end']));
-  if o.hasOwnProperty('personId') then Result.PersonId := string(o['personId']);
-  if o.hasOwnProperty('shiftTypeId') then Result.ShiftTypeId := string(o['shiftTypeId']);
-  if o.hasOwnProperty('createdAt') then
-    Result.CreatedAt := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
-  if o.hasOwnProperty('updatedAt') then
-    Result.UpdatedAt := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
+  if o.hasOwnProperty('start')        then Result.Start        := TWebRESTClient.IsoToDateTime(string(o['start']));
+  if o.hasOwnProperty('end')          then Result.EndTime      := TWebRESTClient.IsoToDateTime(string(o['end']));
+  if o.hasOwnProperty('personId')     then Result.PersonId     := string(o['personId']);
+  if o.hasOwnProperty('shiftTypeId')  then Result.ShiftTypeId  := string(o['shiftTypeId']);
+  if o.hasOwnProperty('createdAt')    then Result.CreatedAt    := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
+  if o.hasOwnProperty('updatedAt')    then Result.UpdatedAt    := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
 end;
 
 end.

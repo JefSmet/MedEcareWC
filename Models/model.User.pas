@@ -7,33 +7,31 @@ uses
 
 type
   TUser = record
-    Id         : string;
-    Email      : string;
-    Password   : string;
-    CreatedAt  : TDateTime;
-    UpdatedAt  : TDateTime;
-    ResetToken : string;
-    ResetExpire: TDateTime;
-    class function FromJSON(const S: string): TUser; static;
+    Id           : string;
+    Email        : string;
+    Password     : string;
+    CreatedAt    : TDateTime;
+    UpdatedAt    : TDateTime;
+    ResetToken   : string;
+    ResetExpire  : TDateTime;
+    class function FromJSON(const AJson: string): TUser; static;
   end;
 
 implementation
 
-class function TUser.FromJSON(const S: string): TUser;
+class function TUser.FromJSON(const AJson: string): TUser;
 var
   o: TJSObject;
 begin
-  o := TJSJSON.parseObject(S);
-  if o.hasOwnProperty('id') then Result.Id := string(o['id']);
-  if o.hasOwnProperty('email') then Result.Email := string(o['email']);
-  if o.hasOwnProperty('password') then Result.Password := string(o['password']);
-  if o.hasOwnProperty('createdAt') then
-    Result.CreatedAt := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
-  if o.hasOwnProperty('updatedAt') then
-    Result.UpdatedAt := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
-  if o.hasOwnProperty('resetToken') then Result.ResetToken := string(o['resetToken']);
-  if o.hasOwnProperty('resetExpire') then
-    Result.ResetExpire := TWebRESTClient.IsoToDateTime(string(o['resetExpire']));
+  o := TJSJSON.parseObject(AJson);
+
+  if o.hasOwnProperty('id')          then Result.Id           := string(o['id']);
+  if o.hasOwnProperty('email')       then Result.Email        := string(o['email']);
+  if o.hasOwnProperty('password')    then Result.Password     := string(o['password']);
+  if o.hasOwnProperty('createdAt')   then Result.CreatedAt    := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
+  if o.hasOwnProperty('updatedAt')   then Result.UpdatedAt    := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
+  if o.hasOwnProperty('resetToken')  then Result.ResetToken   := string(o['resetToken']);
+  if o.hasOwnProperty('resetExpire') then Result.ResetExpire  := TWebRESTClient.IsoToDateTime(string(o['resetExpire']));
 end;
 
 end.
