@@ -3,17 +3,17 @@ unit Model.UserConstraint;
 interface
 
 uses
-  JS, Web;
+  JS, Web, WEBLib.REST;
 
 type
   TUserConstraint = record
-    Id: string;
-    PersonId: string;
-    MaxNightShiftsPerWeek: Integer;
-    MaxConsecutiveNightShifts: Integer;
-    MinRestHoursBetweenShifts: Integer;
-    CreatedAt: string;
-    UpdatedAt: string;
+    Id                          : string;
+    PersonId                    : string;
+    MaxNightShiftsPerWeek       : Integer;
+    MaxConsecutiveNightShifts   : Integer;
+    MinRestHoursBetweenShifts   : Integer;
+    CreatedAt                   : TDateTime;
+    UpdatedAt                   : TDateTime;
     class function FromJSON(const S: string): TUserConstraint; static;
   end;
 
@@ -26,11 +26,16 @@ begin
   o := TJSJSON.parseObject(S);
   if o.hasOwnProperty('id') then Result.Id := string(o['id']);
   if o.hasOwnProperty('personId') then Result.PersonId := string(o['personId']);
-  if o.hasOwnProperty('maxNightShiftsPerWeek') then Result.MaxNightShiftsPerWeek := Integer(o['maxNightShiftsPerWeek']);
-  if o.hasOwnProperty('maxConsecutiveNightShifts') then Result.MaxConsecutiveNightShifts := Integer(o['maxConsecutiveNightShifts']);
-  if o.hasOwnProperty('minRestHoursBetweenShifts') then Result.MinRestHoursBetweenShifts := Integer(o['minRestHoursBetweenShifts']);
-  if o.hasOwnProperty('createdAt') then Result.CreatedAt := string(o['createdAt']);
-  if o.hasOwnProperty('updatedAt') then Result.UpdatedAt := string(o['updatedAt']);
+  if o.hasOwnProperty('maxNightShiftsPerWeek') then
+    Result.MaxNightShiftsPerWeek := Integer(o['maxNightShiftsPerWeek']);
+  if o.hasOwnProperty('maxConsecutiveNightShifts') then
+    Result.MaxConsecutiveNightShifts := Integer(o['maxConsecutiveNightShifts']);
+  if o.hasOwnProperty('minRestHoursBetweenShifts') then
+    Result.MinRestHoursBetweenShifts := Integer(o['minRestHoursBetweenShifts']);
+  if o.hasOwnProperty('createdAt') then
+    Result.CreatedAt := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
+  if o.hasOwnProperty('updatedAt') then
+    Result.UpdatedAt := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
 end;
 
 end.

@@ -3,15 +3,15 @@ unit Model.RefreshToken;
 interface
 
 uses
-  JS, Web;
+  JS, Web, WEBLib.REST;
 
 type
   TRefreshToken = record
-    Id: string;
-    Token: string;
-    UserId: string;
-    ExpiresAt: string;
-    CreatedAt: string;
+    Id        : string;
+    Token     : string;
+    UserId    : string;
+    ExpiresAt : TDateTime;
+    CreatedAt : TDateTime;
     class function FromJSON(const S: string): TRefreshToken; static;
   end;
 
@@ -25,8 +25,10 @@ begin
   if o.hasOwnProperty('id') then Result.Id := string(o['id']);
   if o.hasOwnProperty('token') then Result.Token := string(o['token']);
   if o.hasOwnProperty('userId') then Result.UserId := string(o['userId']);
-  if o.hasOwnProperty('expiresAt') then Result.ExpiresAt := string(o['expiresAt']);
-  if o.hasOwnProperty('createdAt') then Result.CreatedAt := string(o['createdAt']);
+  if o.hasOwnProperty('expiresAt') then
+    Result.ExpiresAt := TWebRESTClient.IsoToDateTime(string(o['expiresAt']));
+  if o.hasOwnProperty('createdAt') then
+    Result.CreatedAt := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
 end;
 
 end.

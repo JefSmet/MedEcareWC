@@ -3,16 +3,16 @@ unit Model.Person;
 interface
 
 uses
-  JS, Web;
+  JS, Web, WEBLib.REST;
 
 type
   TPerson = record
-    Id: string;
-    FirstName: string;
-    LastName: string;
-    DateOfBirth: string;
-    CreatedAt: string;
-    UpdatedAt: string;
+    Id          : string;
+    FirstName   : string;
+    LastName    : string;
+    DateOfBirth : TDateTime;
+    CreatedAt   : TDateTime;
+    UpdatedAt   : TDateTime;
     class function FromJSON(const S: string): TPerson; static;
   end;
 
@@ -26,9 +26,12 @@ begin
   if o.hasOwnProperty('id') then Result.Id := string(o['id']);
   if o.hasOwnProperty('firstName') then Result.FirstName := string(o['firstName']);
   if o.hasOwnProperty('lastName') then Result.LastName := string(o['lastName']);
-  if o.hasOwnProperty('dateOfBirth') then Result.DateOfBirth := string(o['dateOfBirth']);
-  if o.hasOwnProperty('createdAt') then Result.CreatedAt := string(o['createdAt']);
-  if o.hasOwnProperty('updatedAt') then Result.UpdatedAt := string(o['updatedAt']);
+  if o.hasOwnProperty('dateOfBirth') then
+    Result.DateOfBirth := TWebRESTClient.IsoToDateTime(string(o['dateOfBirth']));
+  if o.hasOwnProperty('createdAt') then
+    Result.CreatedAt := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
+  if o.hasOwnProperty('updatedAt') then
+    Result.UpdatedAt := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
 end;
 
 end.

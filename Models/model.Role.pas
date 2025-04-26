@@ -7,7 +7,7 @@ uses
 
 type
   TRole = record
-    Id: string;
+    Id  : string;
     Name: string;
     class function FromJSON(const S: string): TRole; static;
   end;
