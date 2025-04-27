@@ -6,32 +6,53 @@ uses
   JS, Web, WEBLib.REST;
 
 type
+
   TUserConstraint = record
-    Id                            : string;
-    PersonId                      : string;
-    MaxNightShiftsPerWeek         : Integer;
-    MaxConsecutiveNightShifts     : Integer;
-    MinRestHoursBetweenShifts     : Integer;
-    CreatedAt                     : TDateTime;
-    UpdatedAt                     : TDateTime;
-    class function FromJSON(const AJson: string): TUserConstraint; static;
+    Id: string;
+    PersonId: string;
+    MaxNightShiftsPerWeek: Integer;
+    MaxConsecutiveNightShifts: Integer;
+    MinRestHoursBetweenShifts: Integer;
+    CreatedAt: TDateTime;
+    UpdatedAt: TDateTime;
+
+    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+      : TUserConstraint; overload; static;
+    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean)
+      : TUserConstraint; overload; static;
   end;
 
 implementation
 
-class function TUserConstraint.FromJSON(const AJson: string): TUserConstraint;
-var
-  o: TJSObject;
+class function TUserConstraint.FromJSON(const AJson: string;
+  ADateTimeIsUTC: Boolean): TUserConstraint;
 begin
-  o := TJSJSON.parseObject(AJson);
+  Result := FromJSON(TJSJSON.parseObject(AJson), ADateTimeIsUTC);
+end;
 
-  if o.hasOwnProperty('id')                         then Result.Id                        := string(o['id']);
-  if o.hasOwnProperty('personId')                   then Result.PersonId                  := string(o['personId']);
-  if o.hasOwnProperty('maxNightShiftsPerWeek')      then Result.MaxNightShiftsPerWeek     := Integer(o['maxNightShiftsPerWeek']);
-  if o.hasOwnProperty('maxConsecutiveNightShifts')  then Result.MaxConsecutiveNightShifts := Integer(o['maxConsecutiveNightShifts']);
-  if o.hasOwnProperty('minRestHoursBetweenShifts')  then Result.MinRestHoursBetweenShifts := Integer(o['minRestHoursBetweenShifts']);
-  if o.hasOwnProperty('createdAt')                  then Result.CreatedAt                 := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
-  if o.hasOwnProperty('updatedAt')                  then Result.UpdatedAt                 := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
+class function TUserConstraint.FromJSON(const AJsonObj: TJSObject;
+  ADateTimeIsUTC: Boolean): TUserConstraint;
+begin
+  Result := Default (TUserConstraint);
+  if AJsonObj.hasOwnProperty('id') then
+    Result.Id := JS.toString(AJsonObj['id']);
+  if AJsonObj.hasOwnProperty('personId') then
+    Result.PersonId := JS.toString(AJsonObj['personId']);
+  if AJsonObj.hasOwnProperty('maxNightShiftsPerWeek') then
+    Result.MaxNightShiftsPerWeek :=
+      JS.toInteger(AJsonObj['maxNightShiftsPerWeek']);
+  if AJsonObj.hasOwnProperty('maxConsecutiveNightShifts') then
+    Result.MaxConsecutiveNightShifts :=
+      JS.toInteger(AJsonObj['maxConsecutiveNightShifts']);
+  if AJsonObj.hasOwnProperty('minRestHoursBetweenShifts') then
+    Result.MinRestHoursBetweenShifts :=
+      JS.toInteger(AJsonObj['minRestHoursBetweenShifts']);
+  if AJsonObj.hasOwnProperty('createdAt') then
+    Result.CreatedAt := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['createdAt']), ADateTimeIsUTC);
+  if AJsonObj.hasOwnProperty('updatedAt') then
+    Result.UpdatedAt := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['updatedAt']), ADateTimeIsUTC);
 end;
 
 end.

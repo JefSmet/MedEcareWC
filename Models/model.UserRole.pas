@@ -6,22 +6,33 @@ uses
   JS, Web, WEBLib.REST;
 
 type
+
   TUserRole = record
-    UserId : string;
-    RoleId : string;
-    class function FromJSON(const AJson: string): TUserRole; static;
+    UserId: string;
+    RoleId: string;
+
+    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+      : TUserRole; overload; static;
+    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean)
+      : TUserRole; overload; static;
   end;
 
 implementation
 
-class function TUserRole.FromJSON(const AJson: string): TUserRole;
-var
-  o: TJSObject;
+class function TUserRole.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+  : TUserRole;
 begin
-  o := TJSJSON.parseObject(AJson);
+  Result := FromJSON(TJSJSON.parseObject(AJson), ADateTimeIsUTC);
+end;
 
-  if o.hasOwnProperty('userId') then Result.UserId := string(o['userId']);
-  if o.hasOwnProperty('roleId') then Result.RoleId := string(o['roleId']);
+class function TUserRole.FromJSON(const AJsonObj: TJSObject;
+  ADateTimeIsUTC: Boolean): TUserRole;
+begin
+  Result := Default (TUserRole);
+  if AJsonObj.hasOwnProperty('userId') then
+    Result.UserId := JS.toString(AJsonObj['userId']);
+  if AJsonObj.hasOwnProperty('roleId') then
+    Result.RoleId := JS.toString(AJsonObj['roleId']);
 end;
 
 end.

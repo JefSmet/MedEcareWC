@@ -6,22 +6,33 @@ uses
   JS, Web, WEBLib.REST;
 
 type
+
   TRole = record
-    Id   : string;
-    Name : string;
-    class function FromJSON(const AJson: string): TRole; static;
+    Id: string;
+    Name: string;
+
+    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+      : TRole; overload; static;
+    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean)
+      : TRole; overload; static;
   end;
 
 implementation
 
-class function TRole.FromJSON(const AJson: string): TRole;
-var
-  o: TJSObject;
+class function TRole.FromJSON(const AJson: string;
+  ADateTimeIsUTC: Boolean): TRole;
 begin
-  o := TJSJSON.parseObject(AJson);
+  Result := FromJSON(TJSJSON.parseObject(AJson), ADateTimeIsUTC);
+end;
 
-  if o.hasOwnProperty('id')   then Result.Id   := string(o['id']);
-  if o.hasOwnProperty('name') then Result.Name := string(o['name']);
+class function TRole.FromJSON(const AJsonObj: TJSObject;
+  ADateTimeIsUTC: Boolean): TRole;
+begin
+  Result := Default (TRole);
+  if AJsonObj.hasOwnProperty('id') then
+    Result.Id := JS.toString(AJsonObj['id']);
+  if AJsonObj.hasOwnProperty('name') then
+    Result.Name := JS.toString(AJsonObj['name']);
 end;
 
 end.

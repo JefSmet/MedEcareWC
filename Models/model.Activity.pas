@@ -6,34 +6,55 @@ uses
   JS, Web, WEBLib.REST;
 
 type
+
   TActivity = record
-    Id           : string;
-    ActivityType : string;
-    Start        : TDateTime;
-    EndTime      : TDateTime;
-    PersonId     : string;
-    ShiftTypeId  : string;
-    CreatedAt    : TDateTime;
-    UpdatedAt    : TDateTime;
-    class function FromJSON(const AJson: string): TActivity; static;
+    Id: string;
+    ActivityType: string;
+    Start: TDateTime;
+    EndTime: TDateTime;
+    PersonId: string;
+    ShiftTypeId: string;
+    CreatedAt: TDateTime;
+    UpdatedAt: TDateTime;
+
+    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+      : TActivity; overload; static;
+    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean)
+      : TActivity; overload; static;
   end;
 
 implementation
 
-class function TActivity.FromJSON(const AJson: string): TActivity;
-var
-  o: TJSObject;
+class function TActivity.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+  : TActivity;
 begin
-  o := TJSJSON.parseObject(AJson);
+  Result := FromJSON(TJSJSON.parseObject(AJson), ADateTimeIsUTC);
+end;
 
-  if o.hasOwnProperty('id')           then Result.Id           := string(o['id']);
-  if o.hasOwnProperty('activityType') then Result.ActivityType := string(o['activityType']);
-  if o.hasOwnProperty('start')        then Result.Start        := TWebRESTClient.IsoToDateTime(string(o['start']));
-  if o.hasOwnProperty('end')          then Result.EndTime      := TWebRESTClient.IsoToDateTime(string(o['end']));
-  if o.hasOwnProperty('personId')     then Result.PersonId     := string(o['personId']);
-  if o.hasOwnProperty('shiftTypeId')  then Result.ShiftTypeId  := string(o['shiftTypeId']);
-  if o.hasOwnProperty('createdAt')    then Result.CreatedAt    := TWebRESTClient.IsoToDateTime(string(o['createdAt']));
-  if o.hasOwnProperty('updatedAt')    then Result.UpdatedAt    := TWebRESTClient.IsoToDateTime(string(o['updatedAt']));
+class function TActivity.FromJSON(const AJsonObj: TJSObject;
+  ADateTimeIsUTC: Boolean): TActivity;
+begin
+  Result := Default (TActivity);
+  if AJsonObj.hasOwnProperty('id') then
+    Result.Id := JS.toString(AJsonObj['id']);
+  if AJsonObj.hasOwnProperty('activityType') then
+    Result.ActivityType := JS.toString(AJsonObj['activityType']);
+  if AJsonObj.hasOwnProperty('start') then
+    Result.Start := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['start']),
+      ADateTimeIsUTC);
+  if AJsonObj.hasOwnProperty('end') then
+    Result.EndTime := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['end']),
+      ADateTimeIsUTC);
+  if AJsonObj.hasOwnProperty('personId') then
+    Result.PersonId := JS.toString(AJsonObj['personId']);
+  if AJsonObj.hasOwnProperty('shiftTypeId') then
+    Result.ShiftTypeId := JS.toString(AJsonObj['shiftTypeId']);
+  if AJsonObj.hasOwnProperty('createdAt') then
+    Result.CreatedAt := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['createdAt']), ADateTimeIsUTC);
+  if AJsonObj.hasOwnProperty('updatedAt') then
+    Result.UpdatedAt := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['updatedAt']), ADateTimeIsUTC);
 end;
 
 end.
