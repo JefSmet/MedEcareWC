@@ -28,7 +28,6 @@ implementation
 
 {$R *.dfm}
 
-
 procedure TFormResetPassword.WebFormCreate(Sender: TObject);
 begin
   txtConfirmPassword.Text := '';

@@ -13,13 +13,13 @@ type
     constructor Create; deprecated 'Use TAppController.GetInstance instead of Create.';
   private
     FAuth: TAuthorisation;
-    FFormContainerID : TElementID;
-    FLoadedForm : TWebForm;
+    FFormContainerID: TElementID;
+    FLoadedForm: TWebForm;
     procedure ShowForm(AForm: TWebFormClass);
   public
     destructor Destroy; override;
     class function GetInstance: TAppManager;
-    procedure SetFormContainerID(AFormContainerID : TElementID);
+    procedure SetFormContainerID(AFormContainerID: TElementID);
     property Auth: TAuthorisation read FAuth;
     procedure ShowHome;
     procedure ShowForgotPassword;
@@ -38,15 +38,13 @@ uses
 constructor TAppManager.CreatePrivate;
 begin
   inherited Create;
-  FAuth:=TAuthorisation.Create(nil);
+  FAuth := TAuthorisation.Create(nil);
 end;
 
 constructor TAppManager.Create;
 begin
   // Prevent direct call
-  raise EInvalidOperation.Create(
-    'Use TAppController.GetInstance instead of TAppController.Create.'
-  );
+  raise EInvalidOperation.Create('Use TAppController.GetInstance instead of TAppController.Create.');
 end;
 
 destructor TAppManager.Destroy;
@@ -55,7 +53,7 @@ begin
   begin
     FLoadedForm.free;
   end;
-  FAuth.Free;
+  FAuth.free;
   inherited Destroy;
 end;
 
@@ -66,11 +64,10 @@ begin
   Result := FInstance;
 end;
 
-
 class destructor TAppManager.Destroy;
 begin
   if Assigned(FInstance) then
-    FInstance.Free;
+    FInstance.free;
 end;
 
 procedure TAppManager.SetFormContainerID(AFormContainerID: TElementID);
@@ -80,22 +77,20 @@ end;
 
 procedure TAppManager.ShowForgotPassword;
 begin
- ShowForm(TFormForgotPassword);
+  ShowForm(TFormForgotPassword);
 end;
 
 procedure TAppManager.ShowForm(AForm: TWebFormClass);
 begin
   if Assigned(FLoadedForm) then
     FLoadedForm.free;
-  Application.CreateForm(AForm,FFormContainerID,FLoadedForm);
+  Application.CreateForm(AForm, FFormContainerID, FLoadedForm);
 end;
 
 procedure TAppManager.ShowHome;
 begin
   ShowForm(TFormHome);
 end;
-
-
 
 procedure TAppManager.ShowLogin;
 begin
@@ -104,8 +99,7 @@ end;
 
 procedure TAppManager.ShowResetPassword;
 begin
- ShowForm(TFormResetPassword);
+  ShowForm(TFormResetPassword);
 end;
 
 end.
-

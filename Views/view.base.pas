@@ -19,13 +19,12 @@ type
 implementation
 
 {$R *.dfm}
-
 { TFormBase }
 
 procedure TViewBase.DoCreate;
 begin
   inherited;
-  FAppManager:=TAppManager.GetInstance;
+  FAppManager := TAppManager.GetInstance;
 end;
 
 end.
