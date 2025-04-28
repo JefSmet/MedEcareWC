@@ -183,7 +183,7 @@ begin
   WebHttpRequest1.url := url + '/auth/refresh';
   WebHttpRequest1.Command := httpPOST;
   WebHttpRequest1.ResponseType := rtJSON;
-  WebHttpRequest1.PostData := '{platform: "web-persist"}';
+  WebHttpRequest1.PostData := '{"platform": "web-persist"}';
 
   try
     xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
@@ -194,7 +194,7 @@ begin
 
   if xhr.Status = 200 then
   begin
-    // jsObj  := TJSObject(xhr.response);
+//     jsObj  := TJSObject(xhr.response);
     // userObj:= TJSObject(jsObj['user']);        // ← laat backend evt. user terugsturen
     // WebSessionStorage1.SetValue('userID', string(userObj['id']));
     exit(True);
