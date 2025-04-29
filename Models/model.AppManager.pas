@@ -10,7 +10,8 @@ type
     class var FInstance: TAppManager;
     constructor CreatePrivate;
     class destructor Destroy;
-    constructor Create; deprecated 'Use TAppController.GetInstance instead of Create.';
+    constructor Create;
+      deprecated 'Use TAppController.GetInstance instead of Create.';
   private
     FAuth: TAuthorisation;
     FFormContainerID: TElementID;
@@ -25,13 +26,15 @@ type
     procedure ShowForgotPassword;
     procedure ShowLogin;
     procedure ShowResetPassword;
+    procedure ShowWachtlijstReadOnly;
   end;
 
 implementation
 
 uses
   System.SysUtils, System.Classes, Vcl.Dialogs, Forms.home,
-  Forms.forgotPassword, Forms.login, Forms.resetPassword;
+  Forms.forgotPassword, Forms.login, Forms.resetPassword,
+  Forms.wachtlijst.readOnly;
 
 { TAppManager }
 
@@ -44,7 +47,8 @@ end;
 constructor TAppManager.Create;
 begin
   // Prevent direct call
-  raise EInvalidOperation.Create('Use TAppController.GetInstance instead of TAppController.Create.');
+  raise EInvalidOperation.Create
+    ('Use TAppController.GetInstance instead of TAppController.Create.');
 end;
 
 destructor TAppManager.Destroy;
@@ -100,6 +104,11 @@ end;
 procedure TAppManager.ShowResetPassword;
 begin
   ShowForm(TFormResetPassword);
+end;
+
+procedure TAppManager.ShowWachtlijstReadOnly;
+begin
+  ShowForm(TFormWachtlijstReadOnly);
 end;
 
 end.

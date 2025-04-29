@@ -12,14 +12,19 @@ type
     WebLocalStorage1: TWebLocalStorage;
     WebHttpRequest1: TWebHttpRequest;
   private
-    function PerformRequestWithCredentials(ARequest: TWebHttpRequest): TJSPromise;
-    procedure setLoginRequest(AEmail: string; APassword: string; APlatform: string);
+    function PerformRequestWithCredentials(ARequest: TWebHttpRequest)
+      : TJSPromise;
+    procedure SetRequest(AEndpoint: string; ACommand: THTTPCommand;
+      APostData: string = ''; AResponsetype: THTTPRequestResponseType = rtJSON);
   public
+    procedure ClearStorage;
     [async]
-    function DoLogin(AEmail: string; APassword: string; APlatform: string): TJSXMLHttpRequest;
-    function ListUsers: string;
+    function DoLogin(AEmail: string; APassword: string; APlatform: string)
+      : TJSXMLHttpRequest;
     [async]
     function TryAutoLogin: Boolean;
+    [async]
+    function DoLogout: Boolean;
   end;
 
 var
@@ -31,9 +36,10 @@ uses
   WEBLib.WebTools, vcl.dialogs;
 
 const
-  url = 'http://localhost:3000';
+  url = 'http://localhost:3000/auth';
 
-function HttpCommandToString(ACommand: THTTPCommand; const ACustom: string): string;
+function HttpCommandToString(ACommand: THTTPCommand;
+  const ACustom: string): string;
 begin
   case ACommand of
     httpGET:
@@ -62,17 +68,26 @@ end;
 {$R *.dfm}
 { TAuthorisation }
 
-function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string): TJSXMLHttpRequest;
+procedure TAuthorisation.ClearStorage;
+begin
+  WebLocalStorage1.Clear;
+  WebSessionStorage1.Clear;
+end;
+
+function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string)
+  : TJSXMLHttpRequest;
 var
   req: TJSXMLHttpRequest;
   jsObj, userObj: TJSObject;
   userID: string;
 begin
-  // Eventueel je headers of body instellen (implementatie van setRequest)
-  setLoginRequest(AEmail, APassword, APlatform);
+  SetRequest('/login', httpPOST,
+    Format('{"email": "%s","password": "%s", "platform": "%s"}',
+    [AEmail, APassword, APlatform]));
 
   // Voer de asynchrone request uit en wacht tot deze klaar is
-  req := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+  req := await(TJSXMLHttpRequest,
+    PerformRequestWithCredentials(WebHttpRequest1));
 
   // // Omdat ResponseType = rtJSON is, is req.response direct een JS-object
   // jsObj := TJSObject(req.response);
@@ -90,12 +105,31 @@ begin
   Result := req;
 end;
 
-function TAuthorisation.ListUsers: string;
+function TAuthorisation.DoLogout: Boolean;
+var
+  xhr: TJSXMLHttpRequest;
 begin
+  SetRequest('/logout', httpPOST);
+
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
+  except
+    result := false;
+
+  end;
+
+  if xhr.Status = 200 then
+  begin
+    result := true;
+  end;
+
+  result := false;
 
 end;
 
-function TAuthorisation.PerformRequestWithCredentials(ARequest: TWebHttpRequest): TJSPromise;
+function TAuthorisation.PerformRequestWithCredentials(ARequest: TWebHttpRequest)
+  : TJSPromise;
 var
   req: TJSXMLHttpRequest;
   method: string;
@@ -154,24 +188,27 @@ begin
             if (req.Status >= 200) and (req.Status < 300) then
               Resolve(req) // geef xhr object terug
             else
-              Reject(Exception.CreateFmt('{"status": %d,"message": "%s"}', [req.Status, req.StatusText]));
+              Reject(Exception.CreateFmt('{"status": %d,"message": "%s"}',
+                [req.Status, req.StatusText]));
           end;
         end;
 
       // B) Verstuur bij POST/PUT de PostData, anders geen body
-      if (method = 'GET') or (method = 'DELETE') or (ARequest.PostData.Trim = '') then
+      if (method = 'GET') or (method = 'DELETE') or (ARequest.PostData.Trim = '')
+      then
         req.send
       else
         req.send(ARequest.PostData);
     end);
 end;
 
-procedure TAuthorisation.setLoginRequest(AEmail: string; APassword: string; APlatform: string);
+procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand;
+APostData: string; AResponsetype: THTTPRequestResponseType);
 begin
-  WebHttpRequest1.url := url + '/auth/login';
-  WebHttpRequest1.Command := THTTPCommand.httpPOST;
-  WebHttpRequest1.ResponseType := rtJSON;
-  WebHttpRequest1.PostData := Format('{"email": "%s","password": "%s", "platform": "%s"}', [AEmail, APassword, APlatform]);
+  WebHttpRequest1.url := url + AEndpoint;
+  WebHttpRequest1.Command := ACommand;
+  WebHttpRequest1.ResponseType := AResponsetype;
+  WebHttpRequest1.PostData := APostData;
 end;
 
 function TAuthorisation.TryAutoLogin: Boolean;
@@ -180,13 +217,11 @@ var
   jsObj, userObj: TJSObject;
 begin
   // 1) call /auth/refresh (refreshToken zit in de HttpOnly cookie)
-  WebHttpRequest1.url := url + '/auth/refresh';
-  WebHttpRequest1.Command := httpPOST;
-  WebHttpRequest1.ResponseType := rtJSON;
-  WebHttpRequest1.PostData := '{"platform": "web-persist"}';
+  SetRequest('/refresh', httpPOST, '{"platform": "web-persist"}');
 
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
   except
     exit(False);
 
@@ -194,13 +229,18 @@ begin
 
   if xhr.Status = 200 then
   begin
-//     jsObj  := TJSObject(xhr.response);
+    // jsObj  := TJSObject(xhr.response);
     // userObj:= TJSObject(jsObj['user']);        // ← laat backend evt. user terugsturen
-    // WebSessionStorage1.SetValue('userID', string(userObj['id']));
+    // WebSessionStorage1.SetValue('userId', string(userObj['id']));
     exit(True);
   end;
 
   exit(False);
 end;
+
+// reset password
+
+
+// register
 
 end.

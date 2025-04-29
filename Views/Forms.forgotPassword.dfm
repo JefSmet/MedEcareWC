@@ -1,15 +1,5 @@
-object FormForgotPassword: TFormForgotPassword
-  Left = 0
-  Top = 0
-  ClientHeight = 441
-  ClientWidth = 624
+inherited FormForgotPassword: TFormForgotPassword
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -12
-  Font.Name = 'Segoe UI'
-  Font.Style = []
-  TextHeight = 15
   object txtEmail: TWebEdit
     Left = 101
     Top = 0

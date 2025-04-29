@@ -1,0 +1,33 @@
+inherited FormWachtlijstReadOnly: TFormWachtlijstReadOnly
+  object WebCalendar1: TWebCalendar
+    Left = 48
+    Top = 64
+    Width = 529
+    Height = 329
+    TabOrder = 0
+    SelectedDate = 45776.000000000000000000
+    Year = 2025
+    Month = 4
+    Day = 29
+    NameOfMonths.January = 'January'
+    NameOfMonths.February = 'February'
+    NameOfMonths.March = 'March'
+    NameOfMonths.April = 'April'
+    NameOfMonths.May = 'May'
+    NameOfMonths.June = 'June'
+    NameOfMonths.July = 'July'
+    NameOfMonths.August = 'August'
+    NameOfMonths.September = 'September'
+    NameOfMonths.October = 'October'
+    NameOfMonths.November = 'November'
+    NameOfMonths.December = 'December'
+    NameOfDays.Sunday = 'Sun'
+    NameOfDays.Monday = 'Mon'
+    NameOfDays.Tuesday = 'Tue'
+    NameOfDays.Wednesday = 'Wed'
+    NameOfDays.Thursday = 'Thu'
+    NameOfDays.Friday = 'Fri'
+    NameOfDays.Saturday = 'Sat'
+    OnDateSelected = WebCalendar1DateSelected
+  end
+end

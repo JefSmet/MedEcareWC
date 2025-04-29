@@ -9,7 +9,10 @@ uses
 
 type
   TFormHome = class(TViewBase)
-    WebLabel1: TWebLabel;
+    btnLogout: TWebButton;
+    lblUserInfo: TWebLabel;
+    lblWelcome: TWebLabel;
+    procedure btnLogoutClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -22,5 +25,11 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TFormHome.btnLogoutClick(Sender: TObject);
+begin
+  // model voor logout
+
+end;
 
 end.

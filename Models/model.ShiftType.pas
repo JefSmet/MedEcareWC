@@ -18,18 +18,22 @@ type
     CreatedAt: TDateTime;
     UpdatedAt: TDateTime;
 
-    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean): TShiftType; overload; static;
-    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean): TShiftType; overload; static;
+    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+      : TShiftType; overload; static;
+    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean)
+      : TShiftType; overload; static;
   end;
 
 implementation
 
-class function TShiftType.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean): TShiftType;
+class function TShiftType.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+  : TShiftType;
 begin
   Result := FromJSON(TJSJSON.parseObject(AJson), ADateTimeIsUTC);
 end;
 
-class function TShiftType.FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean): TShiftType;
+class function TShiftType.FromJSON(const AJsonObj: TJSObject;
+  ADateTimeIsUTC: Boolean): TShiftType;
 begin
   Result := Default (TShiftType);
   if AJsonObj.hasOwnProperty('id') then
@@ -54,19 +58,23 @@ begin
   end;
   if AJsonObj.hasOwnProperty('activeFrom') then
   begin
-    Result.ActiveFrom := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['activeFrom']), ADateTimeIsUTC);
+    Result.ActiveFrom := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['activeFrom']), ADateTimeIsUTC);
   end;
   if AJsonObj.hasOwnProperty('activeUntil') then
   begin
-    Result.ActiveUntil := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['activeUntil']), ADateTimeIsUTC);
+    Result.ActiveUntil := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['activeUntil']), ADateTimeIsUTC);
   end;
   if AJsonObj.hasOwnProperty('createdAt') then
   begin
-    Result.CreatedAt := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['createdAt']), ADateTimeIsUTC);
+    Result.CreatedAt := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['createdAt']), ADateTimeIsUTC);
   end;
   if AJsonObj.hasOwnProperty('updatedAt') then
   begin
-    Result.UpdatedAt := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['updatedAt']), ADateTimeIsUTC);
+    Result.UpdatedAt := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['updatedAt']), ADateTimeIsUTC);
   end;
 end;
 

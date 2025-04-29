@@ -1,23 +1,48 @@
-object FormHome: TFormHome
-  Left = 0
-  Top = 0
-  ClientHeight = 441
-  ClientWidth = 624
+inherited FormHome: TFormHome
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -12
-  Font.Name = 'Segoe UI'
-  Font.Style = []
-  TextHeight = 15
-  object WebLabel1: TWebLabel
-    Left = 176
-    Top = 80
-    Width = 68
+  object lblUserInfo: TWebLabel
+    Left = 202
+    Top = 144
+    Width = 57
     Height = 15
-    Caption = 'HomeScreen'
+    Caption = 'lblUserInfo'
     Color = clBtnFace
+    ElementID = 'lblUserInfo'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+  end
+  object lblWelcome: TWebLabel
+    Left = 202
+    Top = 80
+    Width = 63
+    Height = 15
+    Caption = 'lblWelcome'
+    Color = clBtnFace
+    ElementID = 'lblWelcome'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object btnLogout: TWebButton
+    Left = 169
+    Top = 208
+    Width = 96
+    Height = 25
+    Caption = 'btnLogout'
+    ElementID = 'btnLogout'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    OnClick = btnLogoutClick
   end
 end
