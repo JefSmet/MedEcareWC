@@ -34,7 +34,6 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFormMain, FormMain);
-  Application.CreateForm(TFormWachtlijstReadOnly, FormWachtlijstReadOnly);
   Application.Run;
 
 end.

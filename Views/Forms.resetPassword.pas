@@ -1,4 +1,4 @@
-unit Forms.resetPassword;
+﻿unit Forms.resetPassword;
 
 interface
 
@@ -15,6 +15,8 @@ type
     lnkLogin: TWebButton;
     txtNewPassword: TWebEdit;
     procedure WebFormCreate(Sender: TObject);
+    procedure btnResetClick(Sender: TObject);
+    procedure lnkLoginClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -27,6 +29,36 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TFormResetPassword.btnResetClick(Sender: TObject);
+var
+newPassword : string;
+confirmPassword : string;
+userId : string;
+begin
+  inherited;
+    newPassword := txtNewPassword.Text;
+    confirmPassword := txtConfirmPassword.Text;
+
+    if newPassword.Equals(confirmPassword) then
+    begin
+      // maak call
+      userId := AppManager.Auth.WebSessionStorage1.GetValue('userId');
+
+    end
+    else
+    begin
+      //show alert
+    end;
+
+
+end;
+
+procedure TFormResetPassword.lnkLoginClick(Sender: TObject);
+begin
+  inherited;
+ AppManager.ShowLogin;
+end;
 
 procedure TFormResetPassword.WebFormCreate(Sender: TObject);
 begin

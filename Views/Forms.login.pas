@@ -44,7 +44,7 @@ end;
 
 procedure TFormLogin.forgotPasswordClick(Sender: TObject);
 begin
-  //
+  AppManager.showForgotPassword();
 end;
 
 procedure TFormLogin.submitLoginClick(Sender: TObject);

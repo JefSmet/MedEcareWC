@@ -16,6 +16,7 @@ type
       : TJSPromise;
     procedure SetRequest(AEndpoint: string; ACommand: THTTPCommand;
       APostData: string = ''; AResponsetype: THTTPRequestResponseType = rtJSON);
+
   public
     procedure ClearStorage;
     [async]
@@ -25,10 +26,10 @@ type
     function TryAutoLogin: Boolean;
     [async]
     function DoLogout: Boolean;
+    [async]
+    function forgotPassword(AEmail: string): Boolean;
+    function ResetPassword(AToken: string; APassword: string): Boolean;
   end;
-
-var
-  Authorisation: TAuthorisation;
 
 implementation
 
@@ -115,16 +116,16 @@ begin
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(WebHttpRequest1));
   except
-    result := false;
+    Exit(false);
 
   end;
 
   if xhr.Status = 200 then
   begin
-    result := true;
+    Exit(true);
   end;
 
-  result := false;
+  Exit(false);
 
 end;
 
@@ -146,7 +147,7 @@ begin
   req.open(method, ARequest.url);
 
   // 4) Zorg dat HttpOnly cookies worden meegestuurd
-  req.withCredentials := True;
+  req.withCredentials := true;
 
   // 5) (Optioneel) Stel responseType in
   // THTTPRequestResponseType = (rtDefault, rtText, rtBlob, rtJSON, rtDocument, rtArrayBuffer);
@@ -223,7 +224,7 @@ begin
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(WebHttpRequest1));
   except
-    exit(False);
+    Exit(false);
 
   end;
 
@@ -232,13 +233,39 @@ begin
     // jsObj  := TJSObject(xhr.response);
     // userObj:= TJSObject(jsObj['user']);        // ← laat backend evt. user terugsturen
     // WebSessionStorage1.SetValue('userId', string(userObj['id']));
-    exit(True);
+    Exit(true);
   end;
 
-  exit(False);
+  Exit(false);
 end;
 
 // reset password
+function TAuthorisation.forgotPassword(AEmail: string): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+begin
+  SetRequest('/forgot-password', httpPOST, Format('{"email" : "%s"}',
+    [AEmail]));
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
+    Exit(true);
+  except
+    Exit(false);
+  end;
+
+end;
+
+function TAuthorisation.ResetPassword(AToken: string,
+  APassword: string): Boolean;
+var
+  PostData: string;
+begin
+  PostData := format('{"token" : "%s", "newPassword" : "%s"}',[AToken,APassword]);
+  SetRequest('/reset-password', httpPOST, PostData);
+
+end;
+
 
 
 // register

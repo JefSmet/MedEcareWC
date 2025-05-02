@@ -1,8 +1,8 @@
 inherited FormForgotPassword: TFormForgotPassword
   Color = clBtnFace
   object txtEmail: TWebEdit
-    Left = 101
-    Top = 0
+    Left = 168
+    Top = 24
     Width = 96
     Height = 25
     ChildOrder = 1
@@ -15,8 +15,8 @@ inherited FormForgotPassword: TFormForgotPassword
     WidthPercent = 100.000000000000000000
   end
   object btnForgot: TWebButton
-    Left = 202
-    Top = 0
+    Left = 168
+    Top = 64
     Width = 96
     Height = 25
     ChildOrder = 2
@@ -27,10 +27,27 @@ inherited FormForgotPassword: TFormForgotPassword
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnClick = btnForgotClick
   end
-  object TWebHTMLDiv
-    Left = 303
-    Top = 0
+  object btnBack: TWebButton
+    Left = 152
+    Top = 216
+    Width = 96
+    Height = 25
+    Caption = 'btnBack'
+    ChildOrder = 3
+    ElementID = 'btnBack'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    OnClick = btnBackClick
+  end
+  object alertMsg: TWebHTMLDiv
+    Left = 152
+    Top = 144
     Width = 96
     Height = 25
     ElementID = 'alertMsg'
