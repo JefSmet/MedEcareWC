@@ -32,32 +32,31 @@ implementation
 
 procedure TFormResetPassword.btnResetClick(Sender: TObject);
 var
-newPassword : string;
-confirmPassword : string;
-userId : string;
+  newPassword: string;
+  confirmPassword: string;
+  userId: string;
 begin
   inherited;
-    newPassword := txtNewPassword.Text;
-    confirmPassword := txtConfirmPassword.Text;
+  newPassword := txtNewPassword.Text;
+  confirmPassword := txtConfirmPassword.Text;
 
-    if newPassword.Equals(confirmPassword) then
-    begin
-      // maak call
-      userId := AppManager.Auth.WebSessionStorage1.GetValue('userId');
+  if newPassword.Equals(confirmPassword) then
+  begin
+    // maak call
+    userId := AppManager.Auth.WebSessionStorage1.GetValue('userId');
 
-    end
-    else
-    begin
-      //show alert
-    end;
-
+  end
+  else
+  begin
+    // show alert
+  end;
 
 end;
 
 procedure TFormResetPassword.lnkLoginClick(Sender: TObject);
 begin
   inherited;
- AppManager.ShowLogin;
+  AppManager.ShowLogin;
 end;
 
 procedure TFormResetPassword.WebFormCreate(Sender: TObject);

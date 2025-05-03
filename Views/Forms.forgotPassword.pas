@@ -48,7 +48,7 @@ begin
     Exit;
   end;
 
-  if await(Boolean,AppManager.Auth.forgotPassword(txtEmail.Text)) then
+  if await(Boolean, AppManager.Auth.forgotPassword(txtEmail.Text)) then
   begin
     // velden uitschakelen
     txtEmail.Enabled := False;
@@ -61,9 +61,8 @@ begin
       bsToast.show();
     end;
   end
-else
-  ShowMessage
-    ('Je wachtwoord kon niet gereset worden. Probeer het later opnieuw of neem contact op met de ondersteuning.');
+  else
+    ShowMessage('Je wachtwoord kon niet gereset worden. Probeer het later opnieuw of neem contact op met de ondersteuning.');
 end;
 
 function TFormForgotPassword.IsValidEmail(const Email: string): Boolean;

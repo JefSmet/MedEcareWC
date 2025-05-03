@@ -23,8 +23,7 @@ implementation
 
 {$R *.dfm}
 
-procedure TFormWachtlijstReadOnly.WebCalendar1DateSelected(Sender: TObject;
-  ADate: TDateTime);
+procedure TFormWachtlijstReadOnly.WebCalendar1DateSelected(Sender: TObject; ADate: TDateTime);
 begin
   ShowMessage(formatDateTime('dd-mm-yyyy', WebCalendar1.SelectedDate));
 end;

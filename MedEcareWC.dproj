@@ -164,6 +164,14 @@
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="MTR\uTransFixed.pas"/>
+        <DCCReference Include="MTR\uTransRecords.pas"/>
+        <DCCReference Include="MTR\uPrestatieModel.pas"/>
+        <DCCReference Include="MTR\uMtrBuilderIntf.pas"/>
+        <DCCReference Include="MTR\uMtrBuildersSpoed.pas"/>
+        <DCCReference Include="MTR\uMtrBuilderFactory.pas"/>
+        <DCCReference Include="MTR\uMtrWriter.pas"/>
+        <DCCReference Include="MTR\uPrestatieRestClient.pas"/>
         <None Include="MedEcare.html"/>
         <None Include="Manifest.json"/>
         <None Include="serviceworker.js"/>
@@ -204,7 +212,7 @@
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment Version="4">
+            <Deployment Version="5">
                 <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
@@ -264,16 +272,6 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
-                    </Platform>
-                </DeployClass>
-                <DeployClass Name="AndroidClasses">
-                    <Platform Name="Android">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
-                    </Platform>
-                    <Platform Name="Android64">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">

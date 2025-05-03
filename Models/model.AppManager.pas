@@ -10,8 +10,7 @@ type
     class var FInstance: TAppManager;
     constructor CreatePrivate;
     class destructor Destroy;
-    constructor Create;
-      deprecated 'Use TAppController.GetInstance instead of Create.';
+    constructor Create; deprecated 'Use TAppController.GetInstance instead of Create.';
   private
     FAuth: TAuthorisation;
     FFormContainerID: TElementID;
@@ -47,8 +46,7 @@ end;
 constructor TAppManager.Create;
 begin
   // Prevent direct call
-  raise EInvalidOperation.Create
-    ('Use TAppController.GetInstance instead of TAppController.Create.');
+  raise EInvalidOperation.Create('Use TAppController.GetInstance instead of TAppController.Create.');
 end;
 
 destructor TAppManager.Destroy;
