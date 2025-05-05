@@ -15,6 +15,7 @@ type
     lnkLogin: TWebButton;
     txtNewPassword: TWebEdit;
     procedure WebFormCreate(Sender: TObject);
+    [async]
     procedure btnResetClick(Sender: TObject);
     procedure lnkLoginClick(Sender: TObject);
   private
@@ -34,7 +35,7 @@ procedure TFormResetPassword.btnResetClick(Sender: TObject);
 var
   newPassword: string;
   confirmPassword: string;
-  userId: string;
+  resetToken: string;
 begin
   inherited;
   newPassword := txtNewPassword.Text;
@@ -43,12 +44,18 @@ begin
   if newPassword.Equals(confirmPassword) then
   begin
     // maak call
-    userId := AppManager.Auth.WebSessionStorage1.GetValue('userId');
+    resetToken := AppManager.Auth.WebSessionStorage1.GetValue('resetToken');
+    if await(Boolean,AppManager.Auth.ResetPassword(resetToken,newPassword)) then
+    begin
+
+    end;
+
 
   end
   else
   begin
     // show alert
+    ShowMessage('Er is iets mis gegaan, probeer later nog eens.');
   end;
 
 end;
@@ -56,6 +63,7 @@ end;
 procedure TFormResetPassword.lnkLoginClick(Sender: TObject);
 begin
   inherited;
+  //todo
   AppManager.ShowLogin;
 end;
 

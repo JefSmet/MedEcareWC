@@ -71,7 +71,8 @@ begin
   end;
 
   { --------- WEB: Blob + auto-download ------------------------------------- }
-  Blob := TJSBlob.new([RawText], TJSBlobPropertyBag.Create('text/plain;charset=windows-1252'));
+  Blob := TJSBlob.new([RawText],
+    TJSBlobPropertyBag.Create('text/plain;charset=windows-1252'));
   Url := TJSURL.createObjectURL(Blob);
 
   asm
@@ -90,7 +91,8 @@ end;
 
 function BuildMtrFileName(const SenderCode: string; Seq: Integer): string;
 begin
-  Result := UpperCase(SenderCode).PadRight(6).Substring(0, 6) + Seq.ToString.PadLeft(4, '0') + '.MTR';
+  Result := UpperCase(SenderCode).PadRight(6).Substring(0, 6) +
+    Seq.ToString.PadLeft(4, '0') + '.MTR';
 end;
 
 end.

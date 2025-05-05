@@ -60,7 +60,8 @@ var
 begin
   // Get references to error message elements
   emailErrorElement := document.getElementById('emailError') as TJSHTMLElement;
-  passwordErrorElement := document.getElementById('passwordError') as TJSHTMLElement;
+  passwordErrorElement := document.getElementById('passwordError')
+    as TJSHTMLElement;
 
   // Hide error messages initially
   emailErrorElement.classList.add('d-none');
@@ -91,7 +92,8 @@ begin
     Exit;
   end;
   try
-    response := await(AppManager.Auth.DoLogin(loginEmail.Text, loginPassword.Text, ifthen(remember, 'web-persist', 'web')));
+    response := await(AppManager.Auth.DoLogin(loginEmail.Text,
+      loginPassword.Text, ifthen(remember, 'web-persist', 'web')));
     if response.Status = 200 then
     begin
       // AppManager.ShowHome();

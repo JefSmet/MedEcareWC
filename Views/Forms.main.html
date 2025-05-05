@@ -3,7 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <title>Home - MedEcare</title>
+     <style>
+  /* Zorg dat de toast nooit breder wordt dan 100% van het scherm */
+  .toast {
+    max-width: 90vw;      /* kan bijv. 90% van de viewport width */
+    width: auto;
+  }
+  /* Klein beetje marge op smalle schermen */
+  @media (max-width: 576px) {
+    .toast-container {
+      padding: .5rem;
+    }
+  }
+  .zindex-toast {
+    z-index: 1080 !important;
+  }
+</style>
   </head>
   <body>
+    <!-- Toast-container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3 zindex-toast">
+  <div
+    id="myToast"
+    class="toast"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="toast-header">
+      <strong class="me-auto">MedEcare</strong>
+      <small>nu</small>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="toast"
+        aria-label="Sluiten"
+      ></button>
+    </div>
+    <!-- voeg text-break toe zodat woorden netjes breken -->
+    <div class="toast-body text-break" id="toastMessage">
+    </div>
+  </div>
+</div>
   </body>
 </html>

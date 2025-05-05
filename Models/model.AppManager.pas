@@ -1,8 +1,8 @@
-unit model.AppManager;
+﻿unit model.AppManager;
 
 interface
 
-uses model.Authorisation, WEBLib.Forms, WEBLib.Controls;
+uses model.Authorisation, WEBLib.Forms, WEBLib.Controls, SysUtils;
 
 type
   TAppManager = class
@@ -10,11 +10,13 @@ type
     class var FInstance: TAppManager;
     constructor CreatePrivate;
     class destructor Destroy;
-    constructor Create; deprecated 'Use TAppController.GetInstance instead of Create.';
+    constructor Create;
+      deprecated 'Use TAppController.GetInstance instead of Create.';
   private
     FAuth: TAuthorisation;
     FFormContainerID: TElementID;
     FLoadedForm: TWebForm;
+    FToastShowing: Boolean;
     procedure ShowForm(AForm: TWebFormClass);
   public
     destructor Destroy; override;
@@ -26,6 +28,10 @@ type
     procedure ShowLogin;
     procedure ShowResetPassword;
     procedure ShowWachtlijstReadOnly;
+    procedure ShowRegisterUser;
+    procedure ShowToast(AMessage: string; ADelay: integer = 5000); overload;
+    procedure ShowToast(AMessage: string; AOnFinished: TProc;
+      ADelay: integer = 5000); overload;
   end;
 
 implementation
@@ -33,7 +39,7 @@ implementation
 uses
   System.SysUtils, System.Classes, Vcl.Dialogs, Forms.home,
   Forms.forgotPassword, Forms.login, Forms.resetPassword,
-  Forms.wachtlijst.readOnly;
+  Forms.wachtlijst.readOnly, Forms.registerUser;
 
 { TAppManager }
 
@@ -46,7 +52,8 @@ end;
 constructor TAppManager.Create;
 begin
   // Prevent direct call
-  raise EInvalidOperation.Create('Use TAppController.GetInstance instead of TAppController.Create.');
+  raise EInvalidOperation.Create
+    ('Use TAppController.GetInstance instead of TAppController.Create.');
 end;
 
 destructor TAppManager.Destroy;
@@ -99,9 +106,68 @@ begin
   ShowForm(TFormLogin);
 end;
 
+procedure TAppManager.ShowRegisterUser;
+begin
+  ShowForm(TFormRegisterUser);
+end;
+
 procedure TAppManager.ShowResetPassword;
 begin
   ShowForm(TFormResetPassword);
+end;
+
+procedure TAppManager.ShowToast(AMessage: string; AOnFinished: TProc; ADelay: integer);
+begin
+  if FToastShowing then exit();
+
+  asm
+    var toastEl = document.getElementById('myToast');
+    var toastMessage = document.getElementById('toastMessage');
+
+    // ❗ Veiligheidscheck om crash te vermijden
+    if (!toastEl || !toastMessage) return;
+
+    // Verwijder vorige event handler indien nodig
+    if (toastEl._handler) {
+      toastEl.removeEventListener('hidden.bs.toast', toastEl._handler);
+      toastEl._handler = null;
+    }
+
+    toastMessage.innerText = AMessage;
+
+    var self = this;
+    var onFinished = AOnFinished;
+
+    toastEl._handler = function () {
+      self.FToastShowing = false;
+      if (onFinished) {
+        onFinished();
+      }
+    };
+
+    toastEl.addEventListener('hidden.bs.toast', toastEl._handler);
+
+    // Probeer enkel dispose als instance nog bestaat
+    var existingInstance = bootstrap.Toast.getInstance(toastEl);
+    if (existingInstance) {
+      existingInstance.dispose();
+    }
+
+    self.FToastShowing = true;
+
+    // ❗ Probeer niet te showen als element verwijderd is
+    if (toastEl) {
+      var bsToast = new bootstrap.Toast(toastEl, { delay: ADelay });
+      bsToast.show();
+    }
+  end;
+end;
+
+
+
+procedure TAppManager.ShowToast(AMessage: string; ADelay: integer);
+begin
+  ShowToast(AMessage, nil, ADelay);
 end;
 
 procedure TAppManager.ShowWachtlijstReadOnly;

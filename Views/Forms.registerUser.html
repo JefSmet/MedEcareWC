@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Registratieformulier</title>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4">Registreren</h2>
+    <form>
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mailadres</label>
+        <input type="email" class="form-control" id="email" placeholder="naam@voorbeeld.com" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Wachtwoord</label>
+        <input type="password" class="form-control" id="password" placeholder="Voer wachtwoord in" required>
+      </div>
+      <div class="mb-3">
+        <label for="role" class="form-label">Rol</label>
+        <select class="form-select" id="role" required>
+          <option value="">Selecteer rol</option>
+          <option value="admin">Beheerder</option>
+          <option value="user">Gebruiker</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="firstName" class="form-label">Voornaam</label>
+        <input type="text" class="form-control" id="firstName" required>
+      </div>
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Achternaam</label>
+        <input type="text" class="form-control" id="lastName" required>
+      </div>
+      <div class="mb-3">
+        <label for="dateOfBirth" class="form-label">Geboortedatum</label>
+        <input type="date" class="form-control" id="dateOfBirth" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="register">Registreren</button>
+    </form>
+  </div>
+</body>
+</html>
+

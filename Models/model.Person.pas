@@ -15,18 +15,22 @@ type
     CreatedAt: TDateTime;
     UpdatedAt: TDateTime;
 
-    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean): TPerson; overload; static;
-    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean): TPerson; overload; static;
+    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+      : TPerson; overload; static;
+    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean)
+      : TPerson; overload; static;
   end;
 
 implementation
 
-class function TPerson.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean): TPerson;
+class function TPerson.FromJSON(const AJson: string;
+  ADateTimeIsUTC: Boolean): TPerson;
 begin
   Result := FromJSON(TJSJSON.parseObject(AJson), ADateTimeIsUTC);
 end;
 
-class function TPerson.FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean): TPerson;
+class function TPerson.FromJSON(const AJsonObj: TJSObject;
+  ADateTimeIsUTC: Boolean): TPerson;
 begin
   Result := Default (TPerson);
   if AJsonObj.hasOwnProperty('id') then
@@ -43,15 +47,18 @@ begin
   end;
   if AJsonObj.hasOwnProperty('dateOfBirth') then
   begin
-    Result.DateOfBirth := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['dateOfBirth']), ADateTimeIsUTC);
+    Result.DateOfBirth := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['dateOfBirth']), ADateTimeIsUTC);
   end;
   if AJsonObj.hasOwnProperty('createdAt') then
   begin
-    Result.CreatedAt := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['createdAt']), ADateTimeIsUTC);
+    Result.CreatedAt := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['createdAt']), ADateTimeIsUTC);
   end;
   if AJsonObj.hasOwnProperty('updatedAt') then
   begin
-    Result.UpdatedAt := TWebRESTClient.IsoToDateTime(JS.toString(AJsonObj['updatedAt']), ADateTimeIsUTC);
+    Result.UpdatedAt := TWebRESTClient.IsoToDateTime
+      (JS.toString(AJsonObj['updatedAt']), ADateTimeIsUTC);
   end;
 end;
 

@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.Storage,
-  WEBLib.REST, jsdelphisystem, WEBLib.JSON;
+  WEBLib.REST, jsdelphisystem, WEBLib.JSON, DateUtils;
 
 type
   TAuthorisation = class(TWebDataModule)
@@ -12,22 +12,28 @@ type
     WebLocalStorage1: TWebLocalStorage;
     WebHttpRequest1: TWebHttpRequest;
   private
-    function PerformRequestWithCredentials(ARequest: TWebHttpRequest): TJSPromise;
+    function PerformRequestWithCredentials(ARequest: TWebHttpRequest)
+      : TJSPromise;
     [async]
-    procedure SetRequest(AEndpoint: string; ACommand: THTTPCommand; APostData: string = '';
-      AResponsetype: THTTPRequestResponseType = rtJSON);
+    procedure SetRequest(AEndpoint: string; ACommand: THTTPCommand;
+      APostData: string = ''; AResponsetype: THTTPRequestResponseType = rtJSON);
 
   public
     procedure ClearStorage;
     [async]
-    function DoLogin(AEmail: string; APassword: string; APlatform: string): TJSXMLHttpRequest;
+    function DoLogin(AEmail: string; APassword: string; APlatform: string)
+      : TJSXMLHttpRequest;
     [async]
     function TryAutoLogin: Boolean;
     [async]
     function DoLogout: Boolean;
     [async]
     function forgotPassword(AEmail: string): Boolean;
+    [async]
     function ResetPassword(AToken: string; APassword: string): Boolean;
+    [async]
+    function RegisterNewUser(AEmail, APassword, ARole, AFirstName,
+      ALastname: string; ADateOfBirth: TDateTime): Boolean;
   end;
 
 implementation
@@ -38,7 +44,8 @@ uses
 const
   url = 'http://localhost:3000/auth';
 
-function HttpCommandToString(ACommand: THTTPCommand; const ACustom: string): string;
+function HttpCommandToString(ACommand: THTTPCommand;
+  const ACustom: string): string;
 begin
   case ACommand of
     httpGET:
@@ -73,16 +80,20 @@ begin
   WebSessionStorage1.Clear;
 end;
 
-function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string): TJSXMLHttpRequest;
+function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string)
+  : TJSXMLHttpRequest;
 var
   req: TJSXMLHttpRequest;
   jsObj, userObj: TJSObject;
   userID: string;
 begin
-  SetRequest('/login', httpPOST, Format('{"email": "%s","password": "%s", "platform": "%s"}', [AEmail, APassword, APlatform]));
+  SetRequest('/login', httpPOST,
+    Format('{"email": "%s","password": "%s", "platform": "%s"}',
+    [AEmail, APassword, APlatform]));
 
   // Voer de asynchrone request uit en wacht tot deze klaar is
-  req := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+  req := await(TJSXMLHttpRequest,
+    PerformRequestWithCredentials(WebHttpRequest1));
 
   // // Omdat ResponseType = rtJSON is, is req.response direct een JS-object
   // jsObj := TJSObject(req.response);
@@ -107,7 +118,8 @@ begin
   SetRequest('/logout', httpPOST);
 
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
   except
     Exit(false);
 
@@ -122,7 +134,8 @@ begin
 
 end;
 
-function TAuthorisation.PerformRequestWithCredentials(ARequest: TWebHttpRequest): TJSPromise;
+function TAuthorisation.PerformRequestWithCredentials(ARequest: TWebHttpRequest)
+  : TJSPromise;
 var
   req: TJSXMLHttpRequest;
   method: string;
@@ -181,20 +194,22 @@ begin
             if (req.Status >= 200) and (req.Status < 300) then
               Resolve(req) // geef xhr object terug
             else
-              Reject(Exception.CreateFmt('{"status": %d,"message": "%s"}', [req.Status, req.StatusText]));
+              Reject(Exception.CreateFmt('{"status": %d,"message": "%s"}',
+                [req.Status, req.StatusText]));
           end;
         end;
 
       // B) Verstuur bij POST/PUT de PostData, anders geen body
-      if (method = 'GET') or (method = 'DELETE') or (ARequest.PostData.Trim = '') then
+      if (method = 'GET') or (method = 'DELETE') or (ARequest.PostData.Trim = '')
+      then
         req.send
       else
         req.send(ARequest.PostData);
     end);
 end;
 
-procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand; APostData: string;
-AResponsetype: THTTPRequestResponseType);
+procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand;
+APostData: string; AResponsetype: THTTPRequestResponseType);
 begin
   WebHttpRequest1.url := url + AEndpoint;
   WebHttpRequest1.Command := ACommand;
@@ -211,7 +226,8 @@ begin
   SetRequest('/refresh', httpPOST, '{"platform": "web-persist"}');
 
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
   except
     Exit(false);
 
@@ -233,9 +249,11 @@ function TAuthorisation.forgotPassword(AEmail: string): Boolean;
 var
   xhr: TJSXMLHttpRequest;
 begin
-  SetRequest('/forgot-password', httpPOST, Format('{"email" : "%s"}', [AEmail]));
+  SetRequest('/forgot-password', httpPOST, Format('{"email" : "%s"}',
+    [AEmail]));
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
     Exit(true);
   except
     Exit(false);
@@ -243,12 +261,44 @@ begin
 
 end;
 
-function TAuthorisation.ResetPassword(AToken: string; APassword: string): Boolean;
+function TAuthorisation.RegisterNewUser(AEmail, APassword, ARole, AFirstName,
+  ALastname: string; ADateOfBirth: TDateTime): Boolean;
+var
+  JsonStr: string;
+  xhr: TJSXMLHttpRequest;
+  dob: string;
+begin
+  dob := FormatDateTime('yyyy-mm-dd', ADateOfBirth);
+  JsonStr :=
+    Format('{  "email": "%s","password": "%s", "role": "%s", "firstName": "%s", "lastName": "%s", "dateOfBirth": "%s"}',
+    [AEmail, APassword, ARole, AFirstName, ALastname, dob]);
+  SetRequest('/register', httpPOST, JsonStr);
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
+    Exit(true);
+  except
+    Exit(false);
+  end;
+
+end;
+
+function TAuthorisation.ResetPassword(AToken: string;
+APassword: string): Boolean;
 var
   PostData: string;
+  xhr : TJSXMLHttpRequest;
 begin
-  PostData := Format('{"token" : "%s", "newPassword" : "%s"}', [AToken, APassword]);
+  PostData := Format('{"token" : "%s", "newPassword" : "%s"}',
+    [AToken, APassword]);
   SetRequest('/reset-password', httpPOST, PostData);
+ try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
+    Exit(true);
+  except
+    Exit(false);
+  end;
 
 end;
 

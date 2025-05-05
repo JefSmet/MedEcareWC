@@ -32,7 +32,8 @@ type
     /// Haal spoedprestaties op van &lt;baseUrl&gt;/prestaties/spoed?since=YYYY-MM-DD.
     /// Resultaat komt asynchroon in Callback.
     /// </summary>
-    procedure GetSpoedPrestaties(const ASince: TDate; const ACallback: TPrestCallback);
+    procedure GetSpoedPrestaties(const ASince: TDate;
+      const ACallback: TPrestCallback);
   end;
 
 implementation
@@ -44,7 +45,8 @@ implementation
 function TPrestRestClientWeb.ISOToDate(const S: string): TDate;
 begin
   // Verwacht 'YYYY-MM-DD' (tijddeel negeren)
-  Result := EncodeDate(StrToInt(Copy(S, 1, 4)), StrToInt(Copy(S, 6, 2)), StrToInt(Copy(S, 9, 2)));
+  Result := EncodeDate(StrToInt(Copy(S, 1, 4)), StrToInt(Copy(S, 6, 2)),
+    StrToInt(Copy(S, 9, 2)));
 end;
 
 function GetStr(O: TJSObject; const Key: string): string; inline;
@@ -122,12 +124,14 @@ begin
   FBaseUrl := ABaseUrl.TrimRight(['/']);
 end;
 
-procedure TPrestRestClientWeb.GetSpoedPrestaties(const ASince: TDate; const ACallback: TPrestCallback);
+procedure TPrestRestClientWeb.GetSpoedPrestaties(const ASince: TDate;
+  const ACallback: TPrestCallback);
 var
   Req: TWebHttpRequest;
   Url: string;
 begin
-  Url := FBaseUrl + '/prestaties/spoed?since=' + FormatDateTime('yyyy-mm-dd', ASince);
+  Url := FBaseUrl + '/prestaties/spoed?since=' +
+    FormatDateTime('yyyy-mm-dd', ASince);
 
   Req := TWebHttpRequest.Create(nil);
   Req.Url := Url;

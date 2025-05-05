@@ -12,15 +12,16 @@ object FormMain: TFormMain
     DesignSize = (
       81
       520)
-    object WebButton1: TWebButton
+    object btnRegister: TWebButton
       Left = 3
       Top = 3
       Width = 72
       Height = 25
       Anchors = [akLeft, akTop, akRight]
-      Caption = 'btn'
+      Caption = 'Registreren'
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
+      OnClick = btnRegisterClick
     end
     object WebButton2: TWebButton
       Left = 3
@@ -32,6 +33,7 @@ object FormMain: TFormMain
       ChildOrder = 1
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
+      OnClick = WebButton2Click
     end
     object WebButton3: TWebButton
       Left = 3

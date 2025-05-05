@@ -55,14 +55,11 @@ begin
     btnForgot.Enabled := False;
 
     // toon de Bootstrap-toast (via een asm-blok)
-    asm
-      var toastEl = document.getElementById('myToast');
-      var bsToast = new bootstrap.Toast(toastEl, { delay: 5000 });
-      bsToast.show();
-    end;
+    AppManager.ShowToast('Je email met verdere instructies is verzonden, check je inbox!');
   end
   else
-    ShowMessage('Je wachtwoord kon niet gereset worden. Probeer het later opnieuw of neem contact op met de ondersteuning.');
+    ShowMessage
+      ('Je wachtwoord kon niet gereset worden. Probeer het later opnieuw of neem contact op met de ondersteuning.');
 end;
 
 function TFormForgotPassword.IsValidEmail(const Email: string): Boolean;

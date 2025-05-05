@@ -6,7 +6,8 @@ type
   { -- type-alias zodat de echte lengte in comments blijft staan ------------ }
   TFixedStr = string; // overal toepassen
 
-  TPrestType = (ptAmbulance, ptMUG, ptOrthopedics, ptSurgery, ptAnaesthesia, ptEcho, ptUnknown);
+  TPrestType = (ptAmbulance, ptMUG, ptOrthopedics, ptSurgery, ptAnaesthesia,
+    ptEcho, ptUnknown);
 
   TAmbuSub = record
     RitID: TFixedStr; // max 15

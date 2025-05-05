@@ -45,8 +45,8 @@ implementation
 
 function TMtrHeader.ToLine: string;
 begin
-  Result := 'TTT' + FormatDateTime('yyyymmdd', FileDate) + StringOfChar(' ', 6) + TFixed.PadRight(Version, 10) +
-    TFixed.PadRight(ModuleVer, 10) + CRLF;
+  Result := 'TTT' + FormatDateTime('yyyymmdd', FileDate) + StringOfChar(' ', 6)
+    + TFixed.PadRight(Version, 10) + TFixed.PadRight(ModuleVer, 10) + CRLF;
 end;
 
 { TMtrTrailer --------------------------------------------------------------- }
@@ -67,7 +67,8 @@ function TMtrDetail.ToLine: string;
 var
   L: string;
 begin
-  L := TFixed.PadRight(UniekNr, 12) + TFixed.PadRight(VisitID, 20) + TFixed.PadLeft(VolgNr.ToString, 5) + DateToStr8(ExecDate) +
+  L := TFixed.PadRight(UniekNr, 12) + TFixed.PadRight(VisitID, 20) +
+    TFixed.PadLeft(VolgNr.ToString, 5) + DateToStr8(ExecDate) +
     DateToStr8(TotDate) + TFixed.PadLeft(RizivNr, 7) +
   // 935,7; spec laat 60,6 toe :contentReference[oaicite:2]{index=2}:contentReference[oaicite:3]{index=3}
     TFixed.PadLeft(Aantal.ToString, 4);

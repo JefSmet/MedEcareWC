@@ -16,7 +16,7 @@ inherited FormForgotPassword: TFormForgotPassword
   end
   object btnForgot: TWebButton
     Left = 168
-    Top = 64
+    Top = 55
     Width = 96
     Height = 25
     ChildOrder = 2
