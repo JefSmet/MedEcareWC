@@ -28,6 +28,7 @@ inherited FormResetPassword: TFormResetPassword
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnClick = btnResetClick
   end
   object alertMsg: TWebHTMLDiv
     Left = 202
@@ -43,8 +44,8 @@ inherited FormResetPassword: TFormResetPassword
     Role = ''
   end
   object lnkLogin: TWebButton
-    Left = 303
-    Top = 0
+    Left = 302
+    Top = -1
     Width = 96
     Height = 25
     ChildOrder = 3
@@ -55,6 +56,7 @@ inherited FormResetPassword: TFormResetPassword
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnClick = lnkLoginClick
   end
   object txtNewPassword: TWebEdit
     Left = 404

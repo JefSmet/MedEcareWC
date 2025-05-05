@@ -58,7 +58,7 @@ begin
     AppManager.ShowToast('Je email met verdere instructies is verzonden, check je inbox!');
   end
   else
-    ShowMessage
+    AppManager.ShowToast
       ('Je wachtwoord kon niet gereset worden. Probeer het later opnieuw of neem contact op met de ondersteuning.');
 end;
 

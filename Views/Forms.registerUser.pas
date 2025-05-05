@@ -19,7 +19,7 @@ type
     [async]
     procedure registerClick(Sender: TObject);
   private
-    procedure OnRegistered;
+    procedure DoOnRegistered;
   public
     { Public declarations }
   end;
@@ -31,9 +31,9 @@ implementation
 
 {$R *.dfm}
 
-procedure TFormRegisterUser.OnRegistered;
+procedure TFormRegisterUser.DoOnRegistered;
 begin
-      showMessage('banaan');
+  AppManager.ShowLogin;
 end;
 
 procedure TFormRegisterUser.registerClick(Sender: TObject);
@@ -42,12 +42,14 @@ begin
     role.Values[role.ItemIndex].ToLower, firstName.Text, lastName.Text,
     dateOfBirth.DateTime)) then
   begin
-    AppManager.ShowToast('Registratie voltooid! Je kan nu inloggen!',OnRegistered);
+    AppManager.ShowToast('Registratie voltooid! Je kan nu inloggen!',
+      DoOnRegistered);
 
-  end;
+  end
+  else
+    AppManager.ShowToast
+      ('Er is iets mis gegaan, probeer het nog eens! Anders neem contact op met support!');
 
 end;
-
-
 
 end.
