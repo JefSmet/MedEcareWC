@@ -18,11 +18,14 @@ type
     btnLogout: TWebButton;
     FormContainer: TWebPanel;
     [async]
+    btnTest: TWebButton;
+    [async]
     procedure WebFormCreate(Sender: TObject);
     [async]
     procedure btnLogoutClick(Sender: TObject);
     procedure btnRegisterClick(Sender: TObject);
     procedure WebButton2Click(Sender: TObject);
+    procedure btnTestClick(Sender: TObject);
   private
     FAppManager: TAppManager;
   public
@@ -54,9 +57,14 @@ begin
   FAppManager.ShowRegisterUser;
 end;
 
+procedure TFormMain.btnTestClick(Sender: TObject);
+begin
+  FAppManager.ShowTest;
+end;
+
 procedure TFormMain.WebButton2Click(Sender: TObject);
 begin
-  FAppManager.ShowToast('hallo',
+  FAppManager.ShowToast('dit is een zeer lange toastmessage om de regeleinden te controleren',
     procedure
     begin
       showMessage('daaaaag');

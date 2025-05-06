@@ -37,7 +37,7 @@ object FormMain: TFormMain
     end
     object WebButton3: TWebButton
       Left = 3
-      Top = 77
+      Top = 71
       Width = 72
       Height = 25
       Anchors = [akLeft, akTop, akRight]
@@ -57,6 +57,17 @@ object FormMain: TFormMain
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
       OnClick = btnLogoutClick
+    end
+    object btnTest: TWebButton
+      Left = 3
+      Top = 424
+      Width = 72
+      Height = 25
+      Caption = 'TEST'
+      ChildOrder = 4
+      HeightPercent = 100.000000000000000000
+      WidthPercent = 100.000000000000000000
+      OnClick = btnTestClick
     end
   end
   object FormContainer: TWebPanel

@@ -1,24 +1,24 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
     <title>Home - MedEcare</title>
-     <style>
-  /* Zorg dat de toast nooit breder wordt dan 100% van het scherm */
-  .toast {
-    max-width: 90vw;      /* kan bijv. 90% van de viewport width */
-    width: auto;
-  }
-  /* Klein beetje marge op smalle schermen */
-  @media (max-width: 576px) {
-    .toast-container {
-      padding: .5rem;
-    }
-  }
-  .zindex-toast {
-    z-index: 1080 !important;
-  }
-</style>
+    <style>
+	  /* Zorg dat de toast nooit breder wordt dan 100% van het scherm */
+	  .toast {
+		max-width: 90vw;      /* kan bijv. 90% van de viewport width */
+		width: auto;
+	  }
+	  /* Klein beetje marge op smalle schermen */
+	  @media (max-width: 576px) {
+		.toast-container {
+		  padding: .5rem;
+		}
+	  }
+	  .zindex-toast {
+		z-index: 1080 !important;
+	  }
+	</style>
   </head>
   <body>
     <!-- Toast-container -->
@@ -41,7 +41,9 @@
       ></button>
     </div>
     <!-- voeg text-break toe zodat woorden netjes breken -->
-    <div class="toast-body text-break" id="toastMessage">
+
+    <div class="toast-body text-break" id="toastBody">
+    <div id="toastMessage"></div>
     </div>
   </div>
 </div>
