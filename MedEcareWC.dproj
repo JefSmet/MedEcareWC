@@ -150,15 +150,15 @@
             <FormType>dfm</FormType>
             <DesignClass>TWebDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Models\model.Activity.pas"/>
-        <DCCReference Include="Models\model.Person.pas"/>
-        <DCCReference Include="Models\model.RefreshToken.pas"/>
-        <DCCReference Include="Models\model.Role.pas"/>
-        <DCCReference Include="Models\model.ShiftType.pas"/>
-        <DCCReference Include="Models\model.ShiftTypeRate.pas"/>
-        <DCCReference Include="Models\model.User.pas"/>
-        <DCCReference Include="Models\model.UserConstraint.pas"/>
-        <DCCReference Include="Models\model.UserRole.pas"/>
+        <DCCReference Include="ORM\orm.Activity.pas"/>
+        <DCCReference Include="ORM\orm.Person.pas"/>
+        <DCCReference Include="ORM\orm.RefreshToken.pas"/>
+        <DCCReference Include="ORM\orm.Role.pas"/>
+        <DCCReference Include="ORM\orm.ShiftType.pas"/>
+        <DCCReference Include="ORM\orm.ShiftTypeRate.pas"/>
+        <DCCReference Include="ORM\orm.User.pas"/>
+        <DCCReference Include="ORM\orm.UserConstraint.pas"/>
+        <DCCReference Include="ORM\orm.UserRole.pas"/>
         <DCCReference Include="Views\Forms.wachtlijst.readOnly.pas">
             <Form>FormWachtlijstReadOnly</Form>
             <FormType>dfm</FormType>

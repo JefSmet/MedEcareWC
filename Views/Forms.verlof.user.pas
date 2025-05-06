@@ -51,6 +51,7 @@ begin
   try
     ACal.FirstDay := 2;     // eerste kolom dag van de week: 1 = zondag... 7 = zaterdag  (zoals SysUtils.DayOfWeek)
     ACal.Footer.Caption := 'Vandaag:';
+    ACal.Footer.DateCaption := TTMSFNCCalendarFooterDate.fdToday;
     ACal.Footer.Visible := False;
     ACal.Interaction.MultiSelect := True;
     ACal.SelectedDates.UnselectAll;

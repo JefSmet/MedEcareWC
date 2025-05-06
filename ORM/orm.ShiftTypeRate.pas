@@ -1,4 +1,4 @@
-unit Model.ShiftTypeRate;
+unit orm.ShiftTypeRate;
 
 interface
 
