@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, VCL.TMSFNCTypes, VCL.TMSFNCUtils,
   VCL.TMSFNCGraphics, VCL.TMSFNCGraphicsTypes,
-  VCL.Controls, VCL.TMSFNCCustomControl, VCL.TMSFNCCalendar, DateUtils, Vcl.StdCtrls, WEBLib.StdCtrls;
+  VCL.Controls, VCL.TMSFNCCustomControl, VCL.TMSFNCCalendar, DateUtils, VCL.StdCtrls, WEBLib.StdCtrls;
 
 type
   TFormVerlofUser = class(TViewBase)
@@ -19,10 +19,10 @@ type
     procedure WebFormCreate(Sender: TObject);
     procedure CalEndCustomNavigation(Sender: TObject; ADate, AFocusedDate: TDate; ADirection: Boolean);
   private
-    { Private declarations }
+    procedure InitCalendar(ACal: TTMSFNCCalendar);
   public
     { Public declarations }
-    procedure SetDate(AMonth, AYear: word);
+    procedure SetDate(AYear, AMonth: Word);
   end;
 
 var
@@ -34,40 +34,56 @@ implementation
 { TFormVerlofUser }
 
 procedure TFormVerlofUser.CalEndCustomNavigation(Sender: TObject; ADate, AFocusedDate: TDate; ADirection: Boolean);
-var date: TDateTime;
-begin
-date := ADate;
-if ADirection then
-begin
-  date := IncMonth(date,-1);
-end;
-setDate(MonthOf(date),YearOf(date));
-end;
-
-procedure TFormVerlofUser.SetDate(AMonth, AYear: word);
 var
   date: TDateTime;
 begin
+  date := ADate;
+  if ADirection then
+  begin
+    date := IncMonth(date, -1);
+  end;
+  SetDate(YearOf(date), MonthOf(date));
+end;
+
+procedure TFormVerlofUser.InitCalendar(ACal: TTMSFNCCalendar);
+begin
+  ACal.BeginUpdate;
+  try
+    ACal.FirstDay := 2;     // eerste kolom dag van de week: 1 = zondag... 7 = zaterdag  (zoals SysUtils.DayOfWeek)
+    ACal.Footer.Caption := 'Vandaag:';
+    ACal.Footer.Visible := False;
+    ACal.Interaction.MultiSelect := True;
+    ACal.SelectedDates.UnselectAll;
+  finally
+    ACal.EndUpdate;
+  end;
+end;
+
+procedure TFormVerlofUser.SetDate(AYear, AMonth: Word);
+begin
   CalStart.BeginUpdate;
   CalEnd.BeginUpdate;
-  date := encodeDate(AYear, AMonth, 1);
-  CalStart.date := date;
-  date := IncMonth(date, 1);
-  CalEnd.date := date;
-  CalStart.EndUpdate;
-  CalEnd.EndUpdate;
+  try
+    CalStart.date := EncodeDate(AYear, AMonth, 1);
+    CalEnd.date := IncMonth(CalStart.date, 1);;
+  finally
+    CalStart.EndUpdate;
+    CalEnd.EndUpdate;
+  end;
 end;
 
 procedure TFormVerlofUser.WebButton1Click(Sender: TObject);
 begin
   inherited;
-setDate(12,2024);
+  SetDate(2024, 12);
 end;
 
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);
 begin
   inherited;
-setDate(MonthOf(Now),YearOf(Now));
+  InitCalendar(CalStart);
+  InitCalendar(CalEnd);
+  SetDate(YearOf(Now), MonthOf(Now));
 end;
 
 end.

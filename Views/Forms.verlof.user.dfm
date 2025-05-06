@@ -3,8 +3,8 @@ inherited FormVerlofUser: TFormVerlofUser
   Height = 724
   OnCreate = WebFormCreate
   object WebLabel1: TWebLabel
-    Left = 344
-    Top = 184
+    Left = 680
+    Top = 104
     Width = 58
     Height = 15
     Caption = 'WebLabel1'
@@ -12,8 +12,8 @@ inherited FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object WebLabel2: TWebLabel
-    Left = 576
-    Top = 184
+    Left = 696
+    Top = 176
     Width = 58
     Height = 15
     Caption = 'WebLabel2'
@@ -21,8 +21,8 @@ inherited FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object CalStart: TTMSFNCCalendar
-    Left = 192
-    Top = 232
+    Left = 33
+    Top = 32
     Width = 235
     Height = 235
     ParentDoubleBuffered = False
@@ -40,6 +40,7 @@ inherited FormVerlofUser: TFormVerlofUser
     Header.Font.Height = -13
     Header.Font.Name = 'Segoe UI'
     Header.Font.Style = [fsBold]
+    Footer.Caption = 'Vandaag:'
     Footer.Fill.Kind = gfkGradient
     Footer.Fill.Color = 16578806
     Footer.Fill.ColorTo = 16380654
@@ -48,10 +49,12 @@ inherited FormVerlofUser: TFormVerlofUser
     Footer.Font.Height = -13
     Footer.Font.Name = 'Segoe UI'
     Footer.Font.Style = []
+    Footer.Visible = False
     Day = 6
     Month = 5
     Year = 2025
     Date = 45783.000000000000000000
+    FirstDay = 2
     Events = <>
     WeekNumberAppearance.Font.Charset = DEFAULT_CHARSET
     WeekNumberAppearance.Font.Color = 8026746
@@ -106,8 +109,8 @@ inherited FormVerlofUser: TFormVerlofUser
     OnCustomNavigation = CalEndCustomNavigation
   end
   object CalEnd: TTMSFNCCalendar
-    Left = 553
-    Top = 232
+    Left = 267
+    Top = 32
     Width = 235
     Height = 235
     ParentDoubleBuffered = False
@@ -133,10 +136,11 @@ inherited FormVerlofUser: TFormVerlofUser
     Footer.Font.Height = -13
     Footer.Font.Name = 'Segoe UI'
     Footer.Font.Style = []
+    Footer.Visible = False
     Day = 6
-    Month = 5
+    Month = 6
     Year = 2025
-    Date = 45783.000000000000000000
+    Date = 45814.000000000000000000
     Events = <>
     WeekNumberAppearance.Font.Charset = DEFAULT_CHARSET
     WeekNumberAppearance.Font.Color = 8026746
