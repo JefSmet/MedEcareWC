@@ -67,7 +67,6 @@ object FormMain: TFormMain
       ChildOrder = 4
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
-      OnClick = btnTestClick
     end
   end
   object FormContainer: TWebPanel

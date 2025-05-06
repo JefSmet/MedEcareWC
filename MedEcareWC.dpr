@@ -32,15 +32,15 @@ uses
   uMtrWriter in 'MTR\uMtrWriter.pas',
   uPrestatieRestClient in 'MTR\uPrestatieRestClient.pas',
   Forms.registerUser in 'Views\Forms.registerUser.pas' {FormRegisterUser: TWebForm} {*.html},
-  Forms.CalendarTable.test in 'Views\Forms.CalendarTable.test.pas' {FormCalendarTable: TWebForm} {*.html},
-  Unit1 in 'Views\Unit1.pas' {Form1: TWebForm} {*.html};
+  Forms.calendar in 'Views\Forms.calendar.pas' {Form1: TWebForm} {*.html},
+  Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TFormVerlofUser, FormVerlofUser);
   Application.Run;
 
 end.

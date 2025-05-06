@@ -25,7 +25,6 @@ type
     procedure btnLogoutClick(Sender: TObject);
     procedure btnRegisterClick(Sender: TObject);
     procedure WebButton2Click(Sender: TObject);
-    procedure btnTestClick(Sender: TObject);
   private
     FAppManager: TAppManager;
   public
@@ -55,11 +54,6 @@ end;
 procedure TFormMain.btnRegisterClick(Sender: TObject);
 begin
   FAppManager.ShowRegisterUser;
-end;
-
-procedure TFormMain.btnTestClick(Sender: TObject);
-begin
-  FAppManager.ShowTest;
 end;
 
 procedure TFormMain.WebButton2Click(Sender: TObject);
