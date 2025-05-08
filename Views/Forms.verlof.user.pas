@@ -10,14 +10,6 @@ uses
 
 type
   TFormVerlofUser = class(TViewBase)
-    CalStart: TTMSFNCCalendar;
-    CalEnd: TTMSFNCCalendar;
-    WebButton1: TWebButton;
-    WebLabel1: TWebLabel;
-    WebLabel2: TWebLabel;
-    procedure WebButton1Click(Sender: TObject);
-    procedure WebFormCreate(Sender: TObject);
-    procedure CalEndCustomNavigation(Sender: TObject; ADate, AFocusedDate: TDate; ADirection: Boolean);
   private
     procedure InitCalendar(ACal: TTMSFNCCalendar);
   public
