@@ -33,8 +33,7 @@ uses
   uPrestatieRestClient in 'MTR\uPrestatieRestClient.pas',
   Forms.registerUser in 'Views\Forms.registerUser.pas' {FormRegisterUser: TWebForm} {*.html},
   Forms.calendar in 'Views\Forms.calendar.pas' {Form1: TWebForm} {*.html},
-  Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html},
-  Unit1 in 'Unit1.pas' {estForm: TWebForm};
+  Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html};
 
 {$R *.res}
 
@@ -42,7 +41,6 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFormVerlofUser, FormVerlofUser);
-  Application.CreateForm(TestForm, estForm);
   Application.Run;
 
 end.

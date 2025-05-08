@@ -1,208 +1,341 @@
 inherited FormVerlofUser: TFormVerlofUser
-  Width = 901
-  Height = 724
+  Width = 902
+  Height = 718
   OnCreate = WebFormCreate
-  object WebLabel1: TWebLabel
-    Left = 680
-    Top = 104
-    Width = 58
-    Height = 15
-    Caption = 'WebLabel1'
-    HeightPercent = 100.000000000000000000
-    WidthPercent = 100.000000000000000000
-  end
-  object WebLabel2: TWebLabel
-    Left = 696
-    Top = 176
-    Width = 58
-    Height = 15
-    Caption = 'WebLabel2'
-    HeightPercent = 100.000000000000000000
-    WidthPercent = 100.000000000000000000
-  end
-  object CalStart: TTMSFNCCalendar
-    Left = 33
-    Top = 32
-    Width = 235
-    Height = 235
-    ParentDoubleBuffered = False
-    DoubleBuffered = True
-    TabOrder = 0
-    Header.Arrow.ArrowLeftBitmap = <>
-    Header.Arrow.ArrowRightBitmap = <>
-    Header.Arrow.ArrowRightType = atCustom
-    Header.Arrow.Visibility = [alvLeft]
-    Header.Fill.Kind = gfkGradient
-    Header.Fill.Color = 16578806
-    Header.Fill.ColorTo = 16380654
-    Header.Font.Charset = DEFAULT_CHARSET
-    Header.Font.Color = 4539717
-    Header.Font.Height = -13
-    Header.Font.Name = 'Segoe UI'
-    Header.Font.Style = [fsBold]
-    Footer.Caption = 'Vandaag:'
-    Footer.Fill.Kind = gfkGradient
-    Footer.Fill.Color = 16578806
-    Footer.Fill.ColorTo = 16380654
-    Footer.Font.Charset = DEFAULT_CHARSET
-    Footer.Font.Color = 4539717
-    Footer.Font.Height = -13
-    Footer.Font.Name = 'Segoe UI'
-    Footer.Font.Style = []
-    Footer.Visible = False
-    Day = 6
-    Month = 5
-    Year = 2025
-    Date = 45783.000000000000000000
-    FirstDay = 2
-    Events = <>
-    WeekNumberAppearance.Font.Charset = DEFAULT_CHARSET
-    WeekNumberAppearance.Font.Color = 8026746
-    WeekNumberAppearance.Font.Height = -12
-    WeekNumberAppearance.Font.Name = 'Segoe UI'
-    WeekNumberAppearance.Font.Style = []
-    DayNameAppearance.Font.Charset = DEFAULT_CHARSET
-    DayNameAppearance.Font.Color = 8026746
-    DayNameAppearance.Font.Height = -12
-    DayNameAppearance.Font.Name = 'Segoe UI'
-    DayNameAppearance.Font.Style = []
-    DateAppearance.Font.Charset = DEFAULT_CHARSET
-    DateAppearance.Font.Color = 8026746
-    DateAppearance.Font.Height = -12
-    DateAppearance.Font.Name = 'Segoe UI'
-    DateAppearance.Font.Style = []
-    DateAppearance.SelectedFill.Color = 16380654
-    DateAppearance.SelectedFont.Charset = DEFAULT_CHARSET
-    DateAppearance.SelectedFont.Color = 4539717
-    DateAppearance.SelectedFont.Height = -13
-    DateAppearance.SelectedFont.Name = 'Segoe UI'
-    DateAppearance.SelectedFont.Style = [fsBold]
-    DateAppearance.SelectedStroke.Color = 15702829
-    DateAppearance.DisabledFont.Charset = DEFAULT_CHARSET
-    DateAppearance.DisabledFont.Color = clLightgray
-    DateAppearance.DisabledFont.Height = -12
-    DateAppearance.DisabledFont.Name = 'Segoe UI'
-    DateAppearance.DisabledFont.Style = []
-    DateAppearance.DateBeforeFont.Charset = DEFAULT_CHARSET
-    DateAppearance.DateBeforeFont.Color = 12303291
-    DateAppearance.DateBeforeFont.Height = -12
-    DateAppearance.DateBeforeFont.Name = 'Segoe UI'
-    DateAppearance.DateBeforeFont.Style = []
-    DateAppearance.DateAfterFont.Charset = DEFAULT_CHARSET
-    DateAppearance.DateAfterFont.Color = 12303291
-    DateAppearance.DateAfterFont.Height = -12
-    DateAppearance.DateAfterFont.Name = 'Segoe UI'
-    DateAppearance.DateAfterFont.Style = []
-    DateAppearance.TodayFont.Charset = DEFAULT_CHARSET
-    DateAppearance.TodayFont.Color = 15702829
-    DateAppearance.TodayFont.Height = -12
-    DateAppearance.TodayFont.Name = 'Segoe UI'
-    DateAppearance.TodayFont.Style = [fsBold]
-    DateAppearance.BadgeFont.Charset = DEFAULT_CHARSET
-    DateAppearance.BadgeFont.Color = clWhite
-    DateAppearance.BadgeFont.Height = -9
-    DateAppearance.BadgeFont.Name = 'Segoe UI'
-    DateAppearance.BadgeFont.Style = []
-    DateAppearance.ShowFocus = False
-    LineAppearance.Stroke.Color = clDarkgray
-    Interaction.NavigationMode = nmCustom
-    OnCustomNavigation = CalEndCustomNavigation
-  end
-  object CalEnd: TTMSFNCCalendar
-    Left = 267
-    Top = 32
-    Width = 235
-    Height = 235
-    ParentDoubleBuffered = False
-    DoubleBuffered = True
-    TabOrder = 1
-    Header.Arrow.ArrowLeftBitmap = <>
-    Header.Arrow.ArrowLeftType = atCustom
-    Header.Arrow.ArrowRightBitmap = <>
-    Header.Arrow.Visibility = [alvRight]
-    Header.Fill.Kind = gfkGradient
-    Header.Fill.Color = 16578806
-    Header.Fill.ColorTo = 16380654
-    Header.Font.Charset = DEFAULT_CHARSET
-    Header.Font.Color = 4539717
-    Header.Font.Height = -13
-    Header.Font.Name = 'Segoe UI'
-    Header.Font.Style = [fsBold]
-    Footer.Fill.Kind = gfkGradient
-    Footer.Fill.Color = 16578806
-    Footer.Fill.ColorTo = 16380654
-    Footer.Font.Charset = DEFAULT_CHARSET
-    Footer.Font.Color = 4539717
-    Footer.Font.Height = -13
-    Footer.Font.Name = 'Segoe UI'
-    Footer.Font.Style = []
-    Footer.Visible = False
-    Day = 6
-    Month = 6
-    Year = 2025
-    Date = 45814.000000000000000000
-    Events = <>
-    WeekNumberAppearance.Font.Charset = DEFAULT_CHARSET
-    WeekNumberAppearance.Font.Color = 8026746
-    WeekNumberAppearance.Font.Height = -12
-    WeekNumberAppearance.Font.Name = 'Segoe UI'
-    WeekNumberAppearance.Font.Style = []
-    DayNameAppearance.Font.Charset = DEFAULT_CHARSET
-    DayNameAppearance.Font.Color = 8026746
-    DayNameAppearance.Font.Height = -12
-    DayNameAppearance.Font.Name = 'Segoe UI'
-    DayNameAppearance.Font.Style = []
-    DateAppearance.Font.Charset = DEFAULT_CHARSET
-    DateAppearance.Font.Color = 8026746
-    DateAppearance.Font.Height = -12
-    DateAppearance.Font.Name = 'Segoe UI'
-    DateAppearance.Font.Style = []
-    DateAppearance.SelectedFill.Color = 16380654
-    DateAppearance.SelectedFont.Charset = DEFAULT_CHARSET
-    DateAppearance.SelectedFont.Color = 4539717
-    DateAppearance.SelectedFont.Height = -13
-    DateAppearance.SelectedFont.Name = 'Segoe UI'
-    DateAppearance.SelectedFont.Style = [fsBold]
-    DateAppearance.SelectedStroke.Color = 15702829
-    DateAppearance.DisabledFont.Charset = DEFAULT_CHARSET
-    DateAppearance.DisabledFont.Color = clLightgray
-    DateAppearance.DisabledFont.Height = -12
-    DateAppearance.DisabledFont.Name = 'Segoe UI'
-    DateAppearance.DisabledFont.Style = []
-    DateAppearance.DateBeforeFont.Charset = DEFAULT_CHARSET
-    DateAppearance.DateBeforeFont.Color = 12303291
-    DateAppearance.DateBeforeFont.Height = -12
-    DateAppearance.DateBeforeFont.Name = 'Segoe UI'
-    DateAppearance.DateBeforeFont.Style = []
-    DateAppearance.DateAfterFont.Charset = DEFAULT_CHARSET
-    DateAppearance.DateAfterFont.Color = 12303291
-    DateAppearance.DateAfterFont.Height = -12
-    DateAppearance.DateAfterFont.Name = 'Segoe UI'
-    DateAppearance.DateAfterFont.Style = []
-    DateAppearance.TodayFont.Charset = DEFAULT_CHARSET
-    DateAppearance.TodayFont.Color = 15702829
-    DateAppearance.TodayFont.Height = -12
-    DateAppearance.TodayFont.Name = 'Segoe UI'
-    DateAppearance.TodayFont.Style = [fsBold]
-    DateAppearance.BadgeFont.Charset = DEFAULT_CHARSET
-    DateAppearance.BadgeFont.Color = clWhite
-    DateAppearance.BadgeFont.Height = -9
-    DateAppearance.BadgeFont.Name = 'Segoe UI'
-    DateAppearance.BadgeFont.Style = []
-    DateAppearance.ShowFocus = False
-    LineAppearance.Stroke.Color = clDarkgray
-    Interaction.NavigationMode = nmCustom
-    OnCustomNavigation = CalEndCustomNavigation
-  end
-  object WebButton1: TWebButton
-    Left = 424
-    Top = 528
+  object reject1: TWebButton
+    Left = 0
+    Top = 0
     Width = 96
     Height = 25
-    Caption = 'WebButton1'
-    ChildOrder = 2
+    Caption = 'reject1'
+    ElementID = 'reject-1'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
-    OnClick = WebButton1Click
+  end
+  object tabrequestbtn: TWebButton
+    Left = 101
+    Top = 0
+    Width = 96
+    Height = 25
+    Caption = 'tabrequestbtn'
+    ChildOrder = 1
+    ElementID = 'tab-request-btn'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object filtertype: TWebComboBox
+    Left = 202
+    Top = 0
+    Width = 96
+    Height = 23
+    ElementID = 'filter-type'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'filtertype'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    ItemIndex = -1
+  end
+  object reasontext: TWebMemo
+    Left = 303
+    Top = 0
+    Width = 96
+    Height = 25
+    ElementID = 'reason-text'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Lines.Strings = (
+      'reasontext')
+    SelLength = 0
+    SelStart = 0
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object list: TWebHTMLDiv
+    Left = 404
+    Top = 0
+    Width = 96
+    Height = 25
+    ElementID = 'list'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 4
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
+  object calendarnext: TWebButton
+    Left = 73
+    Top = 496
+    Width = 96
+    Height = 25
+    ChildOrder = 5
+    ElementID = 'calendar-next'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    OnClick = calendarnextClick
+  end
+  object tabcalendarbtn: TWebButton
+    Left = 607
+    Top = -1
+    Width = 96
+    Height = 25
+    Caption = 'tabcalendarbtn'
+    ChildOrder = 6
+    ElementID = 'tab-calendar-btn'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object enddate: TWebDateTimePicker
+    Left = 707
+    Top = 0
+    Width = 96
+    Height = 25
+    ElementID = 'end-date'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    BorderStyle = bsSingle
+    ChildOrder = 7
+    Color = clWhite
+    Date = 45785.781731261570000000
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    Role = ''
+    Text = ''
+  end
+  object request: TWebHTMLDiv
+    Left = 0
+    Top = 30
+    Width = 96
+    Height = 25
+    ElementID = 'request'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 8
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
+  object employeeinput: TWebEdit
+    Left = 101
+    Top = 30
+    Width = 96
+    Height = 25
+    ChildOrder = 9
+    ElementID = 'employee-input'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'employeeinput'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object submitrequest: TWebButton
+    Left = 202
+    Top = 30
+    Width = 96
+    Height = 25
+    Caption = 'submitrequest'
+    ChildOrder = 10
+    ElementID = 'submit-request'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object startdate: TWebDateTimePicker
+    Left = 303
+    Top = 30
+    Width = 96
+    Height = 25
+    ElementID = 'start-date'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    BorderStyle = bsSingle
+    ChildOrder = 11
+    Color = clWhite
+    Date = 45785.781732881940000000
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    Role = ''
+    Text = ''
+  end
+  object leaveTabsContent: TWebHTMLDiv
+    Left = 404
+    Top = 30
+    Width = 96
+    Height = 25
+    ElementID = 'leaveTabsContent'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 12
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
+  object calendarprev: TWebButton
+    Left = 202
+    Top = 496
+    Width = 96
+    Height = 25
+    ChildOrder = 13
+    ElementID = 'calendar-prev'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    OnClick = calendarprevClick
+  end
+  object calendartable: TWebHTMLDiv
+    Left = 606
+    Top = 30
+    Width = 96
+    Height = 25
+    ElementID = 'calendar-table'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 14
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
+  object calendarlegend: TWebHTMLDiv
+    Left = 707
+    Top = 30
+    Width = 96
+    Height = 25
+    ElementID = 'calendar-legend'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 15
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
+  object leavetype: TWebComboBox
+    Left = 0
+    Top = 60
+    Width = 96
+    Height = 23
+    ElementID = 'leave-type'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'leavetype'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    ItemIndex = -1
+  end
+  object tablistbtn: TWebButton
+    Left = 101
+    Top = 60
+    Width = 96
+    Height = 25
+    Caption = 'tablistbtn'
+    ChildOrder = 17
+    ElementID = 'tab-list-btn'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object searchinput: TWebEdit
+    Left = 202
+    Top = 60
+    Width = 96
+    Height = 25
+    ChildOrder = 18
+    ElementID = 'search-input'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'searchinput'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object calendarmonth: TWebHTMLSpan
+    Left = 404
+    Top = 60
+    Width = 96
+    Height = 25
+    ElementID = 'calendar-month'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 20
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
+  object calendar: TWebHTMLDiv
+    Left = 505
+    Top = 60
+    Width = 96
+    Height = 25
+    ElementID = 'calendar'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 21
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
+  object filterstatus: TWebComboBox
+    Left = 606
+    Top = 60
+    Width = 96
+    Height = 23
+    ElementID = 'filter-status'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    Text = 'filterstatus'
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    ItemIndex = -1
+  end
+  object approve1: TWebButton
+    Left = 707
+    Top = 60
+    Width = 96
+    Height = 25
+    Caption = 'approve1'
+    ChildOrder = 23
+    ElementID = 'approve-1'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
   end
 end
