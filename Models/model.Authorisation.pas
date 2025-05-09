@@ -4,21 +4,27 @@ interface
 
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.Storage,
-  WEBLib.REST, jsdelphisystem, WEBLib.JSON, DateUtils;
+  WEBLib.REST, jsdelphisystem, WEBLib.JSON, DateUtils, orm.Person,
+  System.Generics.Collections;
 
 type
   TAuthorisation = class(TWebDataModule)
     WebSessionStorage1: TWebSessionStorage;
     WebLocalStorage1: TWebLocalStorage;
     WebHttpRequest1: TWebHttpRequest;
+    procedure WebDataModuleCreate(Sender: TObject);
+    procedure WebDataModuleDestroy(Sender: TObject);
   private
-    function PerformRequestWithCredentials(ARequest: TWebHttpRequest)
-      : TJSPromise;
+    FcurrentPerson: TPerson;
+    FcurrentUserRoles: TList<string>;
     [async]
     procedure SetRequest(AEndpoint: string; ACommand: THTTPCommand;
       APostData: string = ''; AResponsetype: THTTPRequestResponseType = rtJSON);
+    procedure SetCurrentUser(AJSValue: TJSValue);
 
   public
+    property currentPerson: TPerson read FcurrentPerson write FcurrentPerson;
+    property currentUserRoles: TList<string> read FcurrentUserRoles;
     procedure ClearStorage;
     [async]
     function DoLogin(AEmail: string; APassword: string; APlatform: string)
@@ -39,36 +45,10 @@ type
 implementation
 
 uses
-  WEBLib.WebTools, vcl.dialogs;
+  WEBLib.WebTools, vcl.dialogs, middleware.httponly;
 
 const
   url = 'http://localhost:3000/auth';
-
-function HttpCommandToString(ACommand: THTTPCommand;
-  const ACustom: string): string;
-begin
-  case ACommand of
-    httpGET:
-      Result := 'GET';
-    httpPOST:
-      Result := 'POST';
-    httpPUT:
-      Result := 'PUT';
-    httpDELETE:
-      Result := 'DELETE';
-    httpPATCH:
-      Result := 'PATCH';
-    httpHEAD:
-      Result := 'HEAD';
-    httpCustom:
-      if ACustom.Trim <> '' then
-        Result := ACustom
-      else
-        Result := 'GET';
-  else
-    Result := 'GET'; // fallback
-  end;
-end;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 {$R *.dfm}
@@ -95,17 +75,7 @@ begin
   req := await(TJSXMLHttpRequest,
     PerformRequestWithCredentials(WebHttpRequest1));
 
-  // // Omdat ResponseType = rtJSON is, is req.response direct een JS-object
-  // jsObj := TJSObject(req.response);
-  //
-  // // Haal het 'user'-object op binnenin 'jsObj'
-  // userObj := TJSObject(jsObj['user']);
-  //
-  // // Haal de 'id'‐waarde eruit
-  // userID := string(userObj['id']);
-  //
-  // // Sla op in SessionStorage
-  // WebSessionStorage1.SetValue('userID', userID);
+  SetCurrentUser(req.response);
 
   // Geef het hele request (JS-object) terug
   Result := req;
@@ -134,80 +104,27 @@ begin
 
 end;
 
-function TAuthorisation.PerformRequestWithCredentials(ARequest: TWebHttpRequest)
-  : TJSPromise;
+procedure TAuthorisation.SetCurrentUser(AJSValue: TJSValue);
 var
-  req: TJSXMLHttpRequest;
-  method: string;
+  jsObj: TJSObject;
+  roles: TJSArray;
   i: Integer;
-  headerKey, headerValue: string;
 begin
-  // 1) Nieuw XMLHttpRequest-object
-  req := TJSXMLHttpRequest.New;
-
-  // 2) Bepaal de HTTP-methode (GET, POST, etc.) uit TWebHttpRequest
-  method := HttpCommandToString(ARequest.Command, ARequest.CustomCommand);
-
-  // 3) open(...) met de URL
-  req.open(method, ARequest.url);
-
-  // 4) Zorg dat HttpOnly cookies worden meegestuurd
-  req.withCredentials := true;
-
-  // 5) (Optioneel) Stel responseType in
-  // THTTPRequestResponseType = (rtDefault, rtText, rtBlob, rtJSON, rtDocument, rtArrayBuffer);
-  case ARequest.ResponseType of
-    rtDefault:
-      req.ResponseType := '';
-    rtText:
-      req.ResponseType := 'text';
-    rtBlob:
-      req.ResponseType := 'blob';
-    rtJSON:
-      req.ResponseType := 'json';
-    rtDocument:
-      req.ResponseType := 'document';
-    rtArrayBuffer:
-      req.ResponseType := 'arraybuffer';
-  end;
-
-  // 6) Headers overnemen van TWebHttpRequest
-  for i := 0 to ARequest.Headers.Count - 1 do
+  jsObj := TJSObject(AJSValue);
+  jsObj := TJSObject(jsObj['user']);
+  FcurrentPerson := default (TPerson);
+  FcurrentPerson.FirstName := string(jsObj['firstName']);
+  FcurrentPerson.LastName := string(jsObj['lastName']);
+  FcurrentPerson.Id := string(jsObj['personId']);
+  FcurrentPerson.CreatedAt := now;
+  FcurrentPerson.UpdatedAt := now;
+  FcurrentUserRoles.Clear;
+  roles := toArray(jsObj['roles']);
+  for i := 0 to roles.Length - 1 do
   begin
-    headerKey := ARequest.Headers.Names[i];
-    headerValue := ARequest.Headers.ValueFromIndex[i];
-    req.setRequestHeader(headerKey, headerValue);
+    FcurrentUserRoles.Add(string(roles[i]));
   end;
-
-  // 7) Promise maken die “afgaat” bij readyState = DONE (4)
-  // en dan op basis van req.Status wel/niet ‘resolve’
-  Result := TJSPromise.New(
-    procedure(Resolve, Reject: TJSPromiseResolver)
-    begin
-      // A) Luister naar onreadystatechange
-      req.onreadystatechange := procedure
-        begin
-          // DONE?
-          if req.readyState = TJSXMLHttpRequest.DONE then
-          begin
-            // HTTP status 2xx => success
-            if (req.Status >= 200) and (req.Status < 300) then
-              Resolve(req) // geef xhr object terug
-            else
-              {$ifndef DEBUG}
-              Reject(Exception.CreateFmt('{"status": %d,"message": "%s"}',
-                [req.Status, req.StatusText]));
-              {$endif}
-          end;
-        end;
-
-      // B) Verstuur bij POST/PUT de PostData, anders geen body
-      if (method = 'GET') or (method = 'DELETE') or (ARequest.PostData.Trim = '')
-      then
-        req.send
-      else
-        req.send(ARequest.PostData);
-    end);
+  showMessage(FcurrentPerson.FirstName + FcurrentUserRoles[0]);
 end;
 
 procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand;
@@ -237,13 +154,21 @@ begin
 
   if xhr.Status = 200 then
   begin
-    // jsObj  := TJSObject(xhr.response);
-    // userObj:= TJSObject(jsObj['user']);        // ← laat backend evt. user terugsturen
-    // WebSessionStorage1.SetValue('userId', string(userObj['id']));
+    SetCurrentUser(xhr.response);
     Exit(true);
   end;
 
   Exit(false);
+end;
+
+procedure TAuthorisation.WebDataModuleCreate(Sender: TObject);
+begin
+  FcurrentUserRoles := TList<string>.Create;
+end;
+
+procedure TAuthorisation.WebDataModuleDestroy(Sender: TObject);
+begin
+  FcurrentUserRoles.Free;
 end;
 
 // reset password
@@ -289,12 +214,12 @@ function TAuthorisation.ResetPassword(AToken: string;
 APassword: string): Boolean;
 var
   PostData: string;
-  xhr : TJSXMLHttpRequest;
+  xhr: TJSXMLHttpRequest;
 begin
   PostData := Format('{"token" : "%s", "newPassword" : "%s"}',
     [AToken, APassword]);
   SetRequest('/reset-password', httpPOST, PostData);
- try
+  try
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(WebHttpRequest1));
     Exit(true);

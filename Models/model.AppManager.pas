@@ -2,7 +2,8 @@
 
 interface
 
-uses model.Authorisation, WEBLib.Forms, WEBLib.Controls, SysUtils;
+uses model.Authorisation, WEBLib.Forms, WEBLib.Controls, SysUtils,
+  model.MedEcareDB;
 
 type
   TAppManager = class
@@ -17,12 +18,14 @@ type
     FFormContainerID: TElementID;
     FLoadedForm: TWebForm;
     FToastShowing: Boolean;
+    FDB: TMedEcareDB;
     procedure ShowForm(AForm: TWebFormClass);
   public
     destructor Destroy; override;
     class function GetInstance: TAppManager;
     procedure SetFormContainerID(AFormContainerID: TElementID);
     property Auth: TAuthorisation read FAuth;
+    property DB: TMedEcareDB read FDB;
     procedure ShowHome;
     procedure ShowForgotPassword;
     procedure ShowLogin;
@@ -47,6 +50,7 @@ constructor TAppManager.CreatePrivate;
 begin
   inherited Create;
   FAuth := TAuthorisation.Create(nil);
+  FDB := TMedEcareDB.Create(nil);
 end;
 
 constructor TAppManager.Create;
@@ -63,6 +67,7 @@ begin
     FLoadedForm.free;
   end;
   FAuth.free;
+  FDB.free;
   inherited Destroy;
 end;
 
@@ -116,9 +121,11 @@ begin
   ShowForm(TFormResetPassword);
 end;
 
-procedure TAppManager.ShowToast(AMessage: string; AOnFinished: TProc; ADelay: integer);
+procedure TAppManager.ShowToast(AMessage: string; AOnFinished: TProc;
+  ADelay: integer);
 begin
-  if FToastShowing then exit();
+  if FToastShowing then
+    exit();
 
   asm
     var toastEl = document.getElementById('myToast');
@@ -129,20 +136,20 @@ begin
 
     // Verwijder vorige event handler indien nodig
     if (toastEl._handler) {
-      toastEl.removeEventListener('hidden.bs.toast', toastEl._handler);
-      toastEl._handler = null;
-    }
+    toastEl.removeEventListener('hidden.bs.toast', toastEl._handler);
+    toastEl._handler = null;
+     }
 
-   toastMessage.innerText = AMessage;
+    toastMessage.innerText = AMessage;
 
     var self = this;
     var onFinished = AOnFinished;
 
     toastEl._handler = function () {
-      self.FToastShowing = false;
-      if (onFinished) {
-        onFinished();
-      }
+    self.FToastShowing = false;
+    if (onFinished) {
+    onFinished();
+     }
     };
 
     toastEl.addEventListener('hidden.bs.toast', toastEl._handler);
@@ -150,28 +157,25 @@ begin
     // Probeer enkel dispose als instance nog bestaat
     var existingInstance = bootstrap.Toast.getInstance(toastEl);
     if (existingInstance) {
-      existingInstance.dispose();
-    }
+    existingInstance.dispose();
+     }
 
     self.FToastShowing = true;
 
     // ❗ Probeer niet te showen als element verwijderd is
     if (toastEl) {
-      var bsToast = new bootstrap.Toast(toastEl, { delay: ADelay });
-      bsToast.show();
+    var bsToast = new bootstrap.Toast(toastEl, { delay: ADelay });
+    bsToast.show();
     }
-  end;
-end;
+  end; end;
 
+  procedure TAppManager.ShowToast(
+AMessage:
+  string;
+ADelay:
+  integer); begin ShowToast(AMessage, nil, ADelay); end;
 
-procedure TAppManager.ShowToast(AMessage: string; ADelay: integer);
-begin
-  ShowToast(AMessage, nil, ADelay);
-end;
+  procedure TAppManager.ShowWachtlijstReadOnly;
+  begin ShowForm(TFormWachtlijstReadOnly); end;
 
-procedure TAppManager.ShowWachtlijstReadOnly;
-begin
-  ShowForm(TFormWachtlijstReadOnly);
-end;
-
-end.
+  end.
