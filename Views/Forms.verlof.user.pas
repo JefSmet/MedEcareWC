@@ -68,10 +68,8 @@ begin
   renderCalendar;
 end;
 
-function TFormVerlofUser.GenerateCalendarHTML(
-  AYear, AMonth: Word;
-  AStartDow: Integer  // 1 = zondag … 7 = zaterdag
-): string;
+function TFormVerlofUser.GenerateCalendarHTML(AYear, AMonth: Word; AStartDow: Integer // 1 = zondag … 7 = zaterdag
+  ): string;
 const
   DaysPerWeek = 7;
 var
@@ -83,12 +81,12 @@ var
 begin
   // 1) Bereken eerste dag en aantal dagen
   FirstOfMonth := EncodeDate(AYear, AMonth, 1);
-  StartDow     := DayOfWeek(FirstOfMonth);       // 1=zo … 7=za
-  DaysInMonth  := DaysInAMonth(AYear, AMonth);
-  TodayDate    := Date;
+  StartDow := DayOfWeek(FirstOfMonth); // 1=zo … 7=za
+  DaysInMonth := DaysInAMonth(AYear, AMonth);
+  TodayDate := Date;
 
   // 2) Bepaal in welke kolom dag 1 valt (1..7)
-  //    kolom = ((StartDow - AStartDow) mod 7) + 1
+  // kolom = ((StartDow - AStartDow) mod 7) + 1
   DayCounter := 1;
 
   sb := TStringBuilder.Create;
@@ -100,7 +98,7 @@ begin
     for WeekDayIdx := 1 to DaysPerWeek do
     begin
       PascalDow := ((AStartDow - 1 + WeekDayIdx - 1) mod DaysPerWeek) + 1;
-      DayName   := GetLocaleShortDayName(PascalDow, GetBrowserLocale);
+      DayName := GetLocaleShortDayName(PascalDow, GetBrowserLocale);
       sb.AppendFormat('      <th>%s</th>', [DayName]).AppendLine;
     end;
     sb.AppendLine('    </tr>');
@@ -114,9 +112,8 @@ begin
       for WeekDayIdx := 1 to DaysPerWeek do
       begin
         // Eerste week: voor de 1e dag, of na het einde van de maand?
-        if ((WeekIdx = 0) and
-            (WeekDayIdx < ((StartDow - AStartDow + DaysPerWeek) mod DaysPerWeek) + 1))
-           or (DayCounter > DaysInMonth) then
+        if ((WeekIdx = 0) and (WeekDayIdx < ((StartDow - AStartDow + DaysPerWeek) mod DaysPerWeek) + 1)) or
+          (DayCounter > DaysInMonth) then
         begin
           sb.AppendLine('      <td>&nbsp;</td>')
         end
@@ -126,8 +123,7 @@ begin
           ClassAttr := '';
 
           // Weekend?
-          PascalDow := ((AStartDow - 1 + WeekDayIdx - 1) mod DaysPerWeek) + 1;
-          if PascalDow >= DaySaturday then
+          if DayOfWeek(CellDate) in [1, 7] then
             ClassAttr := 'weekend';
 
           // Vandaag?
@@ -139,15 +135,9 @@ begin
 
           // Open <td> met id en eventueel class
           if ClassAttr <> '' then
-            sb.AppendFormat(
-              '      <td id="day-%d-%.2d-%.2d" class="%s">',
-              [AYear, AMonth, DayCounter, ClassAttr]
-            ).AppendLine
+            sb.AppendFormat('      <td id="day-%d-%.2d-%.2d" class="%s">', [AYear, AMonth, DayCounter, ClassAttr]).AppendLine
           else
-            sb.AppendFormat(
-              '      <td id="day-%d-%.2d-%.2d">',
-              [AYear, AMonth, DayCounter]
-            ).AppendLine;
+            sb.AppendFormat('      <td id="day-%d-%.2d-%.2d">', [AYear, AMonth, DayCounter]).AppendLine;
 
           sb.AppendFormat('        %d', [DayCounter]).AppendLine;
           sb.AppendLine('      </td>');
@@ -184,12 +174,12 @@ end;
 
 procedure TFormVerlofUser.renderCalendar;
 var
-  date: string;
+  Date: string;
 begin
-  document.getElementById('calendar-table').innerHTML := GenerateCalendarHTML(YearOf(FCurrentDate), MonthOf(FCurrentDate),2);
-  date := FormatDateTime('mmmm yyyy', FCurrentDate);
-  date[1] := UpCase(date[1]);
-  calendarmonth.HTML.Text := date;
+  document.getElementById('calendar-table').innerHTML := GenerateCalendarHTML(YearOf(FCurrentDate), MonthOf(FCurrentDate), 2);
+  Date := FormatDateTime('mmmm yyyy', FCurrentDate);
+  Date[1] := UpCase(Date[1]);
+  calendarmonth.HTML.Text := Date;
 end;
 
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);

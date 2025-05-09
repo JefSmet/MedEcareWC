@@ -23,6 +23,22 @@
       border-radius: 50%;
       margin-right: 5px;
     }
+    /* Stijl voor weekenddagen (ZA, ZO) */
+#calendar-table td.weekend {
+  background-color: #ffe082;
+}
+
+/* Stijl voor vandaag */
+#calendar-table td.today {
+  background-color: #ffeb3b;
+  font-weight: bold;
+}
+
+/* Als vandaag in het weekend valt */
+#calendar-table td.weekend.today {
+  background-color: #ffe082;  /* iets donkerder geel */
+}
+
   </style>
 </head>
 <body class="bg-light">
