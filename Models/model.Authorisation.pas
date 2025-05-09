@@ -4,21 +4,29 @@ interface
 
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.Storage,
-  WEBLib.REST, jsdelphisystem, WEBLib.JSON, DateUtils;
+  WEBLib.REST, jsdelphisystem, WEBLib.JSON, DateUtils, orm.Person,
+  System.Generics.Collections;
 
 type
   TAuthorisation = class(TWebDataModule)
     WebSessionStorage1: TWebSessionStorage;
     WebLocalStorage1: TWebLocalStorage;
     WebHttpRequest1: TWebHttpRequest;
+    procedure WebDataModuleCreate(Sender: TObject);
+    procedure WebDataModuleDestroy(Sender: TObject);
   private
+    FcurrentPerson: TPerson;
+    FcurrentUserRoles: TList<string>;
     function PerformRequestWithCredentials(ARequest: TWebHttpRequest)
       : TJSPromise;
     [async]
     procedure SetRequest(AEndpoint: string; ACommand: THTTPCommand;
       APostData: string = ''; AResponsetype: THTTPRequestResponseType = rtJSON);
+    procedure SetCurrentUser(AJSValue: TJSValue);
 
   public
+    property currentPerson: TPerson read FcurrentPerson write FcurrentPerson;
+    property currentUserRoles: TList<string> read FcurrentUserRoles;
     procedure ClearStorage;
     [async]
     function DoLogin(AEmail: string; APassword: string; APlatform: string)
@@ -95,17 +103,7 @@ begin
   req := await(TJSXMLHttpRequest,
     PerformRequestWithCredentials(WebHttpRequest1));
 
-  // // Omdat ResponseType = rtJSON is, is req.response direct een JS-object
-  // jsObj := TJSObject(req.response);
-  //
-  // // Haal het 'user'-object op binnenin 'jsObj'
-  // userObj := TJSObject(jsObj['user']);
-  //
-  // // Haal de 'id'‐waarde eruit
-  // userID := string(userObj['id']);
-  //
-  // // Sla op in SessionStorage
-  // WebSessionStorage1.SetValue('userID', userID);
+  SetCurrentUser(req.response);
 
   // Geef het hele request (JS-object) terug
   Result := req;
@@ -194,10 +192,8 @@ begin
             if (req.Status >= 200) and (req.Status < 300) then
               Resolve(req) // geef xhr object terug
             else
-              {$ifndef DEBUG}
               Reject(Exception.CreateFmt('{"status": %d,"message": "%s"}',
                 [req.Status, req.StatusText]));
-              {$endif}
           end;
         end;
 
@@ -208,6 +204,29 @@ begin
       else
         req.send(ARequest.PostData);
     end);
+end;
+
+procedure TAuthorisation.SetCurrentUser(AJSValue: TJSValue);
+var
+  jsObj: TJSObject;
+  roles: TJSArray;
+  i: Integer;
+begin
+  jsObj := TJSObject(AJSValue);
+  jsObj := TJSObject(jsObj['user']);
+  FcurrentPerson := default (TPerson);
+  FcurrentPerson.FirstName := string(jsObj['firstName']);
+  FcurrentPerson.LastName := string(jsObj['lastName']);
+  FcurrentPerson.Id := string(jsObj['personId']);
+  FcurrentPerson.CreatedAt := now;
+  FcurrentPerson.UpdatedAt := now;
+  FcurrentUserRoles.Clear;
+  roles := toArray(jsObj['roles']);
+  for i := 0 to roles.Length - 1 do
+  begin
+    FcurrentUserRoles.Add(string(roles[i]));
+  end;
+  showMessage(FcurrentPerson.FirstName + FcurrentUserRoles[0]);
 end;
 
 procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand;
@@ -237,13 +256,21 @@ begin
 
   if xhr.Status = 200 then
   begin
-    // jsObj  := TJSObject(xhr.response);
-    // userObj:= TJSObject(jsObj['user']);        // ← laat backend evt. user terugsturen
-    // WebSessionStorage1.SetValue('userId', string(userObj['id']));
+    SetCurrentUser(xhr.response);
     Exit(true);
   end;
 
   Exit(false);
+end;
+
+procedure TAuthorisation.WebDataModuleCreate(Sender: TObject);
+begin
+  FcurrentUserRoles := TList<string>.Create;
+end;
+
+procedure TAuthorisation.WebDataModuleDestroy(Sender: TObject);
+begin
+  FcurrentUserRoles.Free;
 end;
 
 // reset password
@@ -289,12 +316,12 @@ function TAuthorisation.ResetPassword(AToken: string;
 APassword: string): Boolean;
 var
   PostData: string;
-  xhr : TJSXMLHttpRequest;
+  xhr: TJSXMLHttpRequest;
 begin
   PostData := Format('{"token" : "%s", "newPassword" : "%s"}',
     [AToken, APassword]);
   SetRequest('/reset-password', httpPOST, PostData);
- try
+  try
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(WebHttpRequest1));
     Exit(true);

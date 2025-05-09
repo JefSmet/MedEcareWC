@@ -1,4 +1,6 @@
 object Authorisation: TAuthorisation
+  OnCreate = WebDataModuleCreate
+  OnDestroy = WebDataModuleDestroy
   Height = 425
   Width = 617
   object WebSessionStorage1: TWebSessionStorage
