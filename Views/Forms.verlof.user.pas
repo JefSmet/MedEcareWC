@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, Vcl.StdCtrls, WEBLib.StdCtrls,
-  Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists;
+  Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools;
 
 type
   TFormVerlofUser = class(TViewBase)
@@ -40,7 +40,7 @@ type
     procedure renderCalendar;
     procedure initControls;
   public
-    function GenerateCalendarHTML(AYear, AMonth: Word): string;
+    function GenerateCalendarHTML(AYear, AMonth: Word; AStartDow: Integer): string;
   end;
 
 var
@@ -68,56 +68,94 @@ begin
   renderCalendar;
 end;
 
-function TFormVerlofUser.GenerateCalendarHTML(AYear, AMonth: Word): string;
+function TFormVerlofUser.GenerateCalendarHTML(
+  AYear, AMonth: Word;
+  AStartDow: Integer  // 1 = zondag … 7 = zaterdag
+): string;
+const
+  DaysPerWeek = 7;
 var
   sb: TStringBuilder;
-  FirstOfMonth: TDateTime;
-  StartDow, DaysInMonth, DayCounter, WeekDayIdx, WeekIdx: Integer;
+  FirstOfMonth, CellDate, TodayDate: TDateTime;
+  StartDow, DaysInMonth, DayCounter: Integer;
+  WeekIdx, WeekDayIdx, PascalDow: Integer;
+  DayName, ClassAttr: string;
 begin
+  // 1) Bereken eerste dag en aantal dagen
+  FirstOfMonth := EncodeDate(AYear, AMonth, 1);
+  StartDow     := DayOfWeek(FirstOfMonth);       // 1=zo … 7=za
+  DaysInMonth  := DaysInAMonth(AYear, AMonth);
+  TodayDate    := Date;
+
+  // 2) Bepaal in welke kolom dag 1 valt (1..7)
+  //    kolom = ((StartDow - AStartDow) mod 7) + 1
+  DayCounter := 1;
+
   sb := TStringBuilder.Create;
   try
-    // Bereken eerste dag en aantal dagen
-    FirstOfMonth := EncodeDate(AYear, AMonth, 1);
-    StartDow := DayOfWeek(FirstOfMonth); // 1=Sunday � 7=Saturday
-    DaysInMonth := DaysInAMonth(AYear, AMonth);
-
-    // Table header
-    sb.AppendLine
-      ('<table id="calendar-table" class="table calendar-table mb-0">');
+    sb.AppendLine('<table id="calendar-table" class="table calendar-table mb-0">');
     sb.AppendLine('  <thead>');
     sb.AppendLine('    <tr>');
-    sb.AppendLine('      <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>');
+    // 2.1) Header: rotatie beginnend bij AStartDow
+    for WeekDayIdx := 1 to DaysPerWeek do
+    begin
+      PascalDow := ((AStartDow - 1 + WeekDayIdx - 1) mod DaysPerWeek) + 1;
+      DayName   := GetLocaleShortDayName(PascalDow, GetBrowserLocale);
+      sb.AppendFormat('      <th>%s</th>', [DayName]).AppendLine;
+    end;
     sb.AppendLine('    </tr>');
     sb.AppendLine('  </thead>');
     sb.AppendLine('  <tbody>');
 
-    DayCounter := 1;
-    // Maximaal 6 weken (42 cellen)
+    // 2.2) Vul de rijen met dagen
     for WeekIdx := 0 to 5 do
     begin
       sb.AppendLine('    <tr>');
-      for WeekDayIdx := 1 to 7 do
+      for WeekDayIdx := 1 to DaysPerWeek do
       begin
-        // Bepaal of we in de eerste week v��r de maand zijn, of na de maand
-        if ((WeekIdx = 0) and (WeekDayIdx < StartDow)) or
-          (DayCounter > DaysInMonth) then
+        // Eerste week: voor de 1e dag, of na het einde van de maand?
+        if ((WeekIdx = 0) and
+            (WeekDayIdx < ((StartDow - AStartDow + DaysPerWeek) mod DaysPerWeek) + 1))
+           or (DayCounter > DaysInMonth) then
         begin
-          // lege cel
-          sb.AppendLine('      <td>&nbsp;</td>');
+          sb.AppendLine('      <td>&nbsp;</td>')
         end
         else
         begin
-          // echte dag
-          sb.AppendFormat('      <td id="day-%d-%.2d-%.2d">',
-            [AYear, AMonth, DayCounter]).AppendLine;
+          CellDate := EncodeDate(AYear, AMonth, DayCounter);
+          ClassAttr := '';
+
+          // Weekend?
+          PascalDow := ((AStartDow - 1 + WeekDayIdx - 1) mod DaysPerWeek) + 1;
+          if PascalDow >= DaySaturday then
+            ClassAttr := 'weekend';
+
+          // Vandaag?
+          if SameDate(CellDate, TodayDate) then
+            if ClassAttr <> '' then
+              ClassAttr := ClassAttr + ' today'
+            else
+              ClassAttr := 'today';
+
+          // Open <td> met id en eventueel class
+          if ClassAttr <> '' then
+            sb.AppendFormat(
+              '      <td id="day-%d-%.2d-%.2d" class="%s">',
+              [AYear, AMonth, DayCounter, ClassAttr]
+            ).AppendLine
+          else
+            sb.AppendFormat(
+              '      <td id="day-%d-%.2d-%.2d">',
+              [AYear, AMonth, DayCounter]
+            ).AppendLine;
+
           sb.AppendFormat('        %d', [DayCounter]).AppendLine;
           sb.AppendLine('      </td>');
+
           Inc(DayCounter);
         end;
       end;
       sb.AppendLine('    </tr>');
-
-      // Stoppen als we alle dagen hebben geplaatst
       if DayCounter > DaysInMonth then
         Break;
     end;
@@ -148,8 +186,7 @@ procedure TFormVerlofUser.renderCalendar;
 var
   date: string;
 begin
-  document.getElementById('calendar-table').innerHTML :=
-    GenerateCalendarHTML(YearOf(FCurrentDate), MonthOf(FCurrentDate));
+  document.getElementById('calendar-table').innerHTML := GenerateCalendarHTML(YearOf(FCurrentDate), MonthOf(FCurrentDate),2);
   date := FormatDateTime('mmmm yyyy', FCurrentDate);
   date[1] := UpCase(date[1]);
   calendarmonth.HTML.Text := date;
