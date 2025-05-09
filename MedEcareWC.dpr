@@ -34,7 +34,8 @@ uses
   Forms.registerUser in 'Views\Forms.registerUser.pas' {FormRegisterUser: TWebForm} {*.html},
   Forms.calendar in 'Views\Forms.calendar.pas' {Form1: TWebForm} {*.html},
   Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html},
-  model.MedEcareDB in 'Models\model.MedEcareDB.pas' {MedEcareDB: TWebDataModule};
+  model.MedEcareDB in 'Models\model.MedEcareDB.pas' {MedEcareDB: TWebDataModule},
+  middleware.httponly in 'middleware.httponly.pas';
 
 {$R *.res}
 
