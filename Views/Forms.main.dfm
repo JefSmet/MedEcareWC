@@ -45,6 +45,7 @@ object FormMain: TFormMain
       ChildOrder = 2
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
+      OnClick = WebButton3Click
     end
     object btnLogout: TWebButton
       Left = 3

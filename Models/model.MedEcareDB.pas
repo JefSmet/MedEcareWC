@@ -3,10 +3,11 @@ unit model.MedEcareDB;
 interface
 
 uses
-  System.SysUtils, System.Classes, JS, Web, WEBLib.Modules;
+  System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.REST;
 
 type
   TMedEcareDB = class(TWebDataModule)
+    WebHttpRequest1: TWebHttpRequest;
   private
     { Private declarations }
   public

@@ -207,6 +207,7 @@
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>PngImage_3</ResourceId>
         </RcItem>
+        <None Include="css\MedEcare.css"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -234,19 +235,60 @@
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="IconResHigh.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="IconResLow.png" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="IconResLow.png" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="IconResLow.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="IconResMid.png" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="IconResMid.png" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="IconResMid.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Manifest.json" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="Manifest.json" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="Manifest.json" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="MedEcare.html" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="MedEcare.html" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="MedEcare.html" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\MedEcareWC.exe" Configuration="Debug" Class="ProjectOutput"/>
-                <DeployFile LocalName="Win32\Debug\MedEcareWC.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="Win32\Debug\MedEcareWC.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>MedEcareWC.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="css\MedEcare.css" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="serviceworker.js" Configuration="Debug" Class="ProjectFile"/>
-                <DeployFile LocalName="serviceworker.js" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="serviceworker.js" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>

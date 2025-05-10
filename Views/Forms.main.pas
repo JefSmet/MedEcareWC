@@ -25,6 +25,7 @@ type
     procedure btnLogoutClick(Sender: TObject);
     procedure btnRegisterClick(Sender: TObject);
     procedure WebButton2Click(Sender: TObject);
+    procedure WebButton3Click(Sender: TObject);
   private
     FAppManager: TAppManager;
   public
@@ -64,6 +65,11 @@ begin
       showMessage('daaaaag');
     end
     );
+end;
+
+procedure TFormMain.WebButton3Click(Sender: TObject);
+begin
+  FAppManager.sh
 end;
 
 procedure TFormMain.WebFormCreate(Sender: TObject);

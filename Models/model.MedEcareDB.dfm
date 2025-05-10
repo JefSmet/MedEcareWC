@@ -1,4 +1,8 @@
 object MedEcareDB: TMedEcareDB
-  Height = 650
-  Width = 1019
+  Height = 429
+  Width = 658
+  object WebHttpRequest1: TWebHttpRequest
+    Left = 248
+    Top = 24
+  end
 end
