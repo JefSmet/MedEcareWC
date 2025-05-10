@@ -29,7 +29,7 @@ object FormMain: TFormMain
       Width = 72
       Height = 25
       Anchors = [akLeft, akTop, akRight]
-      Caption = 'btn'
+      Caption = 'ShowToast'
       ChildOrder = 1
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000

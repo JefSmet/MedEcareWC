@@ -62,7 +62,8 @@ begin
     procedure
     begin
       showMessage('daaaaag');
-    end)
+    end
+    );
 end;
 
 procedure TFormMain.WebFormCreate(Sender: TObject);

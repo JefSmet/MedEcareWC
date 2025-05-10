@@ -11,8 +11,7 @@ type
     class var FInstance: TAppManager;
     constructor CreatePrivate;
     class destructor Destroy;
-    constructor Create;
-      deprecated 'Use TAppController.GetInstance instead of Create.';
+    constructor Create; deprecated 'Use TAppController.GetInstance instead of Create.';
   private
     FAuth: TAuthorisation;
     FFormContainerID: TElementID;
@@ -32,9 +31,8 @@ type
     procedure ShowResetPassword;
     procedure ShowWachtlijstReadOnly;
     procedure ShowRegisterUser;
-    procedure ShowToast(AMessage: string; ADelay: integer = 5000); overload;
-    procedure ShowToast(AMessage: string; AOnFinished: TProc;
-      ADelay: integer = 5000); overload;
+    procedure ShowToast(AMessage: string; ACaption: string = ''; ADelay: integer = 5000); overload;
+    procedure ShowToast(AMessage: string; AOnFinished: TProc; ACaption: string = ''; ADelay: integer = 5000); overload;
   end;
 
 implementation
@@ -56,8 +54,7 @@ end;
 constructor TAppManager.Create;
 begin
   // Prevent direct call
-  raise EInvalidOperation.Create
-    ('Use TAppController.GetInstance instead of TAppController.Create.');
+  raise EInvalidOperation.Create('Use TAppController.GetInstance instead of TAppController.Create.');
 end;
 
 destructor TAppManager.Destroy;
@@ -121,16 +118,16 @@ begin
   ShowForm(TFormResetPassword);
 end;
 
-procedure TAppManager.ShowToast(AMessage: string; AOnFinished: TProc;
-  ADelay: integer);
+procedure TAppManager.ShowToast(AMessage: string; AOnFinished: TProc; ACaption: string; ADelay: integer);
 begin
   if FToastShowing then
     exit();
-
+  if ACaption='' then
+    ACaption:=FormatDateTime('hh:mm dd/mm/yyyy',now);
   asm
     var toastEl = document.getElementById('myToast');
     var toastMessage = document.getElementById('toastMessage');
-
+    var toastCaption = document.getElementById('toastTime');
     // ❗ Veiligheidscheck om crash te vermijden
     if (!toastEl || !toastMessage) return;
 
@@ -141,6 +138,7 @@ begin
      }
 
     toastMessage.innerText = AMessage;
+    toastCaption.innerText = ACaption;
 
     var self = this;
     var onFinished = AOnFinished;
@@ -167,15 +165,17 @@ begin
     var bsToast = new bootstrap.Toast(toastEl, { delay: ADelay });
     bsToast.show();
     }
-  end; end;
+  end;
+end;
 
-  procedure TAppManager.ShowToast(
-AMessage:
-  string;
-ADelay:
-  integer); begin ShowToast(AMessage, nil, ADelay); end;
+procedure TAppManager.ShowToast(AMessage: string; ACaption: string; ADelay: integer);
+begin
+  ShowToast(AMessage, nil, ACaption, ADelay);
+end;
 
-  procedure TAppManager.ShowWachtlijstReadOnly;
-  begin ShowForm(TFormWachtlijstReadOnly); end;
+procedure TAppManager.ShowWachtlijstReadOnly;
+begin
+  ShowForm(TFormWachtlijstReadOnly);
+end;
 
-  end.
+end.

@@ -16,7 +16,7 @@ type
     dateofBirth: TDateTime;
     Roles: TList<string>;
     constructor Create;
-    destructor Destroy;
+    destructor Destroy; override;
     procedure Clear;
   end;
 
