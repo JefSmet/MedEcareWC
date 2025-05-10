@@ -111,7 +111,7 @@ var
   i: Integer;
 begin
   jsObj := TJSObject(AJSValue);
-  jsObj := TJSObject(jsObj['user']);
+  jsObj := TJSObject(jsObj['authenticatedUser']);
   FcurrentPerson := default (TPerson);
   FcurrentPerson.FirstName := string(jsObj['firstName']);
   FcurrentPerson.LastName := string(jsObj['lastName']);
