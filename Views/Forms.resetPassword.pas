@@ -55,7 +55,7 @@ begin
   else
   begin
     // show alert
-    ShowMessage('Er is iets mis gegaan, probeer later nog eens.');
+    AppManager.ShowToast('Er is iets mis gegaan, probeer later nog eens.');
   end;
 
 end;

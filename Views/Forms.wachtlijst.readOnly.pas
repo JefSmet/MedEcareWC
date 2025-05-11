@@ -8,8 +8,6 @@ uses
 
 type
   TFormWachtlijstReadOnly = class(TViewBase)
-    WebCalendar1: TWebCalendar;
-    procedure WebCalendar1DateSelected(Sender: TObject; ADate: TDateTime);
   private
     { Private declarations }
   public
@@ -22,11 +20,5 @@ var
 implementation
 
 {$R *.dfm}
-
-procedure TFormWachtlijstReadOnly.WebCalendar1DateSelected(Sender: TObject;
-  ADate: TDateTime);
-begin
-  ShowMessage(formatDateTime('dd-mm-yyyy', WebCalendar1.SelectedDate));
-end;
 
 end.

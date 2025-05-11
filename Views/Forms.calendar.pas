@@ -36,7 +36,7 @@ begin
   if ARow>0 then
   begin
     adt:=toNumber(TMSFNCDataGrid1.Cells[acolumn,arow]);
-    ShowMessage(FormatDateTime('dddd dd-mm-yyyy',adt));
+    AppManager.ShowToast(FormatDateTime('dddd dd-mm-yyyy',adt));
   end;
 end;
 

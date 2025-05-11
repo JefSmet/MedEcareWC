@@ -7,26 +7,18 @@ uses
   WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, Vcl.Menus, WEBLib.Menus, Vcl.Controls,
   WEBLib.ExtCtrls, Vcl.StdCtrls, WEBLib.StdCtrls, model.AppManager,
-  WEBLib.WebTools, WEBLib.Actions;
+  WEBLib.WebTools, WEBLib.Actions, WEBLib.WebCtrls;
 
 type
   TFormMain = class(TWebForm)
-    WebPanel1: TWebPanel;
-    btnRegister: TWebButton;
-    WebButton2: TWebButton;
-    WebButton3: TWebButton;
-    btnLogout: TWebButton;
-    FormContainer: TWebPanel;
     [async]
-    btnTest: TWebButton;
-    WebElementActionList1: TWebElementActionList;
+    acl: TWebElementActionList;
     [async]
     procedure WebFormCreate(Sender: TObject);
     [async]
     procedure btnLogoutClick(Sender: TObject);
-    procedure btnRegisterClick(Sender: TObject);
-    procedure WebButton2Click(Sender: TObject);
-    procedure WebButton3Click(Sender: TObject);
+    procedure acShowHomeExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure acShowVerlofUserExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
   private
     FAppManager: TAppManager;
   public
@@ -50,27 +42,18 @@ begin
     FAppManager.ShowLogin;
   end
   else
-    showMessage('Er ging iets verkeerd, probeer later opnieuw.');
+    FAppManager.ShowToast('Er ging iets verkeerd, probeer later opnieuw.');
 end;
 
-procedure TFormMain.btnRegisterClick(Sender: TObject);
+procedure TFormMain.acShowVerlofUserExecute(Sender: TObject; Element: TJSHTMLElementRecord;
+  Event: TJSEventParameter);
 begin
-  FAppManager.ShowRegisterUser;
+FAppManager.ShowVerlofUser;
 end;
 
-procedure TFormMain.WebButton2Click(Sender: TObject);
+procedure TFormMain.acShowHomeExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
 begin
-  FAppManager.ShowToast('dit is een zeer lange toastmessage om de regeleinden te controleren',
-    procedure
-    begin
-      showMessage('daaaaag');
-    end
-    );
-end;
-
-procedure TFormMain.WebButton3Click(Sender: TObject);
-begin
-  FAppManager.ShowVerlofUser;
+FAppManager.ShowHome;
 end;
 
 procedure TFormMain.WebFormCreate(Sender: TObject);
@@ -79,7 +62,7 @@ var
   userId: string;
 begin
   FAppManager := TAppManager.GetInstance;
-  FAppManager.SetFormContainerID(FormContainer.ElementID);
+  FAppManager.SetFormContainerID('main-content');
   // check op password reset
   if HasQueryParam('resetToken', resetToken) then
   begin

@@ -55,7 +55,7 @@ uses
   WEBLib.WebTools, vcl.dialogs, middleware.httponly;
 
 const
-  url = 'http://localhost:3000/auth';
+  baseUrl = 'http://localhost:3000/auth';
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 {$R *.dfm}
@@ -123,7 +123,7 @@ begin
   begin
     FcurrentPerson.Roles.Add(string(Roles[i]));
   end;
-  showMessage(FcurrentPerson.firstName +': '+ FcurrentPerson.Roles[0]);
+//  AppManager.ShowToast(FcurrentPerson.firstName +': '+ FcurrentPerson.Roles[0]);
 end;
 
 procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand; APostData: string;

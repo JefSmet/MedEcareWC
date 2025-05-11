@@ -96,8 +96,7 @@ begin
       loginPassword.Text, ifthen(remember, 'web-persist', 'web')));
     if response.Status = 200 then
     begin
-      // AppManager.ShowHome();
-      AppManager.ShowWachtlijstReadOnly();
+       AppManager.ShowHome();
     end;
   except
     on e: Exception do
@@ -105,7 +104,7 @@ begin
       errorObject := TJSJSON.parseObject(e.Message);
       errorMessage := JS.toString(errorObject['message']);
       errorStatus := JS.toInteger(errorObject['status']);
-      ShowMessage(errorStatus.toString + ' ' + errorMessage);
+      AppManager.ShowToast(errorMessage);
     end;
   end;
 end;

@@ -151,7 +151,7 @@ begin
      }
     };
 
-    toastEl.addEventListener('hidden.bs.toast', toastEl._handler);
+    toastEl.addEventListener('hidden.bs.toast', toastEl._handler, {once : true});
 
     // Probeer enkel dispose als instance nog bestaat
     var existingInstance = bootstrap.Toast.getInstance(toastEl);

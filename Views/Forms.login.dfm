@@ -1,5 +1,4 @@
 inherited FormLogin: TFormLogin
-  Align = alClient
   Color = clBtnFace
   object loginPassword: TWebEdit
     Left = 271
