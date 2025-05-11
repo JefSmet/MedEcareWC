@@ -1,0 +1,46 @@
+/* Algemene celopmaak */
+.calendar-table td, .calendar-table th {
+  width: 14.28%;
+  height: auto;
+  vertical-align: top;
+  border: 1px solid #e0e0e0;
+  padding: 6px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+/* Header */
+.calendar-table th {
+  text-align: center;
+  background-color: #f1f3f5;
+  color: #333333;
+  font-weight: 600;
+}
+
+/* Legende */
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+/* Weekenddagen (ZA, ZO) */
+#calendar-table td.weekend {
+  background-color: #f2f2f2;
+}
+
+/* Vandaag */
+#calendar-table td.today {
+  background-color: #007bff;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Vandaag én weekend */
+#calendar-table td.weekend.today {
+  background-color: #0056b3;
+  color: #ffffff;
+}
+

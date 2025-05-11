@@ -30,6 +30,7 @@ type
     procedure ShowLogin;
     procedure ShowResetPassword;
     procedure ShowWachtlijstReadOnly;
+    procedure ShowVerlofUser;
     procedure ShowRegisterUser;
     procedure ShowToast(AMessage: string; ACaption: string = ''; ADelay: integer = 5000); overload;
     procedure ShowToast(AMessage: string; AOnFinished: TProc; ACaption: string = ''; ADelay: integer = 5000); overload;
@@ -40,7 +41,7 @@ implementation
 uses
   System.SysUtils, System.Classes, Vcl.Dialogs, Forms.home,
   Forms.forgotPassword, Forms.login, Forms.resetPassword,
-  Forms.wachtlijst.readOnly, Forms.registerUser;
+  Forms.wachtlijst.readOnly, Forms.registerUser, Forms.verlof.user;
 
 { TAppManager }
 
@@ -166,6 +167,11 @@ begin
     bsToast.show();
     }
   end;
+end;
+
+procedure TAppManager.ShowVerlofUser;
+begin
+  ShowForm(TFormVerlofUser);
 end;
 
 procedure TAppManager.ShowToast(AMessage: string; ACaption: string; ADelay: integer);

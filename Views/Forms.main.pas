@@ -7,7 +7,7 @@ uses
   WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, Vcl.Menus, WEBLib.Menus, Vcl.Controls,
   WEBLib.ExtCtrls, Vcl.StdCtrls, WEBLib.StdCtrls, model.AppManager,
-  WEBLib.WebTools;
+  WEBLib.WebTools, WEBLib.Actions;
 
 type
   TFormMain = class(TWebForm)
@@ -19,6 +19,7 @@ type
     FormContainer: TWebPanel;
     [async]
     btnTest: TWebButton;
+    WebElementActionList1: TWebElementActionList;
     [async]
     procedure WebFormCreate(Sender: TObject);
     [async]
@@ -69,7 +70,7 @@ end;
 
 procedure TFormMain.WebButton3Click(Sender: TObject);
 begin
-  FAppManager.sh
+  FAppManager.ShowVerlofUser;
 end;
 
 procedure TFormMain.WebFormCreate(Sender: TObject);

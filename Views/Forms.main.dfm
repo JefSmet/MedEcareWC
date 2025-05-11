@@ -41,7 +41,7 @@ object FormMain: TFormMain
       Width = 72
       Height = 25
       Anchors = [akLeft, akTop, akRight]
-      Caption = 'btn'
+      Caption = 'VerlofUser'
       ChildOrder = 2
       HeightPercent = 100.000000000000000000
       WidthPercent = 100.000000000000000000
@@ -78,5 +78,10 @@ object FormMain: TFormMain
     Align = alClient
     ChildOrder = 1
     TabOrder = 1
+  end
+  object WebElementActionList1: TWebElementActionList
+    Actions = <>
+    Left = 217
+    Top = 96
   end
 end

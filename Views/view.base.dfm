@@ -1,4 +1,5 @@
 object ViewBase: TViewBase
-  Width = 640
-  Height = 480
+  Width = 557
+  Height = 410
+  Align = alClient
 end

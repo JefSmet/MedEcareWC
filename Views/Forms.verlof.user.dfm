@@ -1,6 +1,6 @@
 inherited FormVerlofUser: TFormVerlofUser
-  Width = 902
-  Height = 718
+  Width = 845
+  Height = 335
   OnCreate = WebFormCreate
   object reject1: TWebButton
     Left = 0
@@ -77,8 +77,8 @@ inherited FormVerlofUser: TFormVerlofUser
     Role = ''
   end
   object calendarnext: TWebButton
-    Left = 73
-    Top = 496
+    Left = 33
+    Top = 152
     Width = 96
     Height = 25
     ChildOrder = 5
@@ -197,8 +197,8 @@ inherited FormVerlofUser: TFormVerlofUser
     Role = ''
   end
   object calendarprev: TWebButton
-    Left = 202
-    Top = 496
+    Left = 162
+    Top = 152
     Width = 96
     Height = 25
     ChildOrder = 13
