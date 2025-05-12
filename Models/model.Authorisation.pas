@@ -129,7 +129,7 @@ end;
 procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand; APostData: string;
   AResponsetype: THTTPRequestResponseType);
 begin
-  WebHttpRequest1.url := url + AEndpoint;
+  WebHttpRequest1.url := baseUrl + AEndpoint;
   WebHttpRequest1.Command := ACommand;
   WebHttpRequest1.ResponseType := AResponsetype;
   WebHttpRequest1.PostData := APostData;

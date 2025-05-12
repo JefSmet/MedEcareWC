@@ -32,7 +32,7 @@ const
 { TMedEcareDB }
 
 
-procedure TMedEcareDB.getActivities(AType: string; AYear, AMonth: word);
+function TMedEcareDB.getActivities(AType: string; AYear, AMonth: word): TList<TActivity>;
 var endpoint : string;
 xhr : TJSXMLHttpRequest;
 begin
