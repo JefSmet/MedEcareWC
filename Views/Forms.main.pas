@@ -19,8 +19,13 @@ type
     procedure btnLogoutClick(Sender: TObject);
     procedure acShowHomeExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure acShowVerlofUserExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure aclocBrandUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
+      TargetElement: TJSHTMLElementRecord);
+    procedure aclocVerlofUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
+      TargetElement: TJSHTMLElementRecord);
   private
     FAppManager: TAppManager;
+    procedure SetNavElementActive(Element: TJSHTMLElementRecord);
   public
     { Public declarations }
   end;
@@ -45,10 +50,29 @@ begin
     FAppManager.ShowToast('Er ging iets verkeerd, probeer later opnieuw.');
 end;
 
+procedure TFormMain.SetNavElementActive(Element: TJSHTMLElementRecord);
+begin
+Element.element.classList.remove('link-dark');
+Element.element.classList.add('active');
+//anakin skywalker
+end;
+
 procedure TFormMain.acShowVerlofUserExecute(Sender: TObject; Element: TJSHTMLElementRecord;
   Event: TJSEventParameter);
 begin
 FAppManager.ShowVerlofUser;
+end;
+
+procedure TFormMain.aclocBrandUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
+  TargetElement: TJSHTMLElementRecord);
+begin
+ SetNavElementActive(Element);
+end;
+
+procedure TFormMain.aclocVerlofUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
+  TargetElement: TJSHTMLElementRecord);
+begin
+SetNavElementActive(Element);
 end;
 
 procedure TFormMain.acShowHomeExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);

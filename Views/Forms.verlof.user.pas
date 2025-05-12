@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, Vcl.StdCtrls, WEBLib.StdCtrls,
-  Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools;
+  Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools, System.Generics.Collections;
 
 type
   TFormVerlofUser = class(TViewBase)
@@ -35,6 +35,7 @@ type
     procedure WebFormCreate(Sender: TObject);
     procedure calendarnextClick(Sender: TObject);
     procedure calendarprevClick(Sender: TObject);
+    procedure submitrequestClick(Sender: TObject);
   private
     FCurrentDate: TDateTime;
     procedure renderCalendar;
@@ -49,7 +50,7 @@ var
 implementation
 
 uses
-  System.DateUtils;
+  System.DateUtils, orm.Person;
 
 {$R *.dfm}
 { TFormVerlofUser }
@@ -180,6 +181,15 @@ begin
   Date := FormatDateTime('mmmm yyyy', FCurrentDate);
   Date[1] := UpCase(Date[1]);
   calendarmonth.HTML.Text := Date;
+end;
+
+procedure TFormVerlofUser.submitrequestClick(Sender: TObject);
+var response : TList<TPerson>;
+begin
+  inherited;
+  response := TPerson.ToList('[{"id":"c1335314-abde-47e9-a6e3-1e1d120d7b04","firstName":"Isabeau","lastName":"Verbelen","dateOfBirth":"1990-07-04T00:00:00.000Z","createdAt":"2025-04-28T20:18:07.040Z","updatedAt":"2025-04-28T20:18:07.040Z"}]',true);
+  showMessage(response.First.LastName);
+  response.Free;
 end;
 
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);
