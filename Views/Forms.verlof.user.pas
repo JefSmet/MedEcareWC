@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, Vcl.StdCtrls, WEBLib.StdCtrls,
-  Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools, System.Generics.Collections;
+  Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools,
+  System.Generics.Collections;
 
 type
   TFormVerlofUser = class(TViewBase)
@@ -35,13 +36,13 @@ type
     procedure WebFormCreate(Sender: TObject);
     procedure calendarnextClick(Sender: TObject);
     procedure calendarprevClick(Sender: TObject);
-    procedure submitrequestClick(Sender: TObject);
   private
     FCurrentDate: TDateTime;
     procedure renderCalendar;
     procedure initControls;
   public
-    function GenerateCalendarHTML(AYear, AMonth: Word; AStartDow: Integer): string;
+    function GenerateCalendarHTML(AYear, AMonth: Word;
+      AStartDow: Integer): string;
   end;
 
 var
@@ -50,10 +51,48 @@ var
 implementation
 
 uses
-  System.DateUtils, orm.Person;
+  System.DateUtils, orm.Person, orm.Activity;
+
+const
+  ShiftJson = '[{' + '  "id": "0bc2873b-5c94-4ac2-9342-00203cb30f6e",' +
+    '  "activityType": "SHIFT",' + '  "start": "2025-05-07T09:00:00.000Z",' +
+    '  "end": "2025-05-07T19:00:00.000Z",' +
+    '  "personId": "37cfacdb-dd29-4125-bcd8-4e8f519d433e",' +
+    '  "shiftTypeId": "c39ed775-592e-47ba-bcad-87a08d9d554e",' +
+    '  "createdAt": "2025-05-02T10:16:51.570Z",' +
+    '  "updatedAt": "2025-05-02T10:16:51.570Z",' + '  "person": {' +
+    '    "id": "37cfacdb-dd29-4125-bcd8-4e8f519d433e",' +
+    '    "firstName": "Bert",' + '    "lastName": "Peeters",' +
+    '    "dateOfBirth": "1990-10-11T00:00:00.000Z",' +
+    '    "createdAt": "2025-04-28T20:18:07.040Z",' +
+    '    "updatedAt": "2025-04-28T20:18:07.040Z"' + '  },' + '  "shiftType": {'
+    + '    "id": "c39ed775-592e-47ba-bcad-87a08d9d554e",' + '    "name": "dag",'
+    + '    "startHour": 9,' + '    "startMinute": 0,' +
+    '    "durationMinutes": 600,' +
+    '    "activeFrom": "2000-01-01T00:00:00.000Z",' + '    "activeUntil": null,'
+    + '    "createdAt": "2025-04-28T20:04:15.883Z",' +
+    '    "updatedAt": "2025-04-28T20:04:15.883Z"' + '  }' + '}, {' +
+    '  "id": "af51a5f0-867c-46f0-9fe8-002ae65b308f",' +
+    '  "activityType": "SHIFT",' + '  "start": "2025-01-13T09:00:00.000Z",' +
+    '  "end": "2025-01-13T19:00:00.000Z",' +
+    '  "personId": "37cfacdb-dd29-4125-bcd8-4e8f519d433e",' +
+    '  "shiftTypeId": "c39ed775-592e-47ba-bcad-87a08d9d554e",' +
+    '  "createdAt": "2025-05-02T10:16:51.570Z",' +
+    '  "updatedAt": "2025-05-02T10:16:51.570Z",' + '  "person": {' +
+    '    "id": "37cfacdb-dd29-4125-bcd8-4e8f519d433e",' +
+    '    "firstName": "Bert",' + '    "lastName": "Peeters",' +
+    '    "dateOfBirth": "1990-10-11T00:00:00.000Z",' +
+    '    "createdAt": "2025-04-28T20:18:07.040Z",' +
+    '    "updatedAt": "2025-04-28T20:18:07.040Z"' + '  },' + '  "shiftType": {'
+    + '    "id": "c39ed775-592e-47ba-bcad-87a08d9d554e",' + '    "name": "dag",'
+    + '    "startHour": 9,' + '    "startMinute": 0,' +
+    '    "durationMinutes": 600,' +
+    '    "activeFrom": "2000-01-01T00:00:00.000Z",' + '    "activeUntil": null,'
+    + '    "createdAt": "2025-04-28T20:04:15.883Z",' +
+    '    "updatedAt": "2025-04-28T20:04:15.883Z"' + '  }' + '}]';
 
 {$R *.dfm}
-{ TFormVerlofUser }
+  { TFormVerlofUser }
 
 procedure TFormVerlofUser.calendarnextClick(Sender: TObject);
 begin
@@ -69,7 +108,8 @@ begin
   renderCalendar;
 end;
 
-function TFormVerlofUser.GenerateCalendarHTML(AYear, AMonth: Word; AStartDow: Integer // 1 = zondag … 7 = zaterdag
+function TFormVerlofUser.GenerateCalendarHTML(AYear, AMonth: Word;
+  AStartDow: Integer // 1 = zondag … 7 = zaterdag
   ): string;
 const
   DaysPerWeek = 7;
@@ -92,7 +132,8 @@ begin
 
   sb := TStringBuilder.Create;
   try
-    sb.AppendLine('<table id="calendar-table" class="table calendar-table mb-0">');
+    sb.AppendLine
+      ('<table id="calendar-table" class="table calendar-table mb-0">');
     sb.AppendLine('  <thead>');
     sb.AppendLine('    <tr>');
     // 2.1) Header: rotatie beginnend bij AStartDow
@@ -113,8 +154,9 @@ begin
       for WeekDayIdx := 1 to DaysPerWeek do
       begin
         // Eerste week: voor de 1e dag, of na het einde van de maand?
-        if ((WeekIdx = 0) and (WeekDayIdx < ((StartDow - AStartDow + DaysPerWeek) mod DaysPerWeek) + 1)) or
-          (DayCounter > DaysInMonth) then
+        if ((WeekIdx = 0) and
+          (WeekDayIdx < ((StartDow - AStartDow + DaysPerWeek) mod DaysPerWeek) +
+          1)) or (DayCounter > DaysInMonth) then
         begin
           sb.AppendLine('      <td>&nbsp;</td>')
         end
@@ -136,9 +178,11 @@ begin
 
           // Open <td> met id en eventueel class
           if ClassAttr <> '' then
-            sb.AppendFormat('      <td id="day-%d-%.2d-%.2d" class="%s">', [AYear, AMonth, DayCounter, ClassAttr]).AppendLine
+            sb.AppendFormat('      <td id="day-%d-%.2d-%.2d" class="%s">',
+              [AYear, AMonth, DayCounter, ClassAttr]).AppendLine
           else
-            sb.AppendFormat('      <td id="day-%d-%.2d-%.2d">', [AYear, AMonth, DayCounter]).AppendLine;
+            sb.AppendFormat('      <td id="day-%d-%.2d-%.2d">',
+              [AYear, AMonth, DayCounter]).AppendLine;
 
           sb.AppendFormat('        %d', [DayCounter]).AppendLine;
           sb.AppendLine('      </td>');
@@ -177,19 +221,11 @@ procedure TFormVerlofUser.renderCalendar;
 var
   Date: string;
 begin
-  document.getElementById('calendar-table').innerHTML := GenerateCalendarHTML(YearOf(FCurrentDate), MonthOf(FCurrentDate), 2);
+  document.getElementById('calendar-table').innerHTML :=
+    GenerateCalendarHTML(YearOf(FCurrentDate), MonthOf(FCurrentDate), 2);
   Date := FormatDateTime('mmmm yyyy', FCurrentDate);
   Date[1] := UpCase(Date[1]);
   calendarmonth.HTML.Text := Date;
-end;
-
-procedure TFormVerlofUser.submitrequestClick(Sender: TObject);
-var response : TList<TPerson>;
-begin
-  inherited;
-  response := TPerson.ToList('[{"id":"c1335314-abde-47e9-a6e3-1e1d120d7b04","firstName":"Isabeau","lastName":"Verbelen","dateOfBirth":"1990-07-04T00:00:00.000Z","createdAt":"2025-04-28T20:18:07.040Z","updatedAt":"2025-04-28T20:18:07.040Z"}]',true);
-  showMessage(response.First.LastName);
-  response.Free;
 end;
 
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);

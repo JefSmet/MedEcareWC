@@ -165,7 +165,6 @@ inherited FormVerlofUser: TFormVerlofUser
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
-    OnClick = submitrequestClick
   end
   object startdate: TWebDateTimePicker
     Left = 303

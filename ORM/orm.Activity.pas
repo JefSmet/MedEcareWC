@@ -3,7 +3,7 @@ unit orm.Activity;
 interface
 
 uses
-  JS, Web, WEBLib.REST, System.Generics.Collections, WEBLib.JSON;
+  JS, Web, WEBLib.REST, System.Generics.Collections, WEBLib.JSON, orm.Person, orm.ShiftType;
 
 type
 
@@ -16,6 +16,8 @@ type
     ShiftTypeId: string;
     CreatedAt: TDateTime;
     UpdatedAt: TDateTime;
+    Person : TPerson;
+    ShiftType : TShiftType;
 
     class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
       : TActivity; overload; static;
@@ -51,6 +53,8 @@ begin
   Result.ShiftTypeId := AJsonObj.GetJSONValue('shiftTypeId');
   Result.CreatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('createdAt'), ADateTimeIsUTC);
   Result.UpdatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('updatedAt'), ADateTimeIsUTC);
+  Result.Person := TPerson.ToObject(TJSONObject(AJsonObj.GetValue('person')),ADateTimeIsUTC);
+  Result.ShiftType := TShiftType.ToObject(TJSONObject(AJsonObj.GetValue('shiftType')),ADateTimeIsUTC);
 end;
 
 class function TActivity.ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TActivity>;

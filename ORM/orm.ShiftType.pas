@@ -18,16 +18,16 @@ type
     CreatedAt: TDateTime;
     UpdatedAt: TDateTime;
 
-    class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+    class function ToObject(const AJson: string; ADateTimeIsUTC: Boolean)
       : TShiftType; overload; static;
-    class function FromJSON(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean)
+    class function ToObject(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean)
       : TShiftType; overload; static;
     class function ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TShiftType>; static;
   end;
 
 implementation
 
-class function TShiftType.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean): TShiftType;
+class function TShiftType.ToObject(const AJson: string; ADateTimeIsUTC: Boolean): TShiftType;
 var
   JS: TJSON;
   jsonObject: TJSONObject;
@@ -35,13 +35,13 @@ begin
   JS := TJSON.Create;
   try
     jsonObject := TJSONObject(JS.Parse(AJson));
-    Result := FromJSON(jsonObject, ADateTimeIsUTC);
+    Result := ToObject(jsonObject, ADateTimeIsUTC);
   finally
     JS.Free;
   end;
 end;
 
-class function TShiftType.FromJSON(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean): TShiftType;
+class function TShiftType.ToObject(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean): TShiftType;
 begin
   Result := Default(TShiftType);
   Result.Id := AJsonObj.GetJSONValue('id');
@@ -71,7 +71,7 @@ begin
       for I := 0 to jsonArr.Count - 1 do
       begin
         jsonObject := TJSONObject(jsonArr.Items[I]);
-        ShiftType := TShiftType.FromJSON(jsonObject, ADateTimeIsUTC);
+        ShiftType := TShiftType.ToObject(jsonObject, ADateTimeIsUTC);
         Result.Add(ShiftType);
       end;
     finally
