@@ -3,7 +3,7 @@ unit orm.ShiftType;
 interface
 
 uses
-  JS, Web, WEBLib.REST;
+  JS, Web, WEBLib.REST, System.Generics.Collections, WEBLib.JSON, System.SysUtils;
 
 type
 
@@ -20,61 +20,65 @@ type
 
     class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
       : TShiftType; overload; static;
-    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean)
+    class function FromJSON(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean)
       : TShiftType; overload; static;
+    class function ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TShiftType>; static;
   end;
 
 implementation
 
-class function TShiftType.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
-  : TShiftType;
+class function TShiftType.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean): TShiftType;
+var
+  JS: TJSON;
+  jsonObject: TJSONObject;
 begin
-  Result := FromJSON(TJSJSON.parseObject(AJson), ADateTimeIsUTC);
+  JS := TJSON.Create;
+  try
+    jsonObject := TJSONObject(JS.Parse(AJson));
+    Result := FromJSON(jsonObject, ADateTimeIsUTC);
+  finally
+    JS.Free;
+  end;
 end;
 
-class function TShiftType.FromJSON(const AJsonObj: TJSObject;
-  ADateTimeIsUTC: Boolean): TShiftType;
+class function TShiftType.FromJSON(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean): TShiftType;
 begin
-  Result := Default (TShiftType);
-  if AJsonObj.hasOwnProperty('id') then
-  begin
-    Result.Id := JS.toString(AJsonObj['id']);
-  end;
-  if AJsonObj.hasOwnProperty('name') then
-  begin
-    Result.Name := JS.toString(AJsonObj['name']);
-  end;
-  if AJsonObj.hasOwnProperty('startHour') then
-  begin
-    Result.StartHour := JS.toInteger(AJsonObj['startHour']);
-  end;
-  if AJsonObj.hasOwnProperty('startMinute') then
-  begin
-    Result.StartMinute := JS.toInteger(AJsonObj['startMinute']);
-  end;
-  if AJsonObj.hasOwnProperty('durationMinutes') then
-  begin
-    Result.DurationMinutes := JS.toInteger(AJsonObj['durationMinutes']);
-  end;
-  if AJsonObj.hasOwnProperty('activeFrom') then
-  begin
-    Result.ActiveFrom := TWebRESTClient.IsoToDateTime
-      (JS.toString(AJsonObj['activeFrom']), ADateTimeIsUTC);
-  end;
-  if AJsonObj.hasOwnProperty('activeUntil') then
-  begin
-    Result.ActiveUntil := TWebRESTClient.IsoToDateTime
-      (JS.toString(AJsonObj['activeUntil']), ADateTimeIsUTC);
-  end;
-  if AJsonObj.hasOwnProperty('createdAt') then
-  begin
-    Result.CreatedAt := TWebRESTClient.IsoToDateTime
-      (JS.toString(AJsonObj['createdAt']), ADateTimeIsUTC);
-  end;
-  if AJsonObj.hasOwnProperty('updatedAt') then
-  begin
-    Result.UpdatedAt := TWebRESTClient.IsoToDateTime
-      (JS.toString(AJsonObj['updatedAt']), ADateTimeIsUTC);
+  Result := Default(TShiftType);
+  Result.Id := AJsonObj.GetJSONValue('id');
+  Result.Name := AJsonObj.GetJSONValue('name');
+  Result.StartHour := StrToInt(AJsonObj.GetJSONValue('startHour'));
+  Result.StartMinute := StrToInt(AJsonObj.GetJSONValue('startMinute'));
+  Result.DurationMinutes := StrToInt(AJsonObj.GetJSONValue('durationMinutes'));
+  Result.ActiveFrom := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('activeFrom'), ADateTimeIsUTC);
+  Result.ActiveUntil := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('activeUntil'), ADateTimeIsUTC);
+  Result.CreatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('createdAt'), ADateTimeIsUTC);
+  Result.UpdatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('updatedAt'), ADateTimeIsUTC);
+end;
+
+class function TShiftType.ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TShiftType>;
+var
+  JS: TJSON;
+  jsonArr: TJSONArray;
+  jsonObject: TJSONObject;
+  ShiftType: TShiftType;
+  I: Integer;
+begin
+  Result := TList<TShiftType>.Create;
+  try
+    JS := TJSON.Create;
+    try
+      jsonArr := TJSONArray(JS.Parse(AJson));
+      for I := 0 to jsonArr.Count - 1 do
+      begin
+        jsonObject := TJSONObject(jsonArr.Items[I]);
+        ShiftType := TShiftType.FromJSON(jsonObject, ADateTimeIsUTC);
+        Result.Add(ShiftType);
+      end;
+    finally
+      JS.Free;
+    end;
+  except
+    Result.Free;
   end;
 end;
 

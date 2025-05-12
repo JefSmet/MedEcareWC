@@ -3,7 +3,7 @@ unit orm.User;
 interface
 
 uses
-  JS, Web, WEBLib.REST;
+  JS, Web, WEBLib.REST, System.Generics.Collections, WEBLib.JSON;
 
 type
 
@@ -18,52 +18,65 @@ type
 
     class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
       : TUser; overload; static;
-    class function FromJSON(const AJsonObj: TJSObject; ADateTimeIsUTC: Boolean)
+    class function FromJSON(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean)
       : TUser; overload; static;
+    class function ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TUser>; static;
   end;
 
 implementation
 
 class function TUser.FromJSON(const AJson: string;
   ADateTimeIsUTC: Boolean): TUser;
+var
+  JS: TJSON;
+  jsonObject: TJSONObject;
 begin
-  Result := FromJSON(TJSJSON.parseObject(AJson), ADateTimeIsUTC);
+  JS := TJSON.Create;
+  try
+    jsonObject := TJSONObject(JS.Parse(AJson));
+    Result := FromJSON(jsonObject, ADateTimeIsUTC);
+  finally
+    JS.Free;
+  end;
 end;
 
-class function TUser.FromJSON(const AJsonObj: TJSObject;
+class function TUser.FromJSON(const AJsonObj: TJSONObject;
   ADateTimeIsUTC: Boolean): TUser;
 begin
-  Result := Default (TUser);
-  if AJsonObj.hasOwnProperty('id') then
-  begin
-    Result.Id := JS.toString(AJsonObj['id']);
-  end;
-  if AJsonObj.hasOwnProperty('email') then
-  begin
-    Result.Email := JS.toString(AJsonObj['email']);
-  end;
-  if AJsonObj.hasOwnProperty('password') then
-  begin
-    Result.Password := JS.toString(AJsonObj['password']);
-  end;
-  if AJsonObj.hasOwnProperty('createdAt') then
-  begin
-    Result.CreatedAt := TWebRESTClient.IsoToDateTime
-      (JS.toString(AJsonObj['createdAt']), ADateTimeIsUTC);
-  end;
-  if AJsonObj.hasOwnProperty('updatedAt') then
-  begin
-    Result.UpdatedAt := TWebRESTClient.IsoToDateTime
-      (JS.toString(AJsonObj['updatedAt']), ADateTimeIsUTC);
-  end;
-  if AJsonObj.hasOwnProperty('resetToken') then
-  begin
-    Result.ResetToken := JS.toString(AJsonObj['resetToken']);
-  end;
-  if AJsonObj.hasOwnProperty('resetExpire') then
-  begin
-    Result.ResetExpire := TWebRESTClient.IsoToDateTime
-      (JS.toString(AJsonObj['resetExpire']), ADateTimeIsUTC);
+  Result := Default(TUser);
+  Result.Id := AJsonObj.GetJSONValue('id');
+  Result.Email := AJsonObj.GetJSONValue('email');
+  Result.Password := AJsonObj.GetJSONValue('password');
+  Result.CreatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('createdAt'), ADateTimeIsUTC);
+  Result.UpdatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('updatedAt'), ADateTimeIsUTC);
+  Result.ResetToken := AJsonObj.GetJSONValue('resetToken');
+  Result.ResetExpire := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('resetExpire'), ADateTimeIsUTC);
+end;
+
+class function TUser.ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TUser>;
+var
+  JS: TJSON;
+  jsonArr: TJSONArray;
+  jsonObject: TJSONObject;
+  User: TUser;
+  I: Integer;
+begin
+  Result := TList<TUser>.Create;
+  try
+    JS := TJSON.Create;
+    try
+      jsonArr := TJSONArray(JS.Parse(AJson));
+      for I := 0 to jsonArr.Count - 1 do
+      begin
+        jsonObject := TJSONObject(jsonArr.Items[I]);
+        User := TUser.FromJSON(jsonObject, ADateTimeIsUTC);
+        Result.Add(User);
+      end;
+    finally
+      JS.Free;
+    end;
+  except
+    Result.Free;
   end;
 end;
 
