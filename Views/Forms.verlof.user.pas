@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, Vcl.StdCtrls, WEBLib.StdCtrls,
   Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools,
-  System.Generics.Collections;
+  System.Generics.Collections, orm.Person, orm.Activity;
 
 type
   TFormVerlofUser = class(TViewBase)
@@ -33,11 +33,15 @@ type
     calendar: TWebHTMLDiv;
     filterstatus: TWebComboBox;
     approve1: TWebButton;
+    WebButton1: TWebButton;
     procedure WebFormCreate(Sender: TObject);
     procedure calendarnextClick(Sender: TObject);
     procedure calendarprevClick(Sender: TObject);
+    procedure WebButton1Click(Sender: TObject);
+    procedure WebFormDestroy(Sender: TObject);
   private
     FCurrentDate: TDateTime;
+    FActivityList: TList<TActivity>;
     procedure renderCalendar;
     procedure initControls;
   public
@@ -51,45 +55,7 @@ var
 implementation
 
 uses
-  System.DateUtils, orm.Person, orm.Activity;
-
-const
-  ShiftJson = '[{' + '  "id": "0bc2873b-5c94-4ac2-9342-00203cb30f6e",' +
-    '  "activityType": "SHIFT",' + '  "start": "2025-05-07T09:00:00.000Z",' +
-    '  "end": "2025-05-07T19:00:00.000Z",' +
-    '  "personId": "37cfacdb-dd29-4125-bcd8-4e8f519d433e",' +
-    '  "shiftTypeId": "c39ed775-592e-47ba-bcad-87a08d9d554e",' +
-    '  "createdAt": "2025-05-02T10:16:51.570Z",' +
-    '  "updatedAt": "2025-05-02T10:16:51.570Z",' + '  "person": {' +
-    '    "id": "37cfacdb-dd29-4125-bcd8-4e8f519d433e",' +
-    '    "firstName": "Bert",' + '    "lastName": "Peeters",' +
-    '    "dateOfBirth": "1990-10-11T00:00:00.000Z",' +
-    '    "createdAt": "2025-04-28T20:18:07.040Z",' +
-    '    "updatedAt": "2025-04-28T20:18:07.040Z"' + '  },' + '  "shiftType": {'
-    + '    "id": "c39ed775-592e-47ba-bcad-87a08d9d554e",' + '    "name": "dag",'
-    + '    "startHour": 9,' + '    "startMinute": 0,' +
-    '    "durationMinutes": 600,' +
-    '    "activeFrom": "2000-01-01T00:00:00.000Z",' + '    "activeUntil": null,'
-    + '    "createdAt": "2025-04-28T20:04:15.883Z",' +
-    '    "updatedAt": "2025-04-28T20:04:15.883Z"' + '  }' + '}, {' +
-    '  "id": "af51a5f0-867c-46f0-9fe8-002ae65b308f",' +
-    '  "activityType": "SHIFT",' + '  "start": "2025-01-13T09:00:00.000Z",' +
-    '  "end": "2025-01-13T19:00:00.000Z",' +
-    '  "personId": "37cfacdb-dd29-4125-bcd8-4e8f519d433e",' +
-    '  "shiftTypeId": "c39ed775-592e-47ba-bcad-87a08d9d554e",' +
-    '  "createdAt": "2025-05-02T10:16:51.570Z",' +
-    '  "updatedAt": "2025-05-02T10:16:51.570Z",' + '  "person": {' +
-    '    "id": "37cfacdb-dd29-4125-bcd8-4e8f519d433e",' +
-    '    "firstName": "Bert",' + '    "lastName": "Peeters",' +
-    '    "dateOfBirth": "1990-10-11T00:00:00.000Z",' +
-    '    "createdAt": "2025-04-28T20:18:07.040Z",' +
-    '    "updatedAt": "2025-04-28T20:18:07.040Z"' + '  },' + '  "shiftType": {'
-    + '    "id": "c39ed775-592e-47ba-bcad-87a08d9d554e",' + '    "name": "dag",'
-    + '    "startHour": 9,' + '    "startMinute": 0,' +
-    '    "durationMinutes": 600,' +
-    '    "activeFrom": "2000-01-01T00:00:00.000Z",' + '    "activeUntil": null,'
-    + '    "createdAt": "2025-04-28T20:04:15.883Z",' +
-    '    "updatedAt": "2025-04-28T20:04:15.883Z"' + '  }' + '}]';
+  System.DateUtils;
 
 {$R *.dfm}
   { TFormVerlofUser }
@@ -98,7 +64,7 @@ procedure TFormVerlofUser.calendarnextClick(Sender: TObject);
 begin
   inherited;
   FCurrentDate := IncMonth(FCurrentDate);
-  renderCalendar;
+  renderCalendar();
 end;
 
 procedure TFormVerlofUser.calendarprevClick(Sender: TObject);
@@ -119,6 +85,7 @@ var
   StartDow, DaysInMonth, DayCounter: Integer;
   WeekIdx, WeekDayIdx, PascalDow: Integer;
   DayName, ClassAttr: string;
+  I: Integer;
 begin
   // 1) Bereken eerste dag en aantal dagen
   FirstOfMonth := EncodeDate(AYear, AMonth, 1);
@@ -185,8 +152,18 @@ begin
               [AYear, AMonth, DayCounter]).AppendLine;
 
           sb.AppendFormat('        %d', [DayCounter]).AppendLine;
-          sb.AppendLine('      </td>');
 
+          for I := FActivityList.Count - 1 downto 0 do
+          begin
+            if SameDate(DateOf(FActivityList[I].Start), CellDate) then
+            begin
+              sb.AppendFormat('        <div class="event">%s</div>',
+                [FActivityList[I].Person.LastName]).AppendLine;
+               FActivityList.Delete(I);
+            end;
+
+          end;
+          sb.AppendLine('      </td>');
           Inc(DayCounter);
         end;
       end;
@@ -205,16 +182,8 @@ begin
 end;
 
 procedure TFormVerlofUser.initControls;
-var
-  i: Integer;
-  Component: TComponent;
 begin
-  for i := 0 to ComponentCount - 1 do
-  begin
-    Component := Components[i];
-    if Component is TWebButton then
-      TWebButton(Component).Caption := '';
-  end;
+  // FActivityList := TList<TActivity>.Create;
 end;
 
 procedure TFormVerlofUser.renderCalendar;
@@ -228,12 +197,26 @@ begin
   calendarmonth.HTML.Text := Date;
 end;
 
+procedure TFormVerlofUser.WebButton1Click(Sender: TObject);
+begin
+  inherited;
+  renderCalendar;
+end;
+
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);
 begin
   inherited;
   initControls;
   FCurrentDate := now;
+  FActivityList := TActivity.ToList(ShiftJson, true);
   renderCalendar;
+end;
+
+procedure TFormVerlofUser.WebFormDestroy(Sender: TObject);
+begin
+  inherited;
+  if Assigned(FActivityList) then
+    FActivityList.Free;
 end;
 
 end.
