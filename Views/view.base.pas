@@ -16,6 +16,9 @@ type
     property AppManager: TAppManager read FAppManager;
   end;
 
+var
+  ViewBase: TViewBase;
+
 implementation
 
 {$R *.dfm}

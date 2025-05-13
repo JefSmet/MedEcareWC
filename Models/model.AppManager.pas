@@ -39,7 +39,7 @@ type
 implementation
 
 uses
-  System.SysUtils, System.Classes, Vcl.Dialogs, Forms.home,
+  System.Classes, Vcl.Dialogs, Forms.home,
   Forms.forgotPassword, Forms.login, Forms.resetPassword,
   Forms.wachtlijst.readOnly, Forms.registerUser, Forms.verlof.user;
 
@@ -48,8 +48,8 @@ uses
 constructor TAppManager.CreatePrivate;
 begin
   inherited Create;
-  FAuth := TAuthorisation.Create(nil);
-  FDB := TMedEcareDB.Create(nil);
+  FAuth := Authorisation;
+  FDB := MedEcareDB;
 end;
 
 constructor TAppManager.Create;

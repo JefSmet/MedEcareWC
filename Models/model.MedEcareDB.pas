@@ -13,7 +13,8 @@ type
   public
     { Public declarations }
     [async]
-    function getActivities(AType: string; AYear, AMonth: word): TList<TActivity>;
+    function getActivities(const AType: string; const AYear, AMonth: word; AList: TList<TActivity>): Boolean;
+    function Test: string;
   end;
 
 var
@@ -27,21 +28,40 @@ uses middleware.httponly;
 {$R *.dfm}
 
 const
-  baseUrl = 'http://localhost:3000/';
+  baseUrl = 'http://localhost:3000';
 
-{ TMedEcareDB }
+  { TMedEcareDB }
 
-
-function TMedEcareDB.getActivities(AType: string; AYear, AMonth: word): TList<TActivity>;
-var endpoint : string;
-xhr : TJSXMLHttpRequest;
+function TMedEcareDB.getActivities(const AType: string; const AYear, AMonth: word; AList: TList<TActivity>): Boolean;
+var
+  endpoint: string;
+  xhr: TJSXMLHttpRequest;
+  list: TList<TActivity>;
 begin
-  endpoint := Format('/admin/activities/type/%s/year/%d/month/%d',[AType,AYear,AMonth]);
+  endpoint := Format('/admin/activities/filter?year=%d&month=%d&activityType=%s', [AYear, AMonth, AType]);
   reqGetActivities.URL := baseUrl + endpoint;
   try
-  xhr := await(TJSXMLHttpRequest,PerformRequestWithCredentials(reqGetActivities));
+    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(reqGetActivities));
+    if xhr.Status = 200 then
+    begin
+      list := TActivity.ToList(TJSJSON.stringify(xhr.response), true);
+      try
+        AList.Clear;
+        AList.AddRange(list);
+        Result := true;
+      finally
+        list.Free;
+      end;
+    end;
   except
+    exit(false);
   end;
+
+end;
+
+function TMedEcareDB.Test: string;
+begin
+  Result := 'medecaredb';
 end;
 
 end.

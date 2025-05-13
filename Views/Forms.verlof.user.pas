@@ -6,10 +6,10 @@ uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, Vcl.StdCtrls, WEBLib.StdCtrls,
   Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools,
-  System.Generics.Collections, orm.Person, orm.Activity;
+  System.Generics.Collections, orm.Person, orm.Activity, model.AppManager;
 
 type
-  TFormVerlofUser = class(TViewBase)
+  TFormVerlofUser = class(TWebForm)
     reject1: TWebButton;
     tabrequestbtn: TWebButton;
     filtertype: TWebComboBox;
@@ -42,8 +42,9 @@ type
   private
     FCurrentDate: TDateTime;
     FActivityList: TList<TActivity>;
+    FAppManager: TAppManager;
     procedure renderCalendar;
-    procedure initControls;
+    procedure SetActivityList;
   public
     function GenerateCalendarHTML(AYear, AMonth: Word;
       AStartDow: Integer): string;
@@ -64,6 +65,7 @@ procedure TFormVerlofUser.calendarnextClick(Sender: TObject);
 begin
   inherited;
   FCurrentDate := IncMonth(FCurrentDate);
+  SetActivityList;
   renderCalendar();
 end;
 
@@ -71,6 +73,7 @@ procedure TFormVerlofUser.calendarprevClick(Sender: TObject);
 begin
   inherited;
   FCurrentDate := IncMonth(FCurrentDate, -1);
+  SetActivityList;
   renderCalendar;
 end;
 
@@ -181,11 +184,6 @@ begin
   end;
 end;
 
-procedure TFormVerlofUser.initControls;
-begin
-  // FActivityList := TList<TActivity>.Create;
-end;
-
 procedure TFormVerlofUser.renderCalendar;
 var
   Date: string;
@@ -197,18 +195,29 @@ begin
   calendarmonth.HTML.Text := Date;
 end;
 
+procedure TFormVerlofUser.SetActivityList;
+var
+  y,m,d: word;
+begin
+//exit;
+DecodeDate(FCurrentDate,y,m,d);
+FAppManager.db.getActivities('shift',y,m, FActivityList);
+end;
+
 procedure TFormVerlofUser.WebButton1Click(Sender: TObject);
 begin
   inherited;
+  FAppManager.db.getActivities('shift',2025,4,FActivityList);
   renderCalendar;
 end;
 
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);
 begin
   inherited;
-  initControls;
   FCurrentDate := now;
-  FActivityList := TActivity.ToList(ShiftJson, true);
+  FActivityList:=TList<TActivity>.Create;
+  FAppManager := TAppManager.GetInstance;
+  SetActivityList;
   renderCalendar;
 end;
 

@@ -49,6 +49,10 @@ type
     function RegisterNewUser(AEmail, APassword, ARole, AFirstName, ALastname: string; ADateOfBirth: TDateTime): Boolean;
   end;
 
+var
+  Authorisation: TAuthorisation;
+
+
 implementation
 
 uses

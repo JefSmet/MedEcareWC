@@ -1,4 +1,4 @@
-inherited FormVerlofUser: TFormVerlofUser
+object FormVerlofUser: TFormVerlofUser
   Width = 845
   Height = 335
   OnCreate = WebFormCreate
@@ -340,11 +340,10 @@ inherited FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object WebButton1: TWebButton
-    Left = 733
-    Top = 294
+    Left = 506
+    Top = -1
     Width = 96
     Height = 25
-    Anchors = [akLeft, akBottom]
     Caption = 'WebButton1'
     ChildOrder = 23
     HeightPercent = 100.000000000000000000
