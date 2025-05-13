@@ -11,7 +11,7 @@ object MedEcareDB: TMedEcareDB
   object reqPostVerlof: TWebHttpRequest
     Command = httpPOST
     Headers.Strings = (
-      'Content-Type:applicatioin/json')
+      'Content-Type:application/json')
     ResponseType = rtText
     Left = 232
     Top = 240

@@ -72,15 +72,19 @@ procedure TMedEcareDB.PostActivity(AActivityType: string;
   AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string);
 var
   postData: string;
-  startDate, endDate: string;
+  startDate, endDate, shifttypeid: string;
   xhr: TJSXMLHttpRequest;
 begin
   reqPostVerlof.URL := baseUrl + 'admin/activities';
-  startDate := FormatDateime('yyyy-mm-dd"T"hh:mm:ss"Z"',AStartDate);
-  endDate := TWebRESTClient.DateTimeToWL(AEndDate);
+  startDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"',AStartDate);
+  endDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"',AEndDate);
+  if AShifttypeId='' then
+    shifttypeid := 'null'
+  else
+    shifttypeid := '"'+AShifttypeId+'"';
   postData :=
-    Format('{"activityType": "%s","start": "%s","end": "%s","personId": "%s","shiftTypeId": "%s"}',
-    [AActivityType, startDate, endDate, APersonId, AShifttypeId]);
+    Format('{"activityType": "%s","start": "%s","end": "%s","personId": "%s","shiftTypeId": %s}',
+    [AActivityType, startDate, endDate, APersonId, shifttypeid]);
   reqPostVerlof.postData := postData;
   try
     xhr := await(TJSXMLHttpRequest,
