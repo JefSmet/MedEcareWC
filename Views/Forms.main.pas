@@ -13,6 +13,7 @@ type
   TFormMain = class(TWebForm)
     [async]
     acl: TWebElementActionList;
+    userName: TWebLabel;
     [async]
     procedure WebFormCreate(Sender: TObject);
     [async]
@@ -23,6 +24,7 @@ type
       TargetElement: TJSHTMLElementRecord);
     procedure aclocVerlofUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
       TargetElement: TJSHTMLElementRecord);
+    procedure aclocLogoutExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
   private
     FAppManager: TAppManager;
     procedure SetNavElementActive(Element: TJSHTMLElementRecord);
@@ -69,6 +71,12 @@ begin
  SetNavElementActive(Element);
 end;
 
+procedure TFormMain.aclocLogoutExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+begin
+FAppManager.Auth.DoLogout;
+FAppManager.ShowLogin;
+end;
+
 procedure TFormMain.aclocVerlofUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
   TargetElement: TJSHTMLElementRecord);
 begin
@@ -98,7 +106,9 @@ begin
 
   // probeer eerst de refreshflow
   if await(Boolean, FAppManager.Auth.TryAutoLogin) then
-    FAppManager.ShowHome
+  begin
+    FAppManager.ShowHome;
+  end
   else
     FAppManager.ShowLogin;
 end;

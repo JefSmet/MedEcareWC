@@ -42,8 +42,6 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TAuthorisation, Authorisation);
-  Application.CreateForm(TMedEcareDB, MedEcareDB);
   Application.CreateForm(TFormMain, FormMain);
   Application.Run;
 

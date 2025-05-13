@@ -174,9 +174,9 @@ begin
             if (req.Status >= 200) and (req.Status < 300) then
               Resolve(req) // geef xhr object terug
             else
-              Reject(req);
-//              Reject(Exception.CreateFmt('{"status": %d,"message": "%s"}',
-//                [req.Status, req.StatusText]));
+              //Reject(req);
+              Reject(Exception.CreateFmt('status: %d, message %s',
+                [req.Status, req.StatusText]));
           end;
         end;
 

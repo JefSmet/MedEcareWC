@@ -3,7 +3,7 @@
 interface
 
 uses model.Authorisation, WEBLib.Forms, WEBLib.Controls, SysUtils,
-  model.MedEcareDB;
+  model.MedEcareDB, Web;
 
 type
   TAppManager = class
@@ -34,6 +34,7 @@ type
     procedure ShowRegisterUser;
     procedure ShowToast(AMessage: string; ACaption: string = ''; ADelay: integer = 5000); overload;
     procedure ShowToast(AMessage: string; AOnFinished: TProc; ACaption: string = ''; ADelay: integer = 5000); overload;
+    procedure ToggleSidebar(AVisible : boolean);
   end;
 
 implementation
@@ -48,8 +49,8 @@ uses
 constructor TAppManager.CreatePrivate;
 begin
   inherited Create;
-  FAuth := Authorisation;
-  FDB := MedEcareDB;
+  FAuth := TAuthorisation.Create(nil);
+  FDB := TMedEcareDB.Create(nil);
 end;
 
 constructor TAppManager.Create;
@@ -182,6 +183,20 @@ end;
 procedure TAppManager.ShowWachtlijstReadOnly;
 begin
   ShowForm(TFormWachtlijstReadOnly);
+end;
+
+procedure TAppManager.ToggleSidebar(AVisible: boolean);
+var sidebar : TJSElement;
+begin
+  sidebar:=document.getElementById('sidebarContainer');
+  if AVisible then
+  begin
+    sidebar.classList.remove('d-none');
+  end
+  else
+  begin
+    sidebar.classList.add('d-none');
+  end;
 end;
 
 end.

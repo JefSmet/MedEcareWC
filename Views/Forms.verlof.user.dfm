@@ -1,11 +1,11 @@
-object FormVerlofUser: TFormVerlofUser
+inherited FormVerlofUser: TFormVerlofUser
   Width = 845
   Height = 335
   OnCreate = WebFormCreate
   OnDestroy = WebFormDestroy
   object reject1: TWebButton
-    Left = 0
-    Top = 0
+    Left = 162
+    Top = 183
     Width = 96
     Height = 25
     Caption = 'reject1'
@@ -46,23 +46,6 @@ object FormVerlofUser: TFormVerlofUser
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
     ItemIndex = -1
-  end
-  object reasontext: TWebMemo
-    Left = 303
-    Top = 0
-    Width = 96
-    Height = 25
-    ElementID = 'reason-text'
-    ElementFont = efCSS
-    ElementPosition = epIgnore
-    HeightStyle = ssAuto
-    HeightPercent = 100.000000000000000000
-    Lines.Strings = (
-      'reasontext')
-    SelLength = 0
-    SelStart = 0
-    WidthStyle = ssAuto
-    WidthPercent = 100.000000000000000000
   end
   object list: TWebHTMLDiv
     Left = 404
@@ -108,8 +91,8 @@ object FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object enddate: TWebDateTimePicker
-    Left = 707
-    Top = 0
+    Left = 639
+    Top = 200
     Width = 96
     Height = 25
     ElementID = 'end-date'
@@ -118,15 +101,15 @@ object FormVerlofUser: TFormVerlofUser
     BorderStyle = bsSingle
     ChildOrder = 7
     Color = clWhite
-    Date = 45785.781731261570000000
     ElementFont = efCSS
     ElementPosition = epIgnore
     Role = ''
     Text = ''
+    OnChange = enddateChange
   end
   object request: TWebHTMLDiv
-    Left = 0
-    Top = 30
+    Left = 8
+    Top = 8
     Width = 96
     Height = 25
     ElementID = 'request'
@@ -137,27 +120,11 @@ object FormVerlofUser: TFormVerlofUser
     ElementFont = efCSS
     Role = ''
   end
-  object employeeinput: TWebEdit
-    Left = 101
-    Top = 30
-    Width = 96
-    Height = 25
-    ChildOrder = 9
-    ElementID = 'employee-input'
-    ElementFont = efCSS
-    ElementPosition = epIgnore
-    HeightStyle = ssAuto
-    HeightPercent = 100.000000000000000000
-    Text = 'employeeinput'
-    WidthStyle = ssAuto
-    WidthPercent = 100.000000000000000000
-  end
   object submitrequest: TWebButton
-    Left = 202
-    Top = 30
+    Left = 553
+    Top = 302
     Width = 96
     Height = 25
-    Caption = 'submitrequest'
     ChildOrder = 10
     ElementID = 'submit-request'
     ElementFont = efCSS
@@ -166,10 +133,11 @@ object FormVerlofUser: TFormVerlofUser
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnClick = submitrequestClick
   end
   object startdate: TWebDateTimePicker
-    Left = 303
-    Top = 30
+    Left = 463
+    Top = 200
     Width = 96
     Height = 25
     ElementID = 'start-date'
@@ -178,11 +146,11 @@ object FormVerlofUser: TFormVerlofUser
     BorderStyle = bsSingle
     ChildOrder = 11
     Color = clWhite
-    Date = 45785.781732881940000000
     ElementFont = efCSS
     ElementPosition = epIgnore
     Role = ''
     Text = ''
+    OnChange = startdateChange
   end
   object leaveTabsContent: TWebHTMLDiv
     Left = 404
@@ -239,8 +207,8 @@ object FormVerlofUser: TFormVerlofUser
     Role = ''
   end
   object leavetype: TWebComboBox
-    Left = 0
-    Top = 60
+    Left = 553
+    Top = 258
     Width = 96
     Height = 23
     ElementID = 'leave-type'
@@ -248,10 +216,15 @@ object FormVerlofUser: TFormVerlofUser
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
-    Text = 'leavetype'
+    Text = 'Verlof'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
-    ItemIndex = -1
+    ItemIndex = 0
+    Items.Strings = (
+      'Verlof'
+      'Congres'
+      'Ziek'
+      'Andere')
   end
   object tablistbtn: TWebButton
     Left = 101
@@ -325,8 +298,8 @@ object FormVerlofUser: TFormVerlofUser
     ItemIndex = -1
   end
   object approve1: TWebButton
-    Left = 707
-    Top = 60
+    Left = 33
+    Top = 183
     Width = 96
     Height = 25
     Caption = 'approve1'
@@ -339,15 +312,11 @@ object FormVerlofUser: TFormVerlofUser
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
   end
-  object WebButton1: TWebButton
-    Left = 506
-    Top = -1
-    Width = 96
-    Height = 25
-    Caption = 'WebButton1'
-    ChildOrder = 23
-    HeightPercent = 100.000000000000000000
-    WidthPercent = 100.000000000000000000
-    OnClick = WebButton1Click
+  object WebHttpRequest1: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 296
+    Top = 152
   end
 end

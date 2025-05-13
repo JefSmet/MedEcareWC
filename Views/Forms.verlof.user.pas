@@ -6,20 +6,18 @@ uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, Vcl.StdCtrls, WEBLib.StdCtrls,
   Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools,
-  System.Generics.Collections, orm.Person, orm.Activity, model.AppManager;
+  System.Generics.Collections, orm.Person, orm.Activity, model.AppManager,
+  WEBLib.REST;
 
 type
-  TFormVerlofUser = class(TWebForm)
+  TFormVerlofUser = class(TViewBase)
     reject1: TWebButton;
     tabrequestbtn: TWebButton;
     filtertype: TWebComboBox;
-    reasontext: TWebMemo;
     list: TWebHTMLDiv;
     calendarnext: TWebButton;
     tabcalendarbtn: TWebButton;
     enddate: TWebDateTimePicker;
-    request: TWebHTMLDiv;
-    employeeinput: TWebEdit;
     submitrequest: TWebButton;
     startdate: TWebDateTimePicker;
     leaveTabsContent: TWebHTMLDiv;
@@ -33,21 +31,24 @@ type
     calendar: TWebHTMLDiv;
     filterstatus: TWebComboBox;
     approve1: TWebButton;
-    WebButton1: TWebButton;
+    WebHttpRequest1: TWebHttpRequest;
+    request: TWebHTMLDiv;
     procedure WebFormCreate(Sender: TObject);
     procedure calendarnextClick(Sender: TObject);
     procedure calendarprevClick(Sender: TObject);
-    procedure WebButton1Click(Sender: TObject);
     procedure WebFormDestroy(Sender: TObject);
+    procedure submitrequestClick(Sender: TObject);
+    procedure startdateChange(Sender: TObject);
+    procedure enddateChange(Sender: TObject);
   private
     FCurrentDate: TDateTime;
     FActivityList: TList<TActivity>;
-    FAppManager: TAppManager;
     procedure renderCalendar;
+    [async]
     procedure SetActivityList;
   public
     function GenerateCalendarHTML(AYear, AMonth: Word;
-      AStartDow: Integer): string;
+      AActivityList: TList<TActivity>; AStartDow: Integer = 2): string;
   end;
 
 var
@@ -56,7 +57,11 @@ var
 implementation
 
 uses
-  System.DateUtils;
+  System.DateUtils, middleware.httponly;
+
+const
+  baseUrl: string = 'http://localhost:3000/admin/activities/';
+  verlofEndpoint: string = 'filter?year=%d&month=%d&activityType=%s';
 
 {$R *.dfm}
   { TFormVerlofUser }
@@ -66,7 +71,6 @@ begin
   inherited;
   FCurrentDate := IncMonth(FCurrentDate);
   SetActivityList;
-  renderCalendar();
 end;
 
 procedure TFormVerlofUser.calendarprevClick(Sender: TObject);
@@ -74,12 +78,19 @@ begin
   inherited;
   FCurrentDate := IncMonth(FCurrentDate, -1);
   SetActivityList;
-  renderCalendar;
+end;
+
+procedure TFormVerlofUser.enddateChange(Sender: TObject);
+begin
+  inherited;
+  if startdate.Date > enddate.Date then
+  begin
+    startdate.Date := enddate.Date;
+  end;
 end;
 
 function TFormVerlofUser.GenerateCalendarHTML(AYear, AMonth: Word;
-  AStartDow: Integer // 1 = zondag … 7 = zaterdag
-  ): string;
+  AActivityList: TList<TActivity>; AStartDow: Integer): string;
 const
   DaysPerWeek = 7;
 var
@@ -156,13 +167,13 @@ begin
 
           sb.AppendFormat('        %d', [DayCounter]).AppendLine;
 
-          for I := FActivityList.Count - 1 downto 0 do
+          for I := AActivityList.Count - 1 downto 0 do
           begin
-            if SameDate(DateOf(FActivityList[I].Start), CellDate) then
+            if SameDate(DateOf(AActivityList[I].Start), CellDate) then
             begin
               sb.AppendFormat('        <div class="event">%s</div>',
-                [FActivityList[I].Person.LastName]).AppendLine;
-               FActivityList.Delete(I);
+                [AActivityList[I].Person.LastName]).AppendLine;
+              AActivityList.Delete(I);
             end;
 
           end;
@@ -187,9 +198,12 @@ end;
 procedure TFormVerlofUser.renderCalendar;
 var
   Date: string;
+  tblString: string;
+  y, m, d: Word;
 begin
-  document.getElementById('calendar-table').innerHTML :=
-    GenerateCalendarHTML(YearOf(FCurrentDate), MonthOf(FCurrentDate), 2);
+  DecodeDate(FCurrentDate, y, m, d);
+  tblString := GenerateCalendarHTML(y, m, FActivityList);
+  document.getElementById('calendar-table').innerHTML := tblString;
   Date := FormatDateTime('mmmm yyyy', FCurrentDate);
   Date[1] := UpCase(Date[1]);
   calendarmonth.HTML.Text := Date;
@@ -197,28 +211,57 @@ end;
 
 procedure TFormVerlofUser.SetActivityList;
 var
-  y,m,d: word;
+  y, m, d: Word;
+  formattedVerlofEndpoint: string;
+  activityType: string;
+  xhr: TJSXMLHttpRequest;
+  response: string;
 begin
-//exit;
-DecodeDate(FCurrentDate,y,m,d);
-FAppManager.db.getActivities('shift',y,m, FActivityList);
+  DecodeDate(FCurrentDate, y, m, d);
+  activityType := 'shift';
+  formattedVerlofEndpoint := Format(verlofEndpoint, [y, m, activityType]);
+  WebHttpRequest1.URL := baseUrl + formattedVerlofEndpoint;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
+    if (xhr.Status = 200) or (xhr.Status = 304) then
+    begin
+      response := xhr.responseText;
+      if Assigned(FActivityList) then
+      begin
+        FActivityList.Free;
+      end;
+      FActivityList := TActivity.ToList(response, true);
+      renderCalendar;
+    end;
+  except
+    on e: exception do
+      AppManager.ShowToast('Er ging iets mis: ' + e.Message);
+  end;
 end;
 
-procedure TFormVerlofUser.WebButton1Click(Sender: TObject);
+procedure TFormVerlofUser.startdateChange(Sender: TObject);
 begin
   inherited;
-  FAppManager.db.getActivities('shift',2025,4,FActivityList);
-  renderCalendar;
+  if enddate.Date < startdate.Date then
+    enddate.Date := startdate.Date;
+end;
+
+procedure TFormVerlofUser.submitrequestClick(Sender: TObject);
+begin
+  inherited;
+  AppManager.DB.PostActivity(leavetype.Items[leavetype.ItemIndex],
+    startdate.Date, enddate.Date, AppManager.Auth.currentPerson.personId, '');
 end;
 
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);
 begin
   inherited;
   FCurrentDate := now;
-  FActivityList:=TList<TActivity>.Create;
-  FAppManager := TAppManager.GetInstance;
+  FActivityList := TList<TActivity>.Create;
   SetActivityList;
-  renderCalendar;
+  startdate.Min := now;
+  enddate.Min := now;
 end;
 
 procedure TFormVerlofUser.WebFormDestroy(Sender: TObject);

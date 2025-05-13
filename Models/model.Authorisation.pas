@@ -29,14 +29,16 @@ type
   private
     FcurrentPerson: TAuthenticatedUser;
     [async]
-    procedure SetRequest(AEndpoint: string; ACommand: THTTPCommand; APostData: string = '';
-      AResponsetype: THTTPRequestResponseType = rtJSON);
+    procedure SetRequest(AEndpoint: string; ACommand: THTTPCommand;
+      APostData: string = ''; AResponsetype: THTTPRequestResponseType = rtJSON);
     procedure SetCurrentUser(AJSValue: TJSValue);
   public
-    property currentPerson: TAuthenticatedUser read FcurrentPerson write FcurrentPerson;
+    property currentPerson: TAuthenticatedUser read FcurrentPerson
+      write FcurrentPerson;
     procedure ClearStorage;
     [async]
-    function DoLogin(AEmail: string; APassword: string; APlatform: string): TJSXMLHttpRequest;
+    function DoLogin(AEmail: string; APassword: string; APlatform: string)
+      : TJSXMLHttpRequest;
     [async]
     function TryAutoLogin: Boolean;
     [async]
@@ -46,17 +48,17 @@ type
     [async]
     function ResetPassword(AToken: string; APassword: string): Boolean;
     [async]
-    function RegisterNewUser(AEmail, APassword, ARole, AFirstName, ALastname: string; ADateOfBirth: TDateTime): Boolean;
+    function RegisterNewUser(AEmail, APassword, ARole, AFirstName,
+      ALastname: string; ADateOfBirth: TDateTime): Boolean;
   end;
 
 var
   Authorisation: TAuthorisation;
 
-
 implementation
 
 uses
-  WEBLib.WebTools, vcl.dialogs, middleware.httponly;
+  WEBLib.WebTools, vcl.dialogs, middleware.httponly, model.AppManager;
 
 const
   baseUrl = 'http://localhost:3000/auth';
@@ -71,21 +73,26 @@ begin
   WebSessionStorage1.Clear;
 end;
 
-function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string): TJSXMLHttpRequest;
+function TAuthorisation.DoLogin(AEmail, APassword, APlatform: string)
+  : TJSXMLHttpRequest;
 var
   req: TJSXMLHttpRequest;
   jsObj, userObj: TJSObject;
   userID: string;
 begin
-  SetRequest('/login', httpPOST, Format('{"email": "%s","password": "%s", "platform": "%s"}', [AEmail, APassword, APlatform]));
+  SetRequest('/login', httpPOST,
+    Format('{"email": "%s","password": "%s", "platform": "%s"}',
+    [AEmail, APassword, APlatform]));
 
   // Voer de asynchrone request uit en wacht tot deze klaar is
-  req := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+  req := await(TJSXMLHttpRequest,
+    PerformRequestWithCredentials(WebHttpRequest1));
 
   SetCurrentUser(req.response);
 
   // Geef het hele request (JS-object) terug
   Result := req;
+  TAppManager.GetInstance.ToggleSidebar(true);
 end;
 
 function TAuthorisation.DoLogout: Boolean;
@@ -95,7 +102,8 @@ begin
   SetRequest('/logout', httpPOST);
 
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
   except
     Exit(false);
 
@@ -103,6 +111,7 @@ begin
 
   if xhr.Status = 200 then
   begin
+    TAppManager.GetInstance.ToggleSidebar(false);
     Exit(true);
   end;
 
@@ -127,11 +136,13 @@ begin
   begin
     FcurrentPerson.Roles.Add(string(Roles[i]));
   end;
-//  AppManager.ShowToast(FcurrentPerson.firstName +': '+ FcurrentPerson.Roles[0]);
+  document.getElementById('userName').innerText :=
+    Format('%s %s', [FcurrentPerson.firstName, FcurrentPerson.lastName]);
+  // AppManager.ShowToast(FcurrentPerson.firstName +': '+ FcurrentPerson.Roles[0]);
 end;
 
-procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand; APostData: string;
-  AResponsetype: THTTPRequestResponseType);
+procedure TAuthorisation.SetRequest(AEndpoint: string; ACommand: THTTPCommand;
+  APostData: string; AResponsetype: THTTPRequestResponseType);
 begin
   WebHttpRequest1.url := baseUrl + AEndpoint;
   WebHttpRequest1.Command := ACommand;
@@ -148,24 +159,26 @@ begin
   SetRequest('/refresh', httpPOST, '{"platform": "web-persist"}');
 
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
-  except
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
+    if xhr.Status = 200 then
+    begin
+      SetCurrentUser(xhr.response);
+      TAppManager.GetInstance.ToggleSidebar(true);
+      Exit(true);
+    end;
+    TAppManager.GetInstance.ToggleSidebar(false);
     Exit(false);
-
+  except
+    TAppManager.GetInstance.ToggleSidebar(false);
+    Exit(false);
   end;
 
-  if xhr.Status = 200 then
-  begin
-    SetCurrentUser(xhr.response);
-    Exit(true);
-  end;
-
-  Exit(false);
 end;
 
 procedure TAuthorisation.WebDataModuleCreate(Sender: TObject);
 begin
-  FcurrentPerson:=TAuthenticatedUser.Create;
+  FcurrentPerson := TAuthenticatedUser.Create;
 end;
 
 procedure TAuthorisation.WebDataModuleDestroy(Sender: TObject);
@@ -178,9 +191,11 @@ function TAuthorisation.forgotPassword(AEmail: string): Boolean;
 var
   xhr: TJSXMLHttpRequest;
 begin
-  SetRequest('/forgot-password', httpPOST, Format('{"email" : "%s"}', [AEmail]));
+  SetRequest('/forgot-password', httpPOST, Format('{"email" : "%s"}',
+    [AEmail]));
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
     Exit(true);
   except
     Exit(false);
@@ -188,19 +203,21 @@ begin
 
 end;
 
-function TAuthorisation.RegisterNewUser(AEmail, APassword, ARole, AFirstName, ALastname: string; ADateOfBirth: TDateTime)
-  : Boolean;
+function TAuthorisation.RegisterNewUser(AEmail, APassword, ARole, AFirstName,
+  ALastname: string; ADateOfBirth: TDateTime): Boolean;
 var
   JsonStr: string;
   xhr: TJSXMLHttpRequest;
   dob: string;
 begin
   dob := FormatDateTime('yyyy-mm-dd', ADateOfBirth);
-  JsonStr := Format('{  "email": "%s","password": "%s", "role": "%s", "firstName": "%s", "lastName": "%s", "dateOfBirth": "%s"}',
+  JsonStr :=
+    Format('{  "email": "%s","password": "%s", "role": "%s", "firstName": "%s", "lastName": "%s", "dateOfBirth": "%s"}',
     [AEmail, APassword, ARole, AFirstName, ALastname, dob]);
   SetRequest('/register', httpPOST, JsonStr);
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
     Exit(true);
   except
     Exit(false);
@@ -208,15 +225,18 @@ begin
 
 end;
 
-function TAuthorisation.ResetPassword(AToken: string; APassword: string): Boolean;
+function TAuthorisation.ResetPassword(AToken: string;
+  APassword: string): Boolean;
 var
   PostData: string;
   xhr: TJSXMLHttpRequest;
 begin
-  PostData := Format('{"token" : "%s", "newPassword" : "%s"}', [AToken, APassword]);
+  PostData := Format('{"token" : "%s", "newPassword" : "%s"}',
+    [AToken, APassword]);
   SetRequest('/reset-password', httpPOST, PostData);
   try
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(WebHttpRequest1));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(WebHttpRequest1));
     Exit(true);
   except
     Exit(false);

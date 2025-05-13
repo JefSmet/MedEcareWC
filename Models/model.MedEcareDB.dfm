@@ -8,4 +8,12 @@ object MedEcareDB: TMedEcareDB
     Left = 248
     Top = 24
   end
+  object reqPostVerlof: TWebHttpRequest
+    Command = httpPOST
+    Headers.Strings = (
+      'Content-Type:applicatioin/json')
+    ResponseType = rtText
+    Left = 232
+    Top = 240
+  end
 end

@@ -155,11 +155,7 @@
           <div class="card-body">
             <h5 class="card-title mb-4"><i class="bi bi-person-plus"></i> Request Leave</h5>
             <form id="leave-form">
-              <div class="mb-3">
-                <label for="employee-input" class="form-label">Employee</label>
-                <input type="text" class="form-control" id="employee-input" value="John Doe" readonly>
-              </div>
-              <div class="row">
+               <div class="row">
                 <div class="col mb-3">
                   <label for="start-date" class="form-label">Start Date</label>
                   <input type="date" class="form-control" id="start-date">
@@ -178,16 +174,7 @@
                   <option>Other</option>
                 </select>
               </div>
-              <div class="mb-4">
-                <label for="reason-text" class="form-label">Reason</label>
-                <textarea
-                  class="form-control"
-                  rows="3"
-                  id="reason-text"
-                  placeholder="Please provide a reason for your leave request"
-                ></textarea>
-              </div>
-              <button type="submit" id="submit-request" class="btn btn-primary w-100">
+              <button type="button" id="submit-request" class="btn btn-primary w-100">
                 Submit Request
               </button>
             </form>
