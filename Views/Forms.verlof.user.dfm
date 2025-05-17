@@ -1,6 +1,6 @@
 inherited FormVerlofUser: TFormVerlofUser
-  Width = 845
-  Height = 335
+  Width = 927
+  Height = 512
   OnCreate = WebFormCreate
   OnDestroy = WebFormDestroy
   object reject1: TWebButton
@@ -101,6 +101,7 @@ inherited FormVerlofUser: TFormVerlofUser
     BorderStyle = bsSingle
     ChildOrder = 7
     Color = clWhite
+    Date = 45794.692988877320000000
     ElementFont = efCSS
     ElementPosition = epIgnore
     Role = ''
@@ -146,6 +147,7 @@ inherited FormVerlofUser: TFormVerlofUser
     BorderStyle = bsSingle
     ChildOrder = 11
     Color = clWhite
+    Date = 45794.692988877320000000
     ElementFont = efCSS
     ElementPosition = epIgnore
     Role = ''
@@ -318,5 +320,23 @@ inherited FormVerlofUser: TFormVerlofUser
     ResponseType = rtText
     Left = 296
     Top = 152
+  end
+  object WebElementActionList1: TWebElementActionList
+    Actions = <
+      item
+        ID = ''
+        Name = 'Action0'
+        Selector = '[data-action="approve"]'
+        TargetAction = actAddClass
+        OnExecute = WebElementActionList1Action0Execute
+      end
+      item
+        ID = ''
+        Name = 'Action1'
+        Selector = '[data-action="reject"]'
+        OnExecute = WebElementActionList1Action1Execute
+      end>
+    Left = 336
+    Top = 328
   end
 end

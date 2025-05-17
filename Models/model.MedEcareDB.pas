@@ -10,6 +10,7 @@ type
   TMedEcareDB = class(TWebDataModule)
     reqGetActivities: TWebHttpRequest;
     reqPostVerlof: TWebHttpRequest;
+    reqPutVerlof: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -19,8 +20,11 @@ type
       AList: TList<TActivity>): Boolean;
     function Test: string;
     [async]
-    procedure PostActivity(AActivityType: string;
+    procedure PostActivity(AActivityStatus, AActivityType: string;
       AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string);
+    [async]
+    function PutActivity(AActivityID, AActivityStatus, AActivityType: string;
+      AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string) : Boolean;
   end;
 
 var
@@ -30,7 +34,7 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
-uses middleware.httponly, DateUtils, model.AppManager;
+uses middleware.httponly, DateUtils, model.AppManager, WEBLib.JSON;
 {$R *.dfm}
 
 const
@@ -68,7 +72,7 @@ begin
 
 end;
 
-procedure TMedEcareDB.PostActivity(AActivityType: string;
+procedure TMedEcareDB.PostActivity(AActivityStatus, AActivityType: string;
   AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string);
 var
   postData: string;
@@ -76,12 +80,12 @@ var
   xhr: TJSXMLHttpRequest;
 begin
   reqPostVerlof.URL := baseUrl + 'admin/activities';
-  startDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"',AStartDate);
-  endDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"',AEndDate);
-  if AShifttypeId='' then
+  startDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AStartDate);
+  endDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AEndDate);
+  if AShifttypeId = '' then
     shifttypeid := 'null'
   else
-    shifttypeid := '"'+AShifttypeId+'"';
+    shifttypeid := '"' + AShifttypeId + '"';
   postData :=
     Format('{"activityType": "%s","start": "%s","end": "%s","personId": "%s","shiftTypeId": %s}',
     [AActivityType, startDate, endDate, APersonId, shifttypeid]);
@@ -89,9 +93,63 @@ begin
   try
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(reqPostVerlof));
-  except on e : exception do
-  TAppManager.GetInstance.ShowToast(e.Message);
+  except
+    on e: exception do
+      TAppManager.GetInstance.ShowToast(e.Message);
   end;
+end;
+
+function TMedEcareDB.PutActivity(AActivityID, AActivityStatus,
+  AActivityType: string; AStartDate, AEndDate: TDateTime;
+  APersonId, AShifttypeId: string) : Boolean;
+var
+  postData: string;
+  startDate, endDate: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+begin
+  JSON := TJSONObject.Create;
+    try
+    reqPutVerlof.URL := baseUrl + 'admin/activities/' + AActivityID;
+      if (AStartDate > 0) then
+      begin
+        startDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AStartDate);
+        JSON.AddPair('start', startDate);
+      end;
+      if (AEndDate > 0) then
+      begin
+        endDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AEndDate);
+        JSON.AddPair('end', endDate);
+      end;
+
+      if AShifttypeId <> '' then
+      JSON.AddPair('shiftTypeId', AShifttypeId);
+      if APersonId <> '' then
+      begin
+        JSON.AddPair('personId', APersonId);
+      end;
+
+      if AActivityStatus <> '' then
+      begin
+        JSON.AddPair('status',AActivityStatus);
+      end;
+
+      postData := JSON.ToString;
+      reqPutVerlof.postData := postData;
+  finally
+  json.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPutVerlof));
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast(e.Message);
+      Result := false;
+    end;
+  end;
+  result := true;
 end;
 
 function TMedEcareDB.Test: string;

@@ -16,4 +16,12 @@ object MedEcareDB: TMedEcareDB
     Left = 232
     Top = 240
   end
+  object reqPutVerlof: TWebHttpRequest
+    Command = httpPUT
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 352
+    Top = 240
+  end
 end

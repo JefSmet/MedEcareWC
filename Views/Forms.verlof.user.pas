@@ -7,7 +7,7 @@ uses
   WEBLib.Forms, WEBLib.Dialogs, view.base, Vcl.StdCtrls, WEBLib.StdCtrls,
   Vcl.Controls, WEBLib.WebCtrls, WEBLib.Lists, WEBLib.WebTools,
   System.Generics.Collections, orm.Person, orm.Activity, model.AppManager,
-  WEBLib.REST;
+  WEBLib.REST, WEBLib.Actions;
 
 type
   TFormVerlofUser = class(TViewBase)
@@ -33,6 +33,7 @@ type
     approve1: TWebButton;
     WebHttpRequest1: TWebHttpRequest;
     request: TWebHTMLDiv;
+    WebElementActionList1: TWebElementActionList;
     procedure WebFormCreate(Sender: TObject);
     procedure calendarnextClick(Sender: TObject);
     procedure calendarprevClick(Sender: TObject);
@@ -40,15 +41,21 @@ type
     procedure submitrequestClick(Sender: TObject);
     procedure startdateChange(Sender: TObject);
     procedure enddateChange(Sender: TObject);
+    [async]
+    procedure WebElementActionList1Action0Execute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    [async]
+    procedure WebElementActionList1Action1Execute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
   private
     FCurrentDate: TDateTime;
     FActivityList: TList<TActivity>;
+    procedure renderList;
     procedure renderCalendar;
     [async]
     procedure SetActivityList;
   public
     function GenerateCalendarHTML(AYear, AMonth: Word;
       AActivityList: TList<TActivity>; AStartDow: Integer = 2): string;
+      function GenerateListHTML(AActivityList: TList<TActivity>): string;
   end;
 
 var
@@ -173,7 +180,7 @@ begin
             begin
               sb.AppendFormat('        <div class="event">%s</div>',
                 [AActivityList[I].Person.LastName]).AppendLine;
-              AActivityList.Delete(I);
+//              AActivityList.Delete(I);
             end;
 
           end;
@@ -195,6 +202,39 @@ begin
   end;
 end;
 
+function TFormVerlofUser.GenerateListHTML(AActivityList: TList<TActivity>): string;
+var
+  sb: TStringBuilder;
+  act: TActivity;
+  dateRange: string;
+  days: Integer;
+begin
+  sb := TStringBuilder.Create;
+  try
+    for act in AActivityList do
+    begin
+      dateRange := FormatDateTime('mmm dd, yyyy', act.Start) + ' - ' +
+                   FormatDateTime('mmm dd, yyyy', act.EndTime);
+      days := DaysBetween(DateOf(act.EndTime), DateOf(act.Start)) + 1;
+      sb.AppendFormat('<tr data-request-id="%s">', [act.Id]).AppendLine;
+      sb.AppendFormat('  <td>%s %s</td>',
+        [act.Person.FirstName, act.Person.LastName]).AppendLine;
+      sb.AppendFormat('  <td>%s</td>', [dateRange]).AppendLine;
+      sb.AppendFormat('  <td><span class="badge bg-secondary">%s</span> %d days</td>',
+        [act.ActivityType, days]).AppendLine;
+      sb.AppendLine('  <td></td>');
+      sb.AppendFormat('  <td><span class="badge bg-secondary">%s</span></td>',[act.status]).AppendLine;
+      sb.AppendFormat('  <td><button type="button" class="btn btn-sm btn-success" data-action="approve" data-id="%s"><i class="bi bi-check-lg"></i></button>', [act.Id]).AppendLine;
+      sb.AppendFormat('      <button type="button" class="btn btn-sm btn-danger" data-action="reject" data-id="%s"><i class="bi bi-x-lg"></i></button></td>', [act.Id]).AppendLine;
+      sb.AppendLine('</tr>');
+    end;
+    Result := sb.ToString;
+  finally
+    sb.Free;
+  end;
+end;
+
+
 procedure TFormVerlofUser.renderCalendar;
 var
   Date: string;
@@ -207,6 +247,15 @@ begin
   Date := FormatDateTime('mmmm yyyy', FCurrentDate);
   Date[1] := UpCase(Date[1]);
   calendarmonth.HTML.Text := Date;
+end;
+
+procedure TFormVerlofUser.renderList;
+var
+  tblString: string;
+begin
+  tblString := GenerateListHTML(FActivityList);
+  document.querySelector('#requests-table tbody').innerHTML := tblString;
+  WebElementActionList1.BindActions;
 end;
 
 procedure TFormVerlofUser.SetActivityList;
@@ -233,6 +282,7 @@ begin
       end;
       FActivityList := TActivity.ToList(response, true);
       renderCalendar;
+      renderList;
     end;
   except
     on e: exception do
@@ -250,8 +300,32 @@ end;
 procedure TFormVerlofUser.submitrequestClick(Sender: TObject);
 begin
   inherited;
-  AppManager.DB.PostActivity(leavetype.Items[leavetype.ItemIndex],
+  AppManager.DB.PostActivity('pending',leavetype.Items[leavetype.ItemIndex],
     startdate.Date, enddate.Date, AppManager.Auth.currentPerson.personId, '');
+end;
+
+procedure TFormVerlofUser.WebElementActionList1Action0Execute(Sender: TObject; Element: TJSHTMLElementRecord;
+  Event: TJSEventParameter);
+begin
+  inherited;
+  try
+  await(Boolean,AppManager.DB.PutActivity(Element.element.Attrs['data-id'],'approved','',0,0,'',''));
+  except
+
+  end;
+  SetActivityList;
+end;
+
+procedure TFormVerlofUser.WebElementActionList1Action1Execute(Sender: TObject; Element: TJSHTMLElementRecord;
+  Event: TJSEventParameter);
+begin
+  inherited;
+   try
+  await(Boolean,AppManager.DB.PutActivity(Element.element.Attrs['data-id'],'rejected','',0,0,'',''));
+  except
+
+  end;
+  SetActivityList;
 end;
 
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);

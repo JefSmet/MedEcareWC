@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, Vcl.Controls, Vcl.StdCtrls,
-  WEBLib.StdCtrls;
+  WEBLib.StdCtrls, WEBLib.ExtCtrls, WEBLib.Grids;
 
 type
   TFormHome = class(TViewBase)

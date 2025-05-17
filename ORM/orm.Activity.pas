@@ -18,6 +18,7 @@ type
     UpdatedAt: TDateTime;
     Person : TPerson;
     ShiftType : TShiftType;
+    Status : string;
 
     class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
       : TActivity; overload; static;
@@ -55,6 +56,7 @@ begin
   Result.UpdatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('updatedAt'), ADateTimeIsUTC);
   Result.Person := TPerson.ToObject(TJSONObject(AJsonObj.GetValue('person')),ADateTimeIsUTC);
   Result.ShiftType := TShiftType.ToObject(TJSONObject(AJsonObj.GetValue('shiftType')),ADateTimeIsUTC);
+  Result.Status := AJsonObj.GetJSONValue('status');
 end;
 
 class function TActivity.ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TActivity>;
