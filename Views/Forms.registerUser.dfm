@@ -1,7 +1,7 @@
 inherited FormRegisterUser: TFormRegisterUser
   object firstName: TWebEdit
-    Left = 0
-    Top = 0
+    Left = 20
+    Top = 20
     Width = 96
     Height = 25
     ElementID = 'firstName'
@@ -14,8 +14,8 @@ inherited FormRegisterUser: TFormRegisterUser
     WidthPercent = 100.000000000000000000
   end
   object email: TWebEdit
-    Left = 101
-    Top = 0
+    Left = 20
+    Top = 100
     Width = 96
     Height = 25
     ChildOrder = 1
@@ -29,8 +29,8 @@ inherited FormRegisterUser: TFormRegisterUser
     WidthPercent = 100.000000000000000000
   end
   object password: TWebEdit
-    Left = 202
-    Top = 0
+    Left = 20
+    Top = 140
     Width = 96
     Height = 25
     ChildOrder = 2
@@ -44,8 +44,8 @@ inherited FormRegisterUser: TFormRegisterUser
     WidthPercent = 100.000000000000000000
   end
   object role: TWebComboBox
-    Left = 303
-    Top = 0
+    Left = 20
+    Top = 180
     Width = 96
     Height = 23
     ElementID = 'role'
@@ -63,8 +63,8 @@ inherited FormRegisterUser: TFormRegisterUser
       'User')
   end
   object lastName: TWebEdit
-    Left = 404
-    Top = 0
+    Left = 20
+    Top = 60
     Width = 96
     Height = 25
     ChildOrder = 4
@@ -78,8 +78,8 @@ inherited FormRegisterUser: TFormRegisterUser
     WidthPercent = 100.000000000000000000
   end
   object dateOfBirth: TWebDateTimePicker
-    Left = 505
-    Top = 0
+    Left = 20
+    Top = 220
     Width = 96
     Height = 25
     ElementID = 'dateOfBirth'
@@ -95,8 +95,8 @@ inherited FormRegisterUser: TFormRegisterUser
     Text = ''
   end
   object register: TWebButton
-    Left = 0
-    Top = 30
+    Left = 20
+    Top = 260
     Width = 96
     Height = 25
     Caption = 'register'

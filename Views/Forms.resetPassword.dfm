@@ -2,8 +2,8 @@ inherited FormResetPassword: TFormResetPassword
   Color = clBtnFace
   OnCreate = WebFormCreate
   object txtConfirmPassword: TWebEdit
-    Left = 0
-    Top = 0
+    Left = 20
+    Top = 60
     Width = 96
     Height = 25
     ElementID = 'txtConfirmPassword'
@@ -16,8 +16,8 @@ inherited FormResetPassword: TFormResetPassword
     WidthPercent = 100.000000000000000000
   end
   object btnReset: TWebButton
-    Left = 101
-    Top = 0
+    Left = 20
+    Top = 100
     Width = 96
     Height = 25
     ChildOrder = 1
@@ -31,8 +31,8 @@ inherited FormResetPassword: TFormResetPassword
     OnClick = btnResetClick
   end
   object alertMsg: TWebHTMLDiv
-    Left = 202
-    Top = 0
+    Left = 20
+    Top = 180
     Width = 96
     Height = 25
     ElementID = 'alertMsg'
@@ -44,8 +44,8 @@ inherited FormResetPassword: TFormResetPassword
     Role = ''
   end
   object lnkLogin: TWebButton
-    Left = 302
-    Top = -1
+    Left = 20
+    Top = 140
     Width = 96
     Height = 25
     ChildOrder = 3
@@ -59,8 +59,8 @@ inherited FormResetPassword: TFormResetPassword
     OnClick = lnkLoginClick
   end
   object txtNewPassword: TWebEdit
-    Left = 404
-    Top = 0
+    Left = 20
+    Top = 20
     Width = 96
     Height = 25
     ChildOrder = 4

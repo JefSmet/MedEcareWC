@@ -1,8 +1,8 @@
 inherited FormHome: TFormHome
   Color = clBtnFace
   object lblUserInfo: TWebLabel
-    Left = 202
-    Top = 144
+    Left = 20
+    Top = 60
     Width = 57
     Height = 15
     Caption = 'lblUserInfo'
@@ -16,8 +16,8 @@ inherited FormHome: TFormHome
     WidthPercent = 100.000000000000000000
   end
   object lblWelcome: TWebLabel
-    Left = 202
-    Top = 80
+    Left = 20
+    Top = 20
     Width = 63
     Height = 15
     Caption = 'lblWelcome'
@@ -31,8 +31,8 @@ inherited FormHome: TFormHome
     WidthPercent = 100.000000000000000000
   end
   object btnLogout: TWebButton
-    Left = 169
-    Top = 208
+    Left = 20
+    Top = 100
     Width = 96
     Height = 25
     Caption = 'btnLogout'

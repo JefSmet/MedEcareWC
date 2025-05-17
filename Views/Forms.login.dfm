@@ -1,8 +1,8 @@
 inherited FormLogin: TFormLogin
   Color = clBtnFace
   object loginPassword: TWebEdit
-    Left = 271
-    Top = 256
+    Left = 20
+    Top = 60
     Width = 96
     Height = 25
     ElementID = 'loginPassword'
@@ -15,8 +15,8 @@ inherited FormLogin: TFormLogin
     WidthPercent = 100.000000000000000000
   end
   object rememberMe: TWebCheckBox
-    Left = 271
-    Top = 384
+    Left = 20
+    Top = 100
     Width = 96
     Height = 25
     ChildOrder = 1
@@ -29,8 +29,8 @@ inherited FormLogin: TFormLogin
     WidthPercent = 100.000000000000000000
   end
   object submitLogin: TWebButton
-    Left = 271
-    Top = 328
+    Left = 20
+    Top = 140
     Width = 96
     Height = 25
     ChildOrder = 2
@@ -44,8 +44,8 @@ inherited FormLogin: TFormLogin
     OnClick = submitLoginClick
   end
   object loginEmail: TWebEdit
-    Left = 271
-    Top = 168
+    Left = 20
+    Top = 20
     Width = 96
     Height = 25
     ChildOrder = 3
@@ -59,8 +59,8 @@ inherited FormLogin: TFormLogin
     WidthPercent = 100.000000000000000000
   end
   object forgotPassword: TWebButton
-    Left = 120
-    Top = 167
+    Left = 20
+    Top = 180
     Width = 96
     Height = 25
     ChildOrder = 4
