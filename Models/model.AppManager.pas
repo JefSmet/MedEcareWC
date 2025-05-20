@@ -35,6 +35,7 @@ type
     procedure ShowToast(AMessage: string; ACaption: string = ''; ADelay: integer = 5000); overload;
     procedure ShowToast(AMessage: string; AOnFinished: TProc; ACaption: string = ''; ADelay: integer = 5000); overload;
     procedure ToggleSidebar(AVisible : boolean);
+    procedure SayHi;
   end;
 
 implementation
@@ -81,6 +82,11 @@ class destructor TAppManager.Destroy;
 begin
   if Assigned(FInstance) then
     FInstance.free;
+end;
+
+procedure TAppManager.SayHi;
+begin
+ShowMessage('Hi');
 end;
 
 procedure TAppManager.SetFormContainerID(AFormContainerID: TElementID);

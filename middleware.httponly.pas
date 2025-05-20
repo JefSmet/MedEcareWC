@@ -4,6 +4,7 @@ interface
 
 uses WebLib.REST, System.SysUtils, JS, Web;
 
+[async]
 function PerformRequestWithCredentials(ARequest: TWebHttpRequest): TJSPromise;
 function PerformHttpOnly(ARequest: TWebHttpRequest): TJSPromise;
 

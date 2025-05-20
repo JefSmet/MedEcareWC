@@ -24,7 +24,8 @@ type
       AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string);
     [async]
     function PutActivity(AActivityID, AActivityStatus, AActivityType: string;
-      AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string) : Boolean;
+      AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string)
+      : Boolean;
   end;
 
 var
@@ -45,31 +46,43 @@ const
 function TMedEcareDB.GetActivities(const AType: string;
   const AYear, AMonth: word; AList: TList<TActivity>): Boolean;
 var
-  endpoint: string;
+  formattedVerlofEndpoint: string;
+  ActivityType: string;
   xhr: TJSXMLHttpRequest;
-  list: TList<TActivity>;
+  response: string;
+  activityList: TList<TActivity>;
 begin
-  endpoint := Format('admin/activities/filter?year=%d&month=%d&activityType=%s',
-    [AYear, AMonth, AType]);
-  reqGetActivities.URL := baseUrl + endpoint;
+  ActivityType := 'shift';
+  formattedVerlofEndpoint :=
+    Format('admin/activities/filter?year=%d&month=%d&activityType=%s',
+    [AYear, AMonth, ActivityType]);
+  reqGetActivities.URL := baseUrl + formattedVerlofEndpoint;
   try
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(reqGetActivities));
-    if xhr.Status = 200 then
+    if (xhr.Status = 200) or (xhr.Status = 304) then
     begin
-      list := TActivity.ToList(TJSJSON.stringify(xhr.response), true);
+      response := xhr.responseText;
+      activityList := TActivity.ToList(response, true);
       try
-        AList.Clear;
-        AList.AddRange(list);
-        Result := true;
+        if Assigned(AList) then
+        begin
+          AList.Clear;
+          AList.AddRange(activityList);
+        end;
       finally
-        list.Free;
+        activityList.Free;
       end;
+
+      Exit(true);
     end;
   except
-    exit(false);
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
   end;
-
 end;
 
 procedure TMedEcareDB.PostActivity(AActivityStatus, AActivityType: string;
@@ -101,7 +114,7 @@ end;
 
 function TMedEcareDB.PutActivity(AActivityID, AActivityStatus,
   AActivityType: string; AStartDate, AEndDate: TDateTime;
-  APersonId, AShifttypeId: string) : Boolean;
+  APersonId, AShifttypeId: string): Boolean;
 var
   postData: string;
   startDate, endDate: string;
@@ -109,35 +122,35 @@ var
   JSON: TJSONObject;
 begin
   JSON := TJSONObject.Create;
-    try
+  try
     reqPutVerlof.URL := baseUrl + 'admin/activities/' + AActivityID;
-      if (AStartDate > 0) then
-      begin
-        startDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AStartDate);
-        JSON.AddPair('start', startDate);
-      end;
-      if (AEndDate > 0) then
-      begin
-        endDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AEndDate);
-        JSON.AddPair('end', endDate);
-      end;
+    if (AStartDate > 0) then
+    begin
+      startDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AStartDate);
+      JSON.AddPair('start', startDate);
+    end;
+    if (AEndDate > 0) then
+    begin
+      endDate := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AEndDate);
+      JSON.AddPair('end', endDate);
+    end;
 
-      if AShifttypeId <> '' then
+    if AShifttypeId <> '' then
       JSON.AddPair('shiftTypeId', AShifttypeId);
-      if APersonId <> '' then
-      begin
-        JSON.AddPair('personId', APersonId);
-      end;
+    if APersonId <> '' then
+    begin
+      JSON.AddPair('personId', APersonId);
+    end;
 
-      if AActivityStatus <> '' then
-      begin
-        JSON.AddPair('status',AActivityStatus);
-      end;
+    if AActivityStatus <> '' then
+    begin
+      JSON.AddPair('status', AActivityStatus);
+    end;
 
-      postData := JSON.ToString;
-      reqPutVerlof.postData := postData;
+    postData := JSON.ToString;
+    reqPutVerlof.postData := postData;
   finally
-  json.Free;
+    JSON.Free;
   end;
   try
     xhr := await(TJSXMLHttpRequest,
@@ -146,10 +159,10 @@ begin
     on e: exception do
     begin
       TAppManager.GetInstance.ShowToast(e.Message);
-      Result := false;
+      Result := False;
     end;
   end;
-  result := true;
+  Result := true;
 end;
 
 function TMedEcareDB.Test: string;

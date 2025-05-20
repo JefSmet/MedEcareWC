@@ -4,9 +4,9 @@ object MedEcareDB: TMedEcareDB
   object reqGetActivities: TWebHttpRequest
     Headers.Strings = (
       'Content-Type:application/json')
-    ResponseType = rtJSON
-    Left = 248
-    Top = 24
+    ResponseType = rtText
+    Left = 120
+    Top = 240
   end
   object reqPostVerlof: TWebHttpRequest
     Command = httpPOST

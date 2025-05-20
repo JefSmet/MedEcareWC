@@ -1,11 +1,11 @@
-object FormVerlofUser: TFormVerlofUser
-  Width = 887
-  Height = 647
+inherited FormVerlofUser2: TFormVerlofUser2
+  Width = 927
+  Height = 512
   OnCreate = WebFormCreate
   OnDestroy = WebFormDestroy
   object reject1: TWebButton
-    Left = 0
-    Top = 0
+    Left = 162
+    Top = 183
     Width = 96
     Height = 25
     Caption = 'reject1'
@@ -48,25 +48,24 @@ object FormVerlofUser: TFormVerlofUser
     ItemIndex = -1
   end
   object list: TWebHTMLDiv
-    Left = 303
+    Left = 404
     Top = 0
     Width = 96
     Height = 25
     ElementID = 'list'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
-    ChildOrder = 3
+    ChildOrder = 4
     ElementPosition = epIgnore
     ElementFont = efCSS
     Role = ''
   end
   object calendarnext: TWebButton
-    Left = 404
-    Top = 0
+    Left = 33
+    Top = 152
     Width = 96
     Height = 25
-    Caption = 'calendarnext'
-    ChildOrder = 4
+    ChildOrder = 5
     ElementID = 'calendar-next'
     ElementFont = efCSS
     ElementPosition = epIgnore
@@ -74,14 +73,15 @@ object FormVerlofUser: TFormVerlofUser
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnClick = calendarnextClick
   end
   object tabcalendarbtn: TWebButton
-    Left = 0
-    Top = 30
+    Left = 607
+    Top = -1
     Width = 96
     Height = 25
     Caption = 'tabcalendarbtn'
-    ChildOrder = 5
+    ChildOrder = 6
     ElementID = 'tab-calendar-btn'
     ElementFont = efCSS
     ElementPosition = epIgnore
@@ -91,42 +91,42 @@ object FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object enddate: TWebDateTimePicker
-    Left = 101
-    Top = 30
+    Left = 639
+    Top = 200
     Width = 96
     Height = 25
     ElementID = 'end-date'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
     BorderStyle = bsSingle
-    ChildOrder = 6
+    ChildOrder = 7
     Color = clWhite
-    Date = 45797.711272037040000000
+    Date = 45794.692988877320000000
     ElementFont = efCSS
     ElementPosition = epIgnore
     Role = ''
     Text = ''
+    OnChange = enddateChange
   end
   object request: TWebHTMLDiv
-    Left = 202
-    Top = 30
+    Left = 8
+    Top = 8
     Width = 96
     Height = 25
     ElementID = 'request'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
-    ChildOrder = 7
+    ChildOrder = 8
     ElementPosition = epIgnore
     ElementFont = efCSS
     Role = ''
   end
   object submitrequest: TWebButton
-    Left = 303
-    Top = 30
+    Left = 553
+    Top = 302
     Width = 96
     Height = 25
-    Caption = 'submitrequest'
-    ChildOrder = 8
+    ChildOrder = 10
     ElementID = 'submit-request'
     ElementFont = efCSS
     ElementPosition = epIgnore
@@ -134,58 +134,32 @@ object FormVerlofUser: TFormVerlofUser
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnClick = submitrequestClick
   end
   object startdate: TWebDateTimePicker
-    Left = 404
-    Top = 30
+    Left = 463
+    Top = 200
     Width = 96
     Height = 25
     ElementID = 'start-date'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
     BorderStyle = bsSingle
-    ChildOrder = 9
+    ChildOrder = 11
     Color = clWhite
-    Date = 45797.711272835650000000
+    Date = 45794.692988877320000000
     ElementFont = efCSS
     ElementPosition = epIgnore
     Role = ''
     Text = ''
+    OnChange = startdateChange
   end
   object leaveTabsContent: TWebHTMLDiv
-    Left = 0
-    Top = 60
+    Left = 404
+    Top = 30
     Width = 96
     Height = 25
     ElementID = 'leaveTabsContent'
-    HeightStyle = ssAuto
-    WidthStyle = ssAuto
-    ChildOrder = 10
-    ElementPosition = epIgnore
-    ElementFont = efCSS
-    Role = ''
-  end
-  object calendarprev: TWebButton
-    Left = 101
-    Top = 60
-    Width = 96
-    Height = 25
-    Caption = 'calendarprev'
-    ChildOrder = 11
-    ElementID = 'calendar-prev'
-    ElementFont = efCSS
-    ElementPosition = epIgnore
-    HeightStyle = ssAuto
-    HeightPercent = 100.000000000000000000
-    WidthStyle = ssAuto
-    WidthPercent = 100.000000000000000000
-  end
-  object calendartable: TWebHTMLDiv
-    Left = 202
-    Top = 60
-    Width = 96
-    Height = 25
-    ElementID = 'calendar-table'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
     ChildOrder = 12
@@ -193,22 +167,50 @@ object FormVerlofUser: TFormVerlofUser
     ElementFont = efCSS
     Role = ''
   end
+  object calendarprev: TWebButton
+    Left = 162
+    Top = 152
+    Width = 96
+    Height = 25
+    ChildOrder = 13
+    ElementID = 'calendar-prev'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    OnClick = calendarprevClick
+  end
+  object calendartable: TWebHTMLDiv
+    Left = 606
+    Top = 30
+    Width = 96
+    Height = 25
+    ElementID = 'calendar-table'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    ChildOrder = 14
+    ElementPosition = epIgnore
+    ElementFont = efCSS
+    Role = ''
+  end
   object calendarlegend: TWebHTMLDiv
-    Left = 303
-    Top = 60
+    Left = 707
+    Top = 30
     Width = 96
     Height = 25
     ElementID = 'calendar-legend'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
-    ChildOrder = 13
+    ChildOrder = 15
     ElementPosition = epIgnore
     ElementFont = efCSS
     Role = ''
   end
   object leavetype: TWebComboBox
-    Left = 404
-    Top = 60
+    Left = 553
+    Top = 258
     Width = 96
     Height = 23
     ElementID = 'leave-type'
@@ -216,18 +218,23 @@ object FormVerlofUser: TFormVerlofUser
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
-    Text = 'leavetype'
+    Text = 'Verlof'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
-    ItemIndex = -1
+    ItemIndex = 0
+    Items.Strings = (
+      'Verlof'
+      'Congres'
+      'Ziek'
+      'Andere')
   end
   object tablistbtn: TWebButton
-    Left = 0
-    Top = 90
+    Left = 101
+    Top = 60
     Width = 96
     Height = 25
     Caption = 'tablistbtn'
-    ChildOrder = 15
+    ChildOrder = 17
     ElementID = 'tab-list-btn'
     ElementFont = efCSS
     ElementPosition = epIgnore
@@ -237,11 +244,11 @@ object FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object searchinput: TWebEdit
-    Left = 101
-    Top = 90
+    Left = 202
+    Top = 60
     Width = 96
     Height = 25
-    ChildOrder = 16
+    ChildOrder = 18
     ElementID = 'search-input'
     ElementFont = efCSS
     ElementPosition = epIgnore
@@ -252,34 +259,34 @@ object FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object calendarmonth: TWebHTMLSpan
-    Left = 303
-    Top = 90
+    Left = 404
+    Top = 60
     Width = 96
     Height = 25
     ElementID = 'calendar-month'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
-    ChildOrder = 18
+    ChildOrder = 20
     ElementPosition = epIgnore
     ElementFont = efCSS
     Role = ''
   end
   object calendar: TWebHTMLDiv
-    Left = 404
-    Top = 90
+    Left = 505
+    Top = 60
     Width = 96
     Height = 25
     ElementID = 'calendar'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
-    ChildOrder = 19
+    ChildOrder = 21
     ElementPosition = epIgnore
     ElementFont = efCSS
     Role = ''
   end
   object filterstatus: TWebComboBox
-    Left = 0
-    Top = 120
+    Left = 606
+    Top = 60
     Width = 96
     Height = 23
     ElementID = 'filter-status'
@@ -293,12 +300,12 @@ object FormVerlofUser: TFormVerlofUser
     ItemIndex = -1
   end
   object approve1: TWebButton
-    Left = 101
-    Top = 120
+    Left = 33
+    Top = 183
     Width = 96
     Height = 25
     Caption = 'approve1'
-    ChildOrder = 21
+    ChildOrder = 23
     ElementID = 'approve-1'
     ElementFont = efCSS
     ElementPosition = epIgnore
@@ -306,5 +313,30 @@ object FormVerlofUser: TFormVerlofUser
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+  end
+  object WebHttpRequest1: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 352
+    Top = 152
+  end
+  object WebElementActionList1: TWebElementActionList
+    Actions = <
+      item
+        ID = ''
+        Name = 'Action0'
+        Selector = '[data-action="approve"]'
+        TargetAction = actAddClass
+        OnExecute = WebElementActionList1Action0Execute
+      end
+      item
+        ID = ''
+        Name = 'Action1'
+        Selector = '[data-action="reject"]'
+        OnExecute = WebElementActionList1Action1Execute
+      end>
+    Left = 336
+    Top = 328
   end
 end
