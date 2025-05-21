@@ -19,6 +19,7 @@ type
     FToastShowing: Boolean;
     FDB: TMedEcareDB;
     procedure ShowForm(AForm: TWebFormClass);
+    procedure DoAppError(Sender: TObject; AError: TApplicationError; var Handled: boolean);
   public
     destructor Destroy; override;
     class function GetInstance: TAppManager;
@@ -50,6 +51,7 @@ uses
 constructor TAppManager.CreatePrivate;
 begin
   inherited Create;
+  Application.OnError:=DoAppError;
   FAuth := TAuthorisation.Create(nil);
   FDB := TMedEcareDB.Create(nil);
 end;
@@ -69,6 +71,12 @@ begin
   FAuth.free;
   FDB.free;
   inherited Destroy;
+end;
+
+procedure TAppManager.DoAppError(Sender: TObject; AError: TApplicationError; var Handled: boolean);
+begin
+ShowToast('Er ging iets mis: '+AError.AMessage);
+Handled:=True;
 end;
 
 class function TAppManager.GetInstance: TAppManager;

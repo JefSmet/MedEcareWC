@@ -3,7 +3,8 @@ unit orm.Activity;
 interface
 
 uses
-  JS, Web, WEBLib.REST, System.Generics.Collections, WEBLib.JSON, orm.Person, orm.ShiftType;
+  JS, Web, WEBLib.REST, System.Generics.Collections, WEBLib.JSON, orm.Person,
+  orm.ShiftType;
 
 type
 
@@ -16,20 +17,24 @@ type
     ShiftTypeId: string;
     CreatedAt: TDateTime;
     UpdatedAt: TDateTime;
-    Person : TPerson;
-    ShiftType : TShiftType;
-    Status : string;
+    Person: TPerson;
+    ShiftType: TShiftType;
+    Status: string;
 
     class function FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
       : TActivity; overload; static;
-    class function FromJSON(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean)
-      : TActivity; overload; static;
-    class function ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TActivity>; static;
+    class function FromJSON(const AJsonObj: TJSONObject;
+      ADateTimeIsUTC: Boolean): TActivity; overload; static;
+    class function ToList(const AJson: string; ADateTimeIsUTC: Boolean)
+      : TList<TActivity>; static;
   end;
+
+  TActivityList = TList<TActivity>;
 
 implementation
 
-class function TActivity.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean): TActivity;
+class function TActivity.FromJSON(const AJson: string; ADateTimeIsUTC: Boolean)
+  : TActivity;
 var
   JS: TJSON;
   jsonObject: TJSONObject;
@@ -43,23 +48,32 @@ begin
   end;
 end;
 
-class function TActivity.FromJSON(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean): TActivity;
+class function TActivity.FromJSON(const AJsonObj: TJSONObject;
+  ADateTimeIsUTC: Boolean): TActivity;
 begin
-  Result := Default(TActivity);
+  Result := Default (TActivity);
   Result.Id := AJsonObj.GetJSONValue('id');
   Result.ActivityType := AJsonObj.GetJSONValue('activityType');
-  Result.Start := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('start'), ADateTimeIsUTC);
-  Result.EndTime := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('end'), ADateTimeIsUTC);
+  Result.Start := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('start'),
+    ADateTimeIsUTC);
+  Result.EndTime := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('end'),
+    ADateTimeIsUTC);
   Result.PersonId := AJsonObj.GetJSONValue('personId');
   Result.ShiftTypeId := AJsonObj.GetJSONValue('shiftTypeId');
-  Result.CreatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('createdAt'), ADateTimeIsUTC);
-  Result.UpdatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('updatedAt'), ADateTimeIsUTC);
-  Result.Person := TPerson.ToObject(TJSONObject(AJsonObj.GetValue('person')),ADateTimeIsUTC);
-  Result.ShiftType := TShiftType.ToObject(TJSONObject(AJsonObj.GetValue('shiftType')),ADateTimeIsUTC);
+  Result.CreatedAt := TWebRESTClient.IsoToDateTime
+    (AJsonObj.GetJSONValue('createdAt'), ADateTimeIsUTC);
+  Result.UpdatedAt := TWebRESTClient.IsoToDateTime
+    (AJsonObj.GetJSONValue('updatedAt'), ADateTimeIsUTC);
+  Result.Person := TPerson.ToObject(TJSONObject(AJsonObj.GetValue('person')),
+    ADateTimeIsUTC);
+  if Result.ShiftTypeId <> 'null' then
+    Result.ShiftType := TShiftType.ToObject
+      (TJSONObject(AJsonObj.GetValue('shiftType')), ADateTimeIsUTC);
   Result.Status := AJsonObj.GetJSONValue('status');
 end;
 
-class function TActivity.ToList(const AJson: string; ADateTimeIsUTC: Boolean): TList<TActivity>;
+class function TActivity.ToList(const AJson: string; ADateTimeIsUTC: Boolean)
+  : TList<TActivity>;
 var
   JS: TJSON;
   jsonArr: TJSONArray;

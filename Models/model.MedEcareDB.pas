@@ -52,7 +52,7 @@ var
   response: string;
   activityList: TList<TActivity>;
 begin
-  ActivityType := 'shift';
+  ActivityType := AType;
   formattedVerlofEndpoint :=
     Format('admin/activities/filter?year=%d&month=%d&activityType=%s',
     [AYear, AMonth, ActivityType]);

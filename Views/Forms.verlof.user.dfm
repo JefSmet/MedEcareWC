@@ -62,10 +62,9 @@ object FormVerlofUser: TFormVerlofUser
   end
   object calendarnext: TWebButton
     Left = 404
-    Top = 0
+    Top = 388
     Width = 96
     Height = 25
-    Caption = 'calendarnext'
     ChildOrder = 4
     ElementID = 'calendar-next'
     ElementFont = efCSS
@@ -74,6 +73,7 @@ object FormVerlofUser: TFormVerlofUser
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnClick = calendarButtonClick
   end
   object tabcalendarbtn: TWebButton
     Left = 0
@@ -166,11 +166,10 @@ object FormVerlofUser: TFormVerlofUser
     Role = ''
   end
   object calendarprev: TWebButton
-    Left = 101
-    Top = 60
+    Left = 293
+    Top = 388
     Width = 96
     Height = 25
-    Caption = 'calendarprev'
     ChildOrder = 11
     ElementID = 'calendar-prev'
     ElementFont = efCSS
@@ -179,6 +178,7 @@ object FormVerlofUser: TFormVerlofUser
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnClick = calendarButtonClick
   end
   object calendartable: TWebHTMLDiv
     Left = 202
@@ -278,8 +278,8 @@ object FormVerlofUser: TFormVerlofUser
     Role = ''
   end
   object filterstatus: TWebComboBox
-    Left = 0
-    Top = 120
+    Left = 191
+    Top = 389
     Width = 96
     Height = 23
     ElementID = 'filter-status'
@@ -306,5 +306,26 @@ object FormVerlofUser: TFormVerlofUser
     HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+  end
+  object btnTest: TWebButton
+    Left = 392
+    Top = 312
+    Width = 96
+    Height = 25
+    Caption = 'Test'
+    ChildOrder = 21
+    HeightPercent = 100.000000000000000000
+    Visible = False
+    WidthPercent = 100.000000000000000000
+    OnClick = btnTestClick
+  end
+  object webElementAL: TWebElementActionList
+    Actions = <
+      item
+        ID = ''
+        Name = 'actionCalendarPrev'
+      end>
+    Left = 576
+    Top = 504
   end
 end

@@ -42,6 +42,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.ErrorType := TApplicationErrorType.aeSilent;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFormMain, FormMain);
   Application.CreateForm(TViewBase, ViewBase);

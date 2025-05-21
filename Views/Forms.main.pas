@@ -28,6 +28,7 @@ type
   private
     FAppManager: TAppManager;
     procedure SetNavElementActive(Element: TJSHTMLElementRecord);
+
   public
     { Public declarations }
   end;
