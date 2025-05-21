@@ -39,6 +39,7 @@ type
     procedure WebFormDestroy(Sender: TObject);
     procedure btnTestClick(Sender: TObject);
     procedure calendarButtonClick(Sender: TObject);
+    procedure onSearchInputChange(Sender: TObject);
   private
     FAppmanager: TAppManager;
     FYear: Word;
@@ -56,7 +57,7 @@ type
     procedure renderCalendar;
     procedure renderList;
     procedure filterVerlofList(AFilteredList: TActivityList; AName: string = '';
-      AStatus: string = '');
+      AStatus: string = ''; AActivityType: string = '');
   public
     { Public declarations }
   end;
@@ -76,9 +77,9 @@ end;
 procedure TFormVerlofUser.DoDateChanged;
 begin
 
-  await(Boolean,GetVerlofList);
+  await(Boolean, GetVerlofList);
   renderCalendar;
-//  renderList;
+  renderList;
 end;
 
 procedure TFormVerlofUser.DoTest;
@@ -96,7 +97,7 @@ begin
 end;
 
 procedure TFormVerlofUser.filterVerlofList(AFilteredList: TActivityList;
-  AName, AStatus: string);
+  AName, AStatus, AActivityType: string);
 var
   Activity: TActivity;
   matchesFilter: Boolean;
@@ -118,6 +119,11 @@ begin
     then
       matchesFilter := False;
 
+    // Filter op status (als er een status is opgegeven)
+    if (AActivityType <> '') and
+      (LowerCase(Activity.ActivityType) <> LowerCase(AActivityType)) then
+      matchesFilter := False;
+
     // Als deze activiteit door alle filters komt, voeg toe aan de tijdelijke lijst
     if matchesFilter then
       AFilteredList.Add(Activity);
@@ -125,10 +131,19 @@ begin
 end;
 
 function TFormVerlofUser.GetVerlofList: Boolean;
+var
+  I: integer;
 begin
   try
-    await(Boolean, FAppmanager.DB.GetActivities('Verlof', FYear, FMonth,
+    await(Boolean, FAppmanager.DB.GetActivities('', FYear, FMonth,
       FAllVerlofLijst));
+    for I := FAllVerlofLijst.Count - 1 downto 0 do
+    begin
+      if LowerCase(FAllVerlofLijst[I].ActivityType) = 'shift' then
+      begin
+        FAllVerlofLijst.Delete(I);
+      end;
+    end;
     Exit(True);
   except
     result := False;
@@ -142,10 +157,10 @@ const
 var
   sb: TStringBuilder;
   FirstOfMonth, CellDate, TodayDate: TDateTime;
-  StartDow, DaysInMonth, DayCounter: Integer;
-  WeekIdx, WeekDayIdx, PascalDow: Integer;
+  StartDow, DaysInMonth, DayCounter: integer;
+  WeekIdx, WeekDayIdx, PascalDow: integer;
   DayName, ClassAttr: string;
-  I: Integer;
+  I: integer;
 begin
   filterVerlofList(FVerlofLijst, '', 'Approved');
   // 1) Bereken eerste dag en aantal dagen
@@ -182,9 +197,8 @@ begin
       for WeekDayIdx := 1 to DaysPerWeek do
       begin
         // Eerste week: voor de 1e dag, of na het einde van de maand?
-        if ((WeekIdx = 0) and
-          (WeekDayIdx < ((StartDow - 2 + DaysPerWeek) mod DaysPerWeek) +
-          1)) or (DayCounter > DaysInMonth) then
+        if ((WeekIdx = 0) and (WeekDayIdx < ((StartDow - 2 + DaysPerWeek)
+          mod DaysPerWeek) + 1)) or (DayCounter > DaysInMonth) then
         begin
           sb.AppendLine('      <td>&nbsp;</td>')
         end
@@ -244,18 +258,23 @@ end;
 
 procedure TFormVerlofUser.renderList;
 var
-  searchQuery, Status: string;
+  searchQuery, Status, ActivityType: string;
   sb: TStringBuilder;
   act: TActivity;
   dateRange: string;
-  days: Integer;
+  days: integer;
 begin
   if not FAppmanager.Auth.currentPerson.Roles.Contains('admin') then
     Exit;
 
   searchQuery := searchinput.Text;
-  Status := filterstatus.Items[filterstatus.ItemIndex];
-  filterVerlofList(FAdminVerlofLijst, searchQuery, Status);
+  if filterstatus.ItemIndex < 0 then
+    Status := ''
+  else
+    Status := filterstatus.Items[filterstatus.ItemIndex];
+    ActivityType := filtertype.Text;
+
+  filterVerlofList(FAdminVerlofLijst, searchQuery, Status, ActivityType);
 
   sb := TStringBuilder.Create;
   try
@@ -289,6 +308,11 @@ begin
 
 end;
 
+procedure TFormVerlofUser.onSearchInputChange(Sender: TObject);
+begin
+  renderList;
+end;
+
 procedure TFormVerlofUser.calendarButtonClick(Sender: TObject);
 var
   encodatedDate: TDateTime;
@@ -300,7 +324,7 @@ begin
   else
     toInc := 1;
   encodatedDate := EncodeDate(FYear, FMonth, 1);
-  encodatedDate := IncMonth(encodatedDate,toInc);
+  encodatedDate := IncMonth(encodatedDate, toInc);
   DecodeDate(encodatedDate, FYear, FMonth, day);
   DoDateChanged;
 end;

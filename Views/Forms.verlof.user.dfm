@@ -33,8 +33,8 @@ object FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object filtertype: TWebComboBox
-    Left = 202
-    Top = 0
+    Left = 76
+    Top = 358
     Width = 96
     Height = 23
     ElementID = 'filter-type'
@@ -42,10 +42,16 @@ object FormVerlofUser: TFormVerlofUser
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
-    Text = 'filtertype'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnChange = onSearchInputChange
     ItemIndex = -1
+    Items.Strings = (
+      ''
+      'Verlof'
+      'Congres'
+      'Ziek'
+      'Andere')
   end
   object list: TWebHTMLDiv
     Left = 303
@@ -207,8 +213,8 @@ object FormVerlofUser: TFormVerlofUser
     Role = ''
   end
   object leavetype: TWebComboBox
-    Left = 404
-    Top = 60
+    Left = 76
+    Top = 389
     Width = 96
     Height = 23
     ElementID = 'leave-type'
@@ -216,10 +222,15 @@ object FormVerlofUser: TFormVerlofUser
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
-    Text = 'leavetype'
+    Text = 'Verlof'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
     ItemIndex = -1
+    Items.Strings = (
+      'Verlof'
+      'Congres'
+      'Ziek'
+      'Andere')
   end
   object tablistbtn: TWebButton
     Left = 0
@@ -237,8 +248,8 @@ object FormVerlofUser: TFormVerlofUser
     WidthPercent = 100.000000000000000000
   end
   object searchinput: TWebEdit
-    Left = 101
-    Top = 90
+    Left = 191
+    Top = 358
     Width = 96
     Height = 25
     ChildOrder = 16
@@ -247,9 +258,9 @@ object FormVerlofUser: TFormVerlofUser
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
-    Text = 'searchinput'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnChange = onSearchInputChange
   end
   object calendarmonth: TWebHTMLSpan
     Left = 303
@@ -290,7 +301,13 @@ object FormVerlofUser: TFormVerlofUser
     Text = 'filterstatus'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
+    OnChange = onSearchInputChange
     ItemIndex = -1
+    Items.Strings = (
+      ''
+      'Scheduled'
+      'Approved'
+      'Rejected')
   end
   object approve1: TWebButton
     Left = 101
