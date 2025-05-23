@@ -327,7 +327,6 @@ inherited FormVerlofUser2: TFormVerlofUser2
         ID = ''
         Name = 'Action0'
         Selector = '[data-action="approve"]'
-        TargetAction = actAddClass
         OnExecute = WebElementActionList1Action0Execute
       end
       item

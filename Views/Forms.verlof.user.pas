@@ -1,4 +1,4 @@
-unit Forms.verlof.user;
+ï»¿unit Forms.verlof.user;
 
 interface
 
@@ -11,35 +11,31 @@ uses
 
 type
   TFormVerlofUser = class(TWebForm)
-    reject1: TWebButton;
-    tabrequestbtn: TWebButton;
     filtertype: TWebComboBox;
-    list: TWebHTMLDiv;
     calendarnext: TWebButton;
-    tabcalendarbtn: TWebButton;
     enddate: TWebDateTimePicker;
-    request: TWebHTMLDiv;
     submitrequest: TWebButton;
     startdate: TWebDateTimePicker;
-    leaveTabsContent: TWebHTMLDiv;
     calendarprev: TWebButton;
-    calendartable: TWebHTMLDiv;
-    calendarlegend: TWebHTMLDiv;
     leavetype: TWebComboBox;
-    tablistbtn: TWebButton;
     searchinput: TWebEdit;
     calendarmonth: TWebHTMLSpan;
-    calendar: TWebHTMLDiv;
     filterstatus: TWebComboBox;
-    approve1: TWebButton;
-    btnTest: TWebButton;
     webElementAL: TWebElementActionList;
     [async]
     procedure WebFormCreate(Sender: TObject);
     procedure WebFormDestroy(Sender: TObject);
-    procedure btnTestClick(Sender: TObject);
     procedure calendarButtonClick(Sender: TObject);
     procedure onSearchInputChange(Sender: TObject);
+    procedure submitrequestClick(Sender: TObject);
+    [async]
+    procedure webElementALacApprovedExecute(Sender: TObject;
+      Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    [async]
+    procedure webElementALExecute(Sender: TObject; AAction: TElementAction;
+      Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure startdateChange(Sender: TObject);
+    procedure enddateChange(Sender: TObject);
   private
     FAppmanager: TAppManager;
     FYear: Word;
@@ -48,11 +44,9 @@ type
     FAdminVerlofLijst: TActivityList;
     FAllVerlofLijst: TActivityList;
     [async]
-    procedure DoTest;
-    [async]
     function GetVerlofList: Boolean;
     [async]
-    procedure DoDateChanged;
+    procedure DoUpdateLists;
     procedure checkInitAdminUi;
     procedure renderCalendar;
     procedure renderList;
@@ -69,12 +63,7 @@ implementation
 
 {$R *.dfm}
 
-procedure TFormVerlofUser.btnTestClick(Sender: TObject);
-begin
-  DoTest;
-end;
-
-procedure TFormVerlofUser.DoDateChanged;
+procedure TFormVerlofUser.DoUpdateLists;
 begin
 
   await(Boolean, GetVerlofList);
@@ -82,17 +71,11 @@ begin
   renderList;
 end;
 
-procedure TFormVerlofUser.DoTest;
-var
-  verlofList: TList<TActivity>;
+procedure TFormVerlofUser.enddateChange(Sender: TObject);
 begin
-  verlofList := TList<TActivity>.Create;
-  try
-    await(Boolean, FAppmanager.DB.GetActivities('Verlof', 2025, 05,
-      verlofList));
-    ShowMessage(verlofList.First.Person.FirstName);
-  finally
-    verlofList.Free;
+  if startdate.Date > enddate.Date then
+  begin
+    startdate.Date := enddate.Date;
   end;
 end;
 
@@ -165,7 +148,7 @@ begin
   filterVerlofList(FVerlofLijst, '', 'Approved');
   // 1) Bereken eerste dag en aantal dagen
   FirstOfMonth := EncodeDate(FYear, FMonth, 1);
-  StartDow := DayOfWeek(FirstOfMonth); // 1=zo … 7=za
+  StartDow := DayOfWeek(FirstOfMonth); // 1=zo ï¿½ 7=za
   DaysInMonth := DaysInAMonth(FYear, FMonth);
   TodayDate := Date;
 
@@ -272,7 +255,7 @@ begin
     Status := ''
   else
     Status := filterstatus.Items[filterstatus.ItemIndex];
-    ActivityType := filtertype.Text;
+  ActivityType := filtertype.Text;
 
   filterVerlofList(FAdminVerlofLijst, searchQuery, Status, ActivityType);
 
@@ -284,17 +267,16 @@ begin
         FormatDateTime('mmm dd, yyyy', act.EndTime);
       days := DaysBetween(DateOf(act.EndTime), DateOf(act.Start)) + 1;
       sb.AppendFormat('<tr data-request-id="%s">', [act.Id]).AppendLine;
-      sb.AppendFormat('  <td>%s %s</td>', [act.Person.FirstName,
+      sb.AppendFormat('  <td style="vertical-align: middle;">%s %s</td>', [act.Person.FirstName,
         act.Person.LastName]).AppendLine;
-      sb.AppendFormat('  <td>%s</td>', [dateRange]).AppendLine;
+      sb.AppendFormat('  <td style="vertical-align: middle;">%s</td>', [dateRange]).AppendLine;
       sb.AppendFormat
-        ('  <td><span class="badge bg-secondary">%s</span> %d days</td>',
+        ('  <td style="vertical-align: middle;"><span class="badge bg-secondary">%s</span> %d days</td>',
         [act.ActivityType, days]).AppendLine;
-      sb.AppendLine('  <td></td>');
-      sb.AppendFormat('  <td><span class="badge bg-secondary">%s</span></td>',
+      sb.AppendFormat('  <td style="vertical-align: middle;"><span class="badge bg-secondary">%s</span></td>',
         [act.Status]).AppendLine;
       sb.AppendFormat
-        ('  <td><button type="button" class="btn btn-sm btn-success" data-action="approve" data-id="%s"><i class="bi bi-check-lg"></i></button>',
+        ('  <td style="vertical-align: middle;"><button type="button" class="btn btn-sm btn-success" data-action="approve" data-id="%s"><i class="bi bi-check-lg"></i></button>',
         [act.Id]).AppendLine;
       sb.AppendFormat
         ('      <button type="button" class="btn btn-sm btn-danger" data-action="reject" data-id="%s"><i class="bi bi-x-lg"></i></button></td>',
@@ -302,10 +284,40 @@ begin
       sb.AppendLine('</tr>');
     end;
     Document.querySelector('#requests-table tbody').innerHTML := sb.ToString;
+    webElementAL.BindActions;
   finally
     sb.Free;
   end;
 
+end;
+
+procedure TFormVerlofUser.startdateChange(Sender: TObject);
+begin
+if enddate.Date < startdate.Date then
+    enddate.Date := startdate.Date;
+end;
+
+procedure TFormVerlofUser.submitrequestClick(Sender: TObject);
+begin
+  FAppmanager.DB.PostActivity('pending', leavetype.Items[leavetype.ItemIndex],
+    startdate.Date, enddate.Date, FAppmanager.Auth.currentPerson.personId, '');
+end;
+
+procedure TFormVerlofUser.webElementALacApprovedExecute(Sender: TObject;
+  Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+begin
+  await(Boolean, FAppmanager.DB.PutActivity(Element.Element.Attrs['data-id'],
+    'approved', '', 0, 0, '', ''));
+  await(DoUpdateLists);
+end;
+
+procedure TFormVerlofUser.webElementALExecute(Sender: TObject;
+  AAction: TElementAction; Element: TJSHTMLElementRecord;
+  Event: TJSEventParameter);
+begin
+  await(Boolean, FAppmanager.DB.PutActivity(Element.Element.Attrs['data-id'],
+    'rejected', '', 0, 0, '', ''));
+  await(DoUpdateLists);
 end;
 
 procedure TFormVerlofUser.onSearchInputChange(Sender: TObject);
@@ -326,7 +338,9 @@ begin
   encodatedDate := EncodeDate(FYear, FMonth, 1);
   encodatedDate := IncMonth(encodatedDate, toInc);
   DecodeDate(encodatedDate, FYear, FMonth, day);
-  DoDateChanged;
+  calendarmonth.HTML.Text := FormatDateTime('mmmm yyyy',encodatedDate);
+  DoUpdateLists;
+
 end;
 
 procedure TFormVerlofUser.checkInitAdminUi;
@@ -344,9 +358,12 @@ begin
   FAdminVerlofLijst := TActivityList.Create;
   FAllVerlofLijst := TActivityList.Create;
   DecodeDate(Now, FYear, FMonth, day);
+  calendarmonth.HTML.Text := FormatDateTime('mmmm yyyy',Now);
+  startdate.Min := now;
+  enddate.Min := now;
   checkInitAdminUi;
 
-  DoDateChanged;
+  DoUpdateLists;
 end;
 
 procedure TFormVerlofUser.WebFormDestroy(Sender: TObject);
