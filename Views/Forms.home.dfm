@@ -2,52 +2,21 @@ inherited FormHome: TFormHome
   Width = 1012
   Height = 755
   Color = clBtnFace
-  object lblUserInfo: TWebLabel
-    Left = 187
-    Top = 62
-    Width = 57
-    Height = 15
-    Anchors = []
-    Caption = 'lblUserInfo'
-    Color = clBtnFace
-    ElementID = 'lblUserInfo'
-    ElementFont = efCSS
-    ElementPosition = epIgnore
+  object WebHTMLDiv1: TWebHTMLDiv
+    Left = 160
+    Top = 48
+    Width = 289
+    Height = 257
+    ElementID = 'testhome'
     HeightStyle = ssAuto
-    HeightPercent = 100.000000000000000000
     WidthStyle = ssAuto
-    WidthPercent = 100.000000000000000000
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    ChildOrder = 1
+    ElementPosition = epIgnore
+    Role = ''
   end
-  object lblWelcome: TWebLabel
-    Left = 189
-    Top = 62
-    Width = 63
-    Height = 15
-    Anchors = []
-    Caption = 'lblWelcome'
-    Color = clBtnFace
-    ElementID = 'lblWelcome'
-    ElementFont = efCSS
-    ElementPosition = epIgnore
-    HeightStyle = ssAuto
-    HeightPercent = 100.000000000000000000
-    WidthStyle = ssAuto
-    WidthPercent = 100.000000000000000000
-  end
-  object btnLogout: TWebButton
-    Left = 168
-    Top = 56
-    Width = 96
-    Height = 25
-    Anchors = []
-    Caption = 'btnLogout'
-    ElementID = 'btnLogout'
-    ElementFont = efCSS
-    ElementPosition = epIgnore
-    HeightStyle = ssAuto
-    HeightPercent = 100.000000000000000000
-    WidthStyle = ssAuto
-    WidthPercent = 100.000000000000000000
-    OnClick = btnLogoutClick
+  object DGCustomDataAdapter1: TDGCustomDataAdapter
+    Left = 608
+    Top = 584
   end
 end
