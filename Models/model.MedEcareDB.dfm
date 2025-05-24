@@ -24,4 +24,12 @@ object MedEcareDB: TMedEcareDB
     Left = 352
     Top = 240
   end
+  object reqDeleteVerlof: TWebHttpRequest
+    Command = httpDELETE
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 448
+    Top = 240
+  end
 end

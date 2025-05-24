@@ -13,6 +13,7 @@ object FormVerlofUser: TFormVerlofUser
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
+    TextHint = 'Filter by type'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
     OnChange = onSearchInputChange
@@ -136,6 +137,7 @@ object FormVerlofUser: TFormVerlofUser
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
+    TextHint = 'Search by name'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
     OnChange = onSearchInputChange
@@ -163,7 +165,7 @@ object FormVerlofUser: TFormVerlofUser
     ElementPosition = epIgnore
     HeightStyle = ssAuto
     HeightPercent = 100.000000000000000000
-    Text = 'filterstatus'
+    TextHint = 'Filter by status'
     WidthStyle = ssAuto
     WidthPercent = 100.000000000000000000
     OnChange = onSearchInputChange
@@ -186,8 +188,14 @@ object FormVerlofUser: TFormVerlofUser
         ID = ''
         Name = 'acRejected'
         Selector = '[data-action="reject"]'
+        OnExecute = webElementALacRejectedExecute
+      end
+      item
+        ID = ''
+        Name = 'acDelete'
+        Selector = '[data-action="delete"]'
+        OnExecute = webElementALacDeleteExecute
       end>
-    OnExecute = webElementALExecute
     Left = 576
     Top = 504
   end

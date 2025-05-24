@@ -27,15 +27,17 @@ type
     procedure WebFormDestroy(Sender: TObject);
     procedure calendarButtonClick(Sender: TObject);
     procedure onSearchInputChange(Sender: TObject);
-    procedure submitrequestClick(Sender: TObject);
+    [async] procedure submitrequestClick(Sender: TObject);
     [async]
     procedure webElementALacApprovedExecute(Sender: TObject;
       Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     [async]
-    procedure webElementALExecute(Sender: TObject; AAction: TElementAction;
-      Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure startdateChange(Sender: TObject);
     procedure enddateChange(Sender: TObject);
+    [async]
+    procedure webElementALacDeleteExecute(Sender: TObject;
+      Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    [async]procedure webElementALacRejectedExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
   private
     FAppmanager: TAppManager;
     FYear: Word;
@@ -47,11 +49,10 @@ type
     function GetVerlofList: Boolean;
     [async]
     procedure DoUpdateLists;
-    procedure checkInitAdminUi;
     procedure renderCalendar;
     procedure renderList;
     procedure filterVerlofList(AFilteredList: TActivityList; AName: string = '';
-      AStatus: string = ''; AActivityType: string = '');
+      AStatus: string = ''; AActivityType: string = ''; APersonId: string = '');
   public
     { Public declarations }
   end;
@@ -80,7 +81,7 @@ begin
 end;
 
 procedure TFormVerlofUser.filterVerlofList(AFilteredList: TActivityList;
-  AName, AStatus, AActivityType: string);
+  AName, AStatus, AActivityType, APersonId: string);
 var
   Activity: TActivity;
   matchesFilter: Boolean;
@@ -90,6 +91,11 @@ begin
   for Activity in FAllVerlofLijst do
   begin
     matchesFilter := True;
+
+    if (APersonId <> '') then
+    begin
+      matchesFilter := (Activity.PersonId = APersonId);
+    end;
 
     // Filter op naam (als er een naam is opgegeven)
     if (AName <> '') and
@@ -247,8 +253,6 @@ var
   dateRange: string;
   days: integer;
 begin
-  if not FAppmanager.Auth.currentPerson.Roles.Contains('admin') then
-    Exit;
 
   searchQuery := searchinput.Text;
   if filterstatus.ItemIndex < 0 then
@@ -257,7 +261,15 @@ begin
     Status := filterstatus.Items[filterstatus.ItemIndex];
   ActivityType := filtertype.Text;
 
-  filterVerlofList(FAdminVerlofLijst, searchQuery, Status, ActivityType);
+  if not FAppmanager.Auth.currentPerson.Roles.Contains('admin') then
+  begin
+    filterVerlofList(FAdminVerlofLijst, searchQuery, Status, ActivityType,
+      FAppmanager.Auth.currentPerson.PersonId);
+  end
+  else
+  begin
+    filterVerlofList(FAdminVerlofLijst, searchQuery, Status, ActivityType);
+  end;
 
   sb := TStringBuilder.Create;
   try
@@ -267,21 +279,43 @@ begin
         FormatDateTime('mmm dd, yyyy', act.EndTime);
       days := DaysBetween(DateOf(act.EndTime), DateOf(act.Start)) + 1;
       sb.AppendFormat('<tr data-request-id="%s">', [act.Id]).AppendLine;
-      sb.AppendFormat('  <td style="vertical-align: middle;">%s %s</td>', [act.Person.FirstName,
-        act.Person.LastName]).AppendLine;
-      sb.AppendFormat('  <td style="vertical-align: middle;">%s</td>', [dateRange]).AppendLine;
+      sb.AppendFormat('  <td style="vertical-align: middle;">%s %s</td>',
+        [act.Person.FirstName, act.Person.LastName]).AppendLine;
+      sb.AppendFormat('  <td style="vertical-align: middle;">%s</td>',
+        [dateRange]).AppendLine;
       sb.AppendFormat
         ('  <td style="vertical-align: middle;"><span class="badge bg-secondary">%s</span> %d days</td>',
         [act.ActivityType, days]).AppendLine;
-      sb.AppendFormat('  <td style="vertical-align: middle;"><span class="badge bg-secondary">%s</span></td>',
+      sb.AppendFormat
+        ('  <td style="vertical-align: middle;"><span class="badge bg-secondary">%s</span></td>',
         [act.Status]).AppendLine;
-      sb.AppendFormat
-        ('  <td style="vertical-align: middle;"><button type="button" class="btn btn-sm btn-success" data-action="approve" data-id="%s"><i class="bi bi-check-lg"></i></button>',
-        [act.Id]).AppendLine;
-      sb.AppendFormat
-        ('      <button type="button" class="btn btn-sm btn-danger" data-action="reject" data-id="%s"><i class="bi bi-x-lg"></i></button></td>',
-        [act.Id]).AppendLine;
+      if FAppmanager.Auth.currentPerson.Roles.Contains('admin') then
+      begin
+        sb.AppendFormat
+          ('  <td style="vertical-align: middle;"><button type="button" class="btn btn-sm btn-success" data-action="approve" data-id="%s"><i class="bi bi-check-lg"></i></button>',
+          [act.Id]).AppendLine;
+        sb.AppendFormat
+          ('      <button type="button" class="btn btn-sm btn-danger" data-action="reject" data-id="%s"><i class="bi bi-x-lg"></i></button>',
+          [act.Id]).AppendLine;
+          if (act.PersonId = FAppmanager.Auth.currentPerson.personId ) then
+          begin
+            sb.AppendFormat
+          ('      <button type="button" class="btn btn-sm btn-danger" data-action="delete" data-id="%s"><i class="bi bi-trash-fill"></i></button></td>',
+          [act.Id]).AppendLine;
+          end
+          else
+          begin
+            sb.AppendLine('</td>');
+          end;
+      end
+      else
+      begin
+        sb.AppendFormat
+          ('      <td><button type="button" class="btn btn-sm btn-danger" data-action="delete" data-id="%s"><i class="bi bi-trash-fill"></i></button></td>',
+          [act.Id]).AppendLine;
+      end;
       sb.AppendLine('</tr>');
+
     end;
     Document.querySelector('#requests-table tbody').innerHTML := sb.ToString;
     webElementAL.BindActions;
@@ -293,14 +327,19 @@ end;
 
 procedure TFormVerlofUser.startdateChange(Sender: TObject);
 begin
-if enddate.Date < startdate.Date then
+  if enddate.Date < startdate.Date then
     enddate.Date := startdate.Date;
 end;
 
 procedure TFormVerlofUser.submitrequestClick(Sender: TObject);
 begin
-  FAppmanager.DB.PostActivity('pending', leavetype.Items[leavetype.ItemIndex],
-    startdate.Date, enddate.Date, FAppmanager.Auth.currentPerson.personId, '');
+  await(FAppmanager.DB.PostActivity('pending', leavetype.Items[leavetype.ItemIndex],
+    startdate.Date, enddate.Date, FAppmanager.Auth.currentPerson.PersonId, ''));
+    await(DoUpdateLists);
+    startdate.Date := Now;
+    enddate.date := Now;
+    FAppmanager.ShowToast('Uw aanvraag is succesvol verzonden!');
+
 end;
 
 procedure TFormVerlofUser.webElementALacApprovedExecute(Sender: TObject;
@@ -311,11 +350,17 @@ begin
   await(DoUpdateLists);
 end;
 
-procedure TFormVerlofUser.webElementALExecute(Sender: TObject;
-  AAction: TElementAction; Element: TJSHTMLElementRecord;
-  Event: TJSEventParameter);
+procedure TFormVerlofUser.webElementALacDeleteExecute(Sender: TObject;
+  Element: TJSHTMLElementRecord; Event: TJSEventParameter);
 begin
-  await(Boolean, FAppmanager.DB.PutActivity(Element.Element.Attrs['data-id'],
+  await(Boolean, FAppmanager.DB.DeleteActivity(Element.Element.Attrs
+    ['data-id']));
+  await(DoUpdateLists);
+end;
+
+procedure TFormVerlofUser.webElementALacRejectedExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+begin
+await(Boolean, FAppmanager.DB.PutActivity(Element.Element.Attrs['data-id'],
     'rejected', '', 0, 0, '', ''));
   await(DoUpdateLists);
 end;
@@ -338,15 +383,9 @@ begin
   encodatedDate := EncodeDate(FYear, FMonth, 1);
   encodatedDate := IncMonth(encodatedDate, toInc);
   DecodeDate(encodatedDate, FYear, FMonth, day);
-  calendarmonth.HTML.Text := FormatDateTime('mmmm yyyy',encodatedDate);
+  calendarmonth.HTML.Text := FormatDateTime('mmmm yyyy', encodatedDate);
   DoUpdateLists;
 
-end;
-
-procedure TFormVerlofUser.checkInitAdminUi;
-begin
-  if FAppmanager.Auth.currentPerson.Roles.Contains('admin') then
-    Document.getElementById('listViewTab').classList.remove('d-none');
 end;
 
 procedure TFormVerlofUser.WebFormCreate(Sender: TObject);
@@ -358,11 +397,11 @@ begin
   FAdminVerlofLijst := TActivityList.Create;
   FAllVerlofLijst := TActivityList.Create;
   DecodeDate(Now, FYear, FMonth, day);
-  calendarmonth.HTML.Text := FormatDateTime('mmmm yyyy',Now);
-  startdate.Min := now;
-  enddate.Min := now;
-  checkInitAdminUi;
-
+  calendarmonth.HTML.Text := FormatDateTime('mmmm yyyy', Now);
+  startdate.Date := Now;
+  endDate.Date := Now;
+  startdate.Min := Now;
+  enddate.Min := Now;
   DoUpdateLists;
 end;
 

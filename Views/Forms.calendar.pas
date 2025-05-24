@@ -42,11 +42,11 @@ end;
 
 procedure TForm1.VulMaandLijst(Grid: TTMSFNCDataGrid; AJaar, AMaand: Word);
 var
-  FS: TFormatSettings;
-  AantalDagen, i: Integer;
+//  FS: TFormatSettings;
+  i: Integer;
   D: TDateTime;
 begin
-  FS := TFormatSettings.Create('nl-BE');
+//  FS := TFormatSettings.Create('nl-BE');
 
   Grid.BeginUpdate;
   try

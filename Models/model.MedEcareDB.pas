@@ -11,6 +11,7 @@ type
     reqGetActivities: TWebHttpRequest;
     reqPostVerlof: TWebHttpRequest;
     reqPutVerlof: TWebHttpRequest;
+    reqDeleteVerlof: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -26,6 +27,8 @@ type
     function PutActivity(AActivityID, AActivityStatus, AActivityType: string;
       AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string)
       : Boolean;
+    [async]
+    function DeleteActivity(AActivityID: string): Boolean;
   end;
 
 var
@@ -42,6 +45,28 @@ const
   baseUrl = 'http://localhost:3000/';
 
   { TMedEcareDB }
+
+function TMedEcareDB.DeleteActivity(AActivityID: string): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+begin
+    reqDeleteVerlof.URL := baseUrl + 'admin/activities/'+AActivityID;
+
+    try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqDeleteVerlof));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
 
 function TMedEcareDB.GetActivities(const AType: string;
   const AYear, AMonth: word; AList: TList<TActivity>): Boolean;
