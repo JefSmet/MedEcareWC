@@ -13,7 +13,6 @@ type
   TFormHome = class(TViewBase)
     DGCustomDataAdapter1: TDGCustomDataAdapter;
     WebDataGrid1: TWebDataGrid;
-    WebHTMLDiv1: TWebHTMLDiv;
     procedure btnLogoutClick(Sender: TObject);
   private
     { Private declarations }

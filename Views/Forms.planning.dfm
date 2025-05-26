@@ -1,26 +1,27 @@
-inherited FormHome: TFormHome
-  Width = 1012
-  Height = 755
-  Color = clBtnFace
-  object TWebHTMLDiv
-    Left = 24
-    Top = 24
-    Width = 561
-    Height = 409
-    ElementID = 'testhome'
+inherited FormPlanning: TFormPlanning
+  Width = 895
+  Height = 650
+  OnCreate = WebFormCreate
+  OnDestroy = WebFormDestroy
+  object WebHTMLDiv1: TWebHTMLDiv
+    Left = 8
+    Top = 0
+    Width = 761
+    Height = 625
+    ElementID = 'grid'
     HeightStyle = ssAuto
     WidthStyle = ssAuto
     ChildOrder = 1
     ElementPosition = epIgnore
     Role = ''
     DesignSize = (
-      561
-      409)
-    object WebDataGrid1: TWebDataGrid
-      Left = 3
-      Top = 3
-      Width = 537
-      Height = 385
+      761
+      625)
+    object dgDataGrid: TWebDataGrid
+      Left = 16
+      Top = 20
+      Width = 729
+      Height = 565
       Banding.Enabled = False
       Banding.OddRowsColor = 16777215
       Banding.EvenRowsColor = 16777215
@@ -35,7 +36,7 @@ inherited FormHome: TFormHome
       ColumnDefs = <
         item
           Field = 'column1'
-          CellDataType = cdtText
+          CellDataType = cdtDateString
           CheckboxSelection = False
           Width = 0
           SelectOptions = <>
@@ -48,9 +49,5 @@ inherited FormHome: TFormHome
           SelectOptions = <>
         end>
     end
-  end
-  object DGCustomDataAdapter1: TDGCustomDataAdapter
-    Left = 608
-    Top = 584
   end
 end

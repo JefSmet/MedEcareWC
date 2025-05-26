@@ -36,7 +36,8 @@ uses
   Forms.verlof.user.temp in 'Views\Forms.verlof.user.temp.pas' {FormVerlofUser2: TWebForm} {*.html},
   model.MedEcareDB in 'Models\model.MedEcareDB.pas' {MedEcareDB: TWebDataModule},
   middleware.httponly in 'middleware.httponly.pas',
-  Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html};
+  Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html},
+  Forms.planning in 'Views\Forms.planning.pas' {FormPlanning: TWebForm} {*.html};
 
 {$R *.res}
 
@@ -46,6 +47,7 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFormMain, FormMain);
   Application.CreateForm(TViewBase, ViewBase);
+  Application.CreateForm(TFormPlanning, FormPlanning);
   Application.Run;
 
 end.
