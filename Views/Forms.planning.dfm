@@ -7,21 +7,21 @@ inherited FormPlanning: TFormPlanning
     Left = 8
     Top = 0
     Width = 761
-    Height = 625
+    Height = 650
     ElementID = 'grid'
-    HeightStyle = ssAuto
+    HeightStyle = ssPercent
     WidthStyle = ssAuto
     ChildOrder = 1
     ElementPosition = epIgnore
     Role = ''
     DesignSize = (
       761
-      625)
+      650)
     object dgDataGrid: TWebDataGrid
       Left = 16
       Top = 20
       Width = 729
-      Height = 565
+      Height = 590
       Banding.Enabled = False
       Banding.OddRowsColor = 16777215
       Banding.EvenRowsColor = 16777215
@@ -48,6 +48,7 @@ inherited FormPlanning: TFormPlanning
           Width = 0
           SelectOptions = <>
         end>
+      ExplicitHeight = 565
     end
   end
 end
