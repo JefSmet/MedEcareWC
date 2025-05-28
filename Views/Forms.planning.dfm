@@ -6,22 +6,24 @@ inherited FormPlanning: TFormPlanning
   object WebHTMLDiv1: TWebHTMLDiv
     Left = 8
     Top = 0
-    Width = 761
-    Height = 650
+    Width = 577
+    Height = 465
     ElementID = 'grid'
     HeightStyle = ssPercent
     WidthStyle = ssAuto
     ChildOrder = 1
     ElementPosition = epIgnore
     Role = ''
-    DesignSize = (
-      761
-      650)
     object dgDataGrid: TWebDataGrid
-      Left = 16
-      Top = 20
-      Width = 729
-      Height = 590
+      AlignWithMargins = True
+      Left = 1
+      Top = 1
+      Width = 575
+      Height = 463
+      Margins.Left = 1
+      Margins.Top = 1
+      Margins.Right = 1
+      Margins.Bottom = 1
       Banding.Enabled = False
       Banding.OddRowsColor = 16777215
       Banding.EvenRowsColor = 16777215
@@ -31,7 +33,7 @@ inherited FormPlanning: TFormPlanning
       EnableClickSelection = True
       BidiMode = bdLeftToRight
       SuppressMoveWhenColumnDragging = False
-      Anchors = [akLeft, akTop, akRight, akBottom]
+      Align = alClient
       MultilevelHeaders = <>
       ColumnDefs = <
         item
@@ -48,7 +50,6 @@ inherited FormPlanning: TFormPlanning
           Width = 0
           SelectOptions = <>
         end>
-      ExplicitHeight = 565
     end
   end
 end

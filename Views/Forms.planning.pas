@@ -7,37 +7,46 @@ uses
   WEBLib.Forms, WEBLib.Dialogs, view.base, System.Generics.Collections,
   orm.Person, orm.Activity, model.AppManager,
   WEBLib.REST, WEBLib.Actions, System.DateUtils, WEBLib.WebTools,
-  WEBLib.DataGrid.Common, Vcl.Controls, Vcl.Grids, WEBLib.DataGrid, WEBLib.DataGrid.Options, WEBLib.WebCtrls;
+  WEBLib.DataGrid.Common, Vcl.Controls, Vcl.Grids, WEBLib.DataGrid,
+  WEBLib.DataGrid.Options, WEBLib.WebCtrls, orm.Doctor, Vcl.StdCtrls,
+  WEBLib.StdCtrls;
 
 type
   TGridHeader = record
     Id: string;
     Caption: string;
-
-    constructor Create(const AId, ACaption: string);
+    HeaderID: integer;
+    constructor Create(const AId, ACaption: string; AHeaderID: integer = -1);
   end;
 
   TFormPlanning = class(TViewBase)
     dgDataGrid: TWebDataGrid;
     WebHTMLDiv1: TWebHTMLDiv;
+    [async]
     procedure WebFormCreate(Sender: TObject);
     procedure WebFormDestroy(Sender: TObject);
-    function ColumnDateFormatter(Value: string): string;
+    function DateColumnFormatter(Value: string): string;
 
   private
-
-    FAllShiftList: TList<TActivity>;
     FShiftList: TList<TActivity>;
+    FVerlofList: TList<TActivity>;
+    FDoctorsList: TList<TDoctor>;
+    FGridHeaders: TList<TGridHeader>;
     FYear: word;
     FMonth: word;
     FDaysBefore: word;
     FDaysAfter: word;
     FGrid: TStringList;
-    FGridHeaders: TList<TGridHeader>;
+    FAppManager: TAppManager;
     procedure RenderCalendar;
-    procedure filterVerlofList(AFilteredList: TActivityList; AName: string = '';
-      AStatus: string = ''; AActivityType: string = ''; APersonId: string = '');
     procedure getHeaders;
+    [async]
+    procedure getDoctors;
+    [async]
+    procedure getShiftList;
+    [async]
+    procedure getVerlofList;
+
     procedure buildGrid;
   public
     { Public declarations }
@@ -53,7 +62,7 @@ implementation
 procedure TFormPlanning.buildGrid;
 var
   headers, row: string;
-  I, D: Integer;
+  I, D: integer;
   daycount: word;
   date: TDateTime;
 begin
@@ -64,66 +73,32 @@ begin
     headers := headers + FGridHeaders.Items[I].Caption + ',';
   end;
   headers := copy(headers, 0, headers.Length - 1);
-  //FGrid.Add(headers);
+  // FGrid.Add(headers);
   daycount := DaysInAMonth(FYear, FMonth) + FDaysBefore + FDaysAfter;
   date := EncodeDate(FYear, FMonth, 1);
   date := IncDay(date, -FDaysBefore);
   for D := 0 to daycount - 1 do
   begin
-    row := IntToStr(trunc(date))+','+','+','+','+',';
+    row := IntToStr(trunc(date)) + ',' + ',' + ',' + ',' + ',';
     FGrid.Add(row);
-    date := IncDay(date,1);
+    date := IncDay(date, 1);
   end;
-  dgDataGrid.LoadFromStrings(FGrid,',','"',false);
+  dgDataGrid.LoadFromStrings(FGrid, ',', '"', false);
 end;
 
 { TForm2 }
 
-function TFormPlanning.ColumnDateFormatter(Value: string): string;
+function TFormPlanning.DateColumnFormatter(Value: string): string;
 var
   dt: TDateTime;
 begin
-dt :=  StrToFloat(Value);
-result := FormatDateTime('dd-mm-yyy ddd',dt);
+  dt := StrToFloat(Value);
+  result := FormatDateTime('dd-mm-yyy ddd', dt);
 end;
 
-procedure TFormPlanning.filterVerlofList(AFilteredList: TActivityList;
-  AName, AStatus, AActivityType, APersonId: string);
-var
-  Activity: TActivity;
-  matchesFilter: Boolean;
+procedure TFormPlanning.getDoctors;
 begin
-  AFilteredList.Clear;
-  // Loop door alle activiteiten en pas de filter toe
-  for Activity in FAllShiftList do
-  begin
-    matchesFilter := True;
-
-    if (APersonId <> '') then
-    begin
-      matchesFilter := (Activity.PersonId = APersonId);
-    end;
-
-    // Filter op naam (als er een naam is opgegeven)
-    if (AName <> '') and
-      (Pos(LowerCase(AName), LowerCase(Activity.Person.LastName)) = 0) and
-      (Pos(LowerCase(AName), LowerCase(Activity.Person.FirstName)) = 0) then
-      matchesFilter := False;
-
-    // Filter op status (als er een status is opgegeven)
-    if (AStatus <> '') and (LowerCase(Activity.Status) <> LowerCase(AStatus))
-    then
-      matchesFilter := False;
-
-    // Filter op status (als er een status is opgegeven)
-    if (AActivityType <> '') and
-      (LowerCase(Activity.ActivityType) <> LowerCase(AActivityType)) then
-      matchesFilter := False;
-
-    // Als deze activiteit door alle filters komt, voeg toe aan de tijdelijke lijst
-    if matchesFilter then
-      AFilteredList.Add(Activity);
-  end;
+  await(FAppManager.DB.getDoctors(FDoctorsList));
 end;
 
 procedure TFormPlanning.getHeaders;
@@ -132,15 +107,15 @@ var
 begin
   dgDataGrid.ColumnDefs.Clear;
   cd := dgDataGrid.ColumnDefs.Add;
-  cd.CellDataType:=cdtDate;
-  cd.Field:='Datum';
-  cd.ValueFormatter:=ColumnDateFormatter;
-  dgDataGrid.ColumnDefs.Add.Field:='Array Potter';
-  dgDataGrid.ColumnDefs.Add.Field:='Bananakin Skywalker';
-  dgDataGrid.ColumnDefs.Add.Field:='Obi Juan Kenobi';
-  dgDataGrid.ColumnDefs.Add.Field:='Count Broekoe';
-  dgDataGrid.ColumnDefs.Add.Field:='Darth Veester';
-  dgDataGrid.ColumnDefs.Add.Field:='General Tyfus';
+  cd.CellDataType := cdtDate;
+  cd.Field := 'Datum';
+  cd.ValueFormatter := DateColumnFormatter;
+  dgDataGrid.ColumnDefs.Add.Field := 'Array Potter';
+  dgDataGrid.ColumnDefs.Add.Field := 'Bananakin Skywalker';
+  dgDataGrid.ColumnDefs.Add.Field := 'Obi Juan Kenobi';
+  dgDataGrid.ColumnDefs.Add.Field := 'Count Broekoe';
+  dgDataGrid.ColumnDefs.Add.Field := 'Darth Veester';
+  dgDataGrid.ColumnDefs.Add.Field := 'General Tyfus';
   FGridHeaders.Add(TGridHeader.Create('1', '"Array Potter"'));
   FGridHeaders.Add(TGridHeader.Create('2', '"Bananakin Skywalker"'));
   FGridHeaders.Add(TGridHeader.Create('3', '"Obi Juan Kenobi"'));
@@ -149,135 +124,70 @@ begin
   FGridHeaders.Add(TGridHeader.Create('6', '"General Tyfus"'));
 end;
 
-procedure TFormPlanning.RenderCalendar;
-const
-  DaysPerWeek = 7;
+procedure TFormPlanning.getShiftList;
 var
-  sb: TStringBuilder;
-  FirstOfMonth, CellDate, TodayDate: TDateTime;
-  StartDow, DaysInMonth, DayCounter: Integer;
-  WeekIdx, WeekDayIdx, PascalDow: Integer;
-  DayName, ClassAttr: string;
-  I: Integer;
+  startdate, endDate, firstDayOfNowMonth, lastDayOfNowMonth: TDateTime;
 begin
-  filterVerlofList(FShiftList, '', 'Approved');
-  // 1) Bereken eerste dag en aantal dagen
-  FirstOfMonth := EncodeDate(FYear, FMonth, 1);
-  StartDow := DayOfWeek(FirstOfMonth); // 1=zo � 7=za
-  DaysInMonth := DaysInAMonth(FYear, FMonth);
-  TodayDate := date;
+  firstDayOfNowMonth := EncodeDate(FYear, FMonth, 1);
 
-  // 2) Bepaal in welke kolom dag 1 valt (1..7)
-  // kolom = ((StartDow - AStartDow) mod 7) + 1
-  DayCounter := 1;
+  lastDayOfNowMonth := EncodeDate(FYear, FMonth, DaysInAMonth(FYear, FMonth));
+  startdate := IncDay(firstDayOfNowMonth, -FDaysBefore);
+  endDate := IncDay(lastDayOfNowMonth, FDaysAfter);
+  await(FAppManager.DB.getShifts(startdate, endDate, FShiftList));
+end;
 
-  sb := TStringBuilder.Create;
-  try
-    sb.AppendLine
-      ('<table id="calendar-table" class="table calendar-table mb-0">');
-    sb.AppendLine('  <thead>');
-    sb.AppendLine('    <tr>');
-    // 2.1) Header: rotatie beginnend bij AStartDow
-    for WeekDayIdx := 1 to DaysPerWeek do
-    begin
-      PascalDow := ((2 - 1 + WeekDayIdx - 1) mod DaysPerWeek) + 1;
-      DayName := GetLocaleShortDayName(PascalDow, GetBrowserLocale);
-      sb.AppendFormat('      <th>%s</th>', [DayName]).AppendLine;
-    end;
-    sb.AppendLine('    </tr>');
-    sb.AppendLine('  </thead>');
-    sb.AppendLine('  <tbody>');
+procedure TFormPlanning.getVerlofList;
+var
+  startdate, endDate, firstDayOfNowMonth, lastDayOfNowMonth: TDateTime;
+begin
+  firstDayOfNowMonth := EncodeDate(FYear, FMonth, 1);
 
-    // 2.2) Vul de rijen met dagen
-    for WeekIdx := 0 to 5 do
-    begin
-      sb.AppendLine('    <tr>');
-      for WeekDayIdx := 1 to DaysPerWeek do
-      begin
-        // Eerste week: voor de 1e dag, of na het einde van de maand?
-        if ((WeekIdx = 0) and (WeekDayIdx < ((StartDow - 2 + DaysPerWeek)
-          mod DaysPerWeek) + 1)) or (DayCounter > DaysInMonth) then
-        begin
-          sb.AppendLine('      <td>&nbsp;</td>')
-        end
-        else
-        begin
-          CellDate := EncodeDate(FYear, FMonth, DayCounter);
-          ClassAttr := '';
+  lastDayOfNowMonth := EncodeDate(FYear, FMonth, DaysInAMonth(FYear, FMonth));
+  startdate := IncDay(firstDayOfNowMonth, -FDaysBefore);
+  endDate := IncDay(lastDayOfNowMonth, FDaysAfter);
+  await(FAppManager.DB.getVerlof(startdate, endDate, FVerlofList));
+end;
 
-          // Weekend?
-          if DayOfWeek(CellDate) in [1, 7] then
-            ClassAttr := 'weekend';
+procedure TFormPlanning.RenderCalendar;
+begin
 
-          // Vandaag?
-          if SameDate(CellDate, TodayDate) then
-            if ClassAttr <> '' then
-              ClassAttr := ClassAttr + ' today'
-            else
-              ClassAttr := 'today';
-
-          // Open <td> met id en eventueel class
-          if ClassAttr <> '' then
-            sb.AppendFormat('      <td id="day-%d-%.2d-%.2d" class="%s">',
-              [FYear, FMonth, DayCounter, ClassAttr]).AppendLine
-          else
-            sb.AppendFormat('      <td id="day-%d-%.2d-%.2d">',
-              [FYear, FMonth, DayCounter]).AppendLine;
-
-          sb.AppendFormat('        %d', [DayCounter]).AppendLine;
-
-          for I := FShiftList.Count - 1 downto 0 do
-          begin
-            if SameDate(DateOf(FShiftList[I].Start), CellDate) then
-            begin
-              sb.AppendFormat('        <div class="event">%s</div>',
-                [FShiftList[I].Person.LastName]).AppendLine;
-              // FVerlofLijst.Delete(I);
-            end;
-
-          end;
-          sb.AppendLine('      </td>');
-          Inc(DayCounter);
-        end;
-      end;
-      sb.AppendLine('    </tr>');
-      if DayCounter > DaysInMonth then
-        Break;
-    end;
-
-    sb.AppendLine('  </tbody>');
-    sb.AppendLine('</table>');
-
-    Document.getElementById('calendar-table').innerHTML := sb.ToString;
-  finally
-    sb.Free;
-  end;
 end;
 
 procedure TFormPlanning.WebFormCreate(Sender: TObject);
 begin
+  FAppManager := TAppManager.GetInstance;
   FGridHeaders := TList<TGridHeader>.Create;
+  FDoctorsList := TList<TDoctor>.Create;
+  FShiftList := TActivityList.Create;
+  FVerlofList := TActivityList.Create;
   FGrid := TStringList.Create;
   FYear := YearOf(now);
   FMonth := MonthOf(now);
-  FDaysBefore := 7;
-  FDaysAfter := 7;
+  FDaysBefore := 5;
+  FDaysAfter := 5;
   getHeaders;
+  await(getDoctors);
+  await(getShiftList);
+  await(getVerlofList);
   buildGrid;
 end;
 
 procedure TFormPlanning.WebFormDestroy(Sender: TObject);
 begin
   FGridHeaders.Free;
+  FDoctorsList.Free;
+  FShiftList.Free;
+  FVerlofList.Free;
   FGrid.Free;
 end;
 
 { TGridHeader }
 
-constructor TGridHeader.Create(const AId, ACaption: string);
+constructor TGridHeader.Create(const AId, ACaption: string; AHeaderID: integer);
 begin
   Id := AId;
   Caption := ACaption;
+  HeaderID := AHeaderID;
 end;
 
 end.

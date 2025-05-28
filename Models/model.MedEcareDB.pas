@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.REST,
-  orm.Activity, System.Generics.Collections;
+  orm.Activity, System.Generics.Collections, orm.Person, orm.Doctor;
 
 type
   TMedEcareDB = class(TWebDataModule)
@@ -12,13 +12,16 @@ type
     reqPostVerlof: TWebHttpRequest;
     reqPutVerlof: TWebHttpRequest;
     reqDeleteVerlof: TWebHttpRequest;
+    reqGetStaff: TWebHttpRequest;
+    reqGetShiftsByPeriod: TWebHttpRequest;
+    reqGetVerlofByPeriod: TWebHttpRequest;
   private
     { Private declarations }
   public
     { Public declarations }
     [async]
     function GetActivities(const AType: string; const AYear, AMonth: word;
-      AList: TList<TActivity>): Boolean;
+      AList: TActivityList): Boolean;
     function Test: string;
     [async]
     procedure PostActivity(AActivityStatus, AActivityType: string;
@@ -29,6 +32,14 @@ type
       : Boolean;
     [async]
     function DeleteActivity(AActivityID: string): Boolean;
+    [async]
+    function getDoctors(AList: TList<TDoctor>): Boolean;
+    [async]
+    function getShifts(startDate, endDate: TDateTime;
+      AList: TActivityList): Boolean;
+    [async]
+    function getVerlof(startDate, endDate: TDateTime;
+      AList: TActivityList): Boolean;
   end;
 
 var
@@ -50,9 +61,9 @@ function TMedEcareDB.DeleteActivity(AActivityID: string): Boolean;
 var
   xhr: TJSXMLHttpRequest;
 begin
-    reqDeleteVerlof.URL := baseUrl + 'admin/activities/'+AActivityID;
+  reqDeleteVerlof.URL := baseUrl + 'admin/activities/' + AActivityID;
 
-    try
+  try
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(reqDeleteVerlof));
     if (xhr.Status = 200) then
@@ -69,7 +80,7 @@ begin
 end;
 
 function TMedEcareDB.GetActivities(const AType: string;
-  const AYear, AMonth: word; AList: TList<TActivity>): Boolean;
+  const AYear, AMonth: word; AList: TActivityList): Boolean;
 var
   formattedVerlofEndpoint: string;
   ActivityType: string;
@@ -101,6 +112,116 @@ begin
 
       Exit(true);
     end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getDoctors(AList: TList<TDoctor>): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+  doctorList: TList<TDoctor>;
+begin
+
+  reqGetStaff.URL := baseUrl + 'admin/persons/staff';
+  try
+
+    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(reqGetStaff));
+
+    doctorList := TDoctor.ToList(xhr.responseText, true);
+
+    try
+      if Assigned(AList) then
+      begin
+        AList.Clear;
+        AList.AddRange(doctorList);
+      end;
+    finally
+      doctorList.Free;
+    end;
+    Exit(true);
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getShifts(startDate, endDate: TDateTime;
+  AList: TActivityList): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response,startString,endString: string;
+  shiftList: TActivityList;
+begin
+  startString := FormatDateTime('yyyy-mm-dd',startDate);
+  endString := FormatDateTime('yyyy-mm-dd',endDate);
+  reqGetShiftsByPeriod.URL := baseUrl +
+    Format('admin/activities/period/shifts?startDate=%s&endDate=%s',
+    [startString, endString]);
+  try
+
+    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(reqGetShiftsByPeriod));
+
+    shiftList := TActivity.ToList(xhr.responseText, true);
+
+    try
+      if Assigned(AList) then
+      begin
+        AList.Clear;
+        AList.AddRange(shiftList);
+      end;
+    finally
+      shiftList.Free;
+    end;
+    Exit(true);
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getVerlof(startDate, endDate: TDateTime;
+  AList: TActivityList): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response,startString,endString: string;
+  verlofList: TActivityList;
+begin
+  startString := FormatDateTime('yyyy-mm-dd',startDate);
+  endString := FormatDateTime('yyyy-mm-dd',endDate);
+  reqGetVerlofByPeriod.URL := baseUrl +
+    Format('admin/activities/period/verlof?startDate=%s&endDate=%s',
+    [startString, endString]);
+  try
+
+    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(reqGetVerlofByPeriod));
+
+    verlofList := TActivity.ToList(xhr.responseText, true);
+
+    try
+      if Assigned(AList) then
+      begin
+        AList.Clear;
+        AList.AddRange(verlofList);
+      end;
+    finally
+      verlofList.Free;
+    end;
+    Exit(true);
+
   except
     on e: exception do
     begin

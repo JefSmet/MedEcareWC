@@ -32,4 +32,25 @@ object MedEcareDB: TMedEcareDB
     Left = 448
     Top = 240
   end
+  object reqGetStaff: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 120
+    Top = 136
+  end
+  object reqGetShiftsByPeriod: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 248
+    Top = 136
+  end
+  object reqGetVerlofByPeriod: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 392
+    Top = 136
+  end
 end

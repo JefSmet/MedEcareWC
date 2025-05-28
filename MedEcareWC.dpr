@@ -37,7 +37,8 @@ uses
   model.MedEcareDB in 'Models\model.MedEcareDB.pas' {MedEcareDB: TWebDataModule},
   middleware.httponly in 'middleware.httponly.pas',
   Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html},
-  Forms.planning in 'Views\Forms.planning.pas' {FormPlanning: TWebForm} {*.html};
+  Forms.planning in 'Views\Forms.planning.pas' {FormPlanning: TWebForm} {*.html},
+  orm.Doctor in 'ORM\orm.Doctor.pas';
 
 {$R *.res}
 
