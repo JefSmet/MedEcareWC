@@ -150,18 +150,17 @@ var
   WeekIdx, WeekDayIdx, PascalDow: integer;
   DayName, ClassAttr: string;
   I: integer;
+  VerlofStart, VerlofEnd: TDateTime;
 begin
   filterVerlofList(FVerlofLijst, '', 'Approved');
   // 1) Bereken eerste dag en aantal dagen
   FirstOfMonth := EncodeDate(FYear, FMonth, 1);
-  StartDow := DayOfWeek(FirstOfMonth); // 1=zo � 7=za
+  StartDow := DayOfWeek(FirstOfMonth); // 1=zo – 7=za
   DaysInMonth := DaysInAMonth(FYear, FMonth);
   TodayDate := Date;
-
   // 2) Bepaal in welke kolom dag 1 valt (1..7)
   // kolom = ((StartDow - AStartDow) mod 7) + 1
   DayCounter := 1;
-
   sb := TStringBuilder.Create;
   try
     sb.AppendLine
@@ -178,7 +177,6 @@ begin
     sb.AppendLine('    </tr>');
     sb.AppendLine('  </thead>');
     sb.AppendLine('  <tbody>');
-
     // 2.2) Vul de rijen met dagen
     for WeekIdx := 0 to 5 do
     begin
@@ -195,18 +193,15 @@ begin
         begin
           CellDate := EncodeDate(FYear, FMonth, DayCounter);
           ClassAttr := '';
-
           // Weekend?
           if DayOfWeek(CellDate) in [1, 7] then
             ClassAttr := 'weekend';
-
           // Vandaag?
           if SameDate(CellDate, TodayDate) then
             if ClassAttr <> '' then
               ClassAttr := ClassAttr + ' today'
             else
               ClassAttr := 'today';
-
           // Open <td> met id en eventueel class
           if ClassAttr <> '' then
             sb.AppendFormat('      <td id="day-%d-%.2d-%.2d" class="%s">',
@@ -214,19 +209,26 @@ begin
           else
             sb.AppendFormat('      <td id="day-%d-%.2d-%.2d">',
               [FYear, FMonth, DayCounter]).AppendLine;
-
           sb.AppendFormat('        %d', [DayCounter]).AppendLine;
 
-          for I := FVerlofLijst.Count - 1 downto 0 do
+          // Check voor verlof op deze datum
+          for I := 0 to FVerlofLijst.Count - 1 do
           begin
-            if SameDate(DateOf(FVerlofLijst[I].Start), CellDate) then
+            VerlofStart := DateOf(FVerlofLijst[I].Start);
+            // Controleer of er een einddatum is, anders gebruik startdatum
+            if FVerlofLijst[I].EndTime <> 0 then  // Assuming EndDate property exists
+              VerlofEnd := DateOf(FVerlofLijst[I].EndTime)
+            else
+              VerlofEnd := VerlofStart;
+
+            // Check of de huidige datum binnen de verlofperiode valt
+            if (CellDate >= VerlofStart) and (CellDate <= VerlofEnd) then
             begin
               sb.AppendFormat('        <div class="event">%s</div>',
                 [FVerlofLijst[I].Person.LastName]).AppendLine;
-              // FVerlofLijst.Delete(I);
             end;
-
           end;
+
           sb.AppendLine('      </td>');
           Inc(DayCounter);
         end;
@@ -235,10 +237,8 @@ begin
       if DayCounter > DaysInMonth then
         Break;
     end;
-
     sb.AppendLine('  </tbody>');
     sb.AppendLine('</table>');
-
     Document.getElementById('calendar-table').innerHTML := sb.ToString;
   finally
     sb.Free;
