@@ -39,6 +39,7 @@ inherited FormPlanning: TFormPlanning
         item
           Field = 'column1'
           CellDataType = cdtDateString
+          EditModeType = cetCombobox
           CheckboxSelection = False
           Width = 0
           SelectOptions = <>

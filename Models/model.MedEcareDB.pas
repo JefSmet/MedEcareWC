@@ -1,10 +1,11 @@
-unit model.MedEcareDB;
+﻿unit model.MedEcareDB;
 
 interface
 
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.REST,
-  orm.Activity, System.Generics.Collections, orm.Person, orm.Doctor;
+  orm.Activity, System.Generics.Collections, orm.Person, orm.Doctor,
+  orm.ShiftType, orm.Role;
 
 type
   TMedEcareDB = class(TWebDataModule)
@@ -15,6 +16,21 @@ type
     reqGetStaff: TWebHttpRequest;
     reqGetShiftsByPeriod: TWebHttpRequest;
     reqGetVerlofByPeriod: TWebHttpRequest;
+    reqGetShiftTypes: TWebHttpRequest;
+    reqPostShiftTypes: TWebHttpRequest;
+    reqPutShiftTypes: TWebHttpRequest;
+    reqDeleteShiftTypes: TWebHttpRequest;
+    reqGetRoles: TWebHttpRequest;
+    reqPostRoles: TWebHttpRequest;
+    reqPutRoles: TWebHttpRequest;
+    reqDeleteRoles: TWebHttpRequest;
+    reqPostActivites: TWebHttpRequest;
+    reqPutActivities: TWebHttpRequest;
+    reqDeleteActivities: TWebHttpRequest;
+    reqDeletePersons: TWebHttpRequest;
+    reqPutPersons: TWebHttpRequest;
+    reqPostPersons: TWebHttpRequest;
+    reqGetPersons: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -26,6 +42,9 @@ type
     [async]
     procedure PostActivity(AActivityStatus, AActivityType: string;
       AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string);
+    [async]
+    function PostShiftType(AStartHour, AStartMinute, ADurationMinutes: integer;
+      ActiveFrom, ActiveUntil: TDateTime; AName: string): Boolean;
     [async]
     function PutActivity(AActivityID, AActivityStatus, AActivityType: string;
       AStartDate, AEndDate: TDateTime; APersonId, AShifttypeId: string)
@@ -40,6 +59,34 @@ type
     [async]
     function getVerlof(startDate, endDate: TDateTime;
       AList: TActivityList): Boolean;
+    [async]
+    function getShiftTypes(AList: TList<TShiftType>): Boolean;
+    [async]
+    function getRoles(AList: TList<TRole>): Boolean;
+    [async]
+    function getRoleById(ARoleId: string; out ARole: TRole): Boolean;
+    [async]
+    function PostRole(AName: string): Boolean;
+    [async]
+    function PutRole(ARoleId, AName: string): Boolean;
+    [async]
+    function DeleteRole(ARoleId: string): Boolean;
+    [async]
+    function getPersons(AList: TList<TPerson>): Boolean;
+    [async]
+    function getPersonById(APersonId: string; out APerson: TPerson): Boolean;
+    [async]
+    function PostPerson(AFirstName, ALastName: string; ADateOfBirth: TDateTime): Boolean;
+    [async]
+    function PutPerson(APersonId, AFirstName, ALastName: string): Boolean;
+    [async]
+    function DeletePerson(APersonId: string): Boolean;
+    [async]
+    function getAllActivities(AList: TActivityList): Boolean;
+    [async]
+    function getActivityById(AActivityId: string; out AActivity: TActivity): Boolean;
+    [async]
+    function filterActivitiesPeriod(startDate, endDate: TDateTime; AActivityType: string; AList: TActivityList): Boolean;
   end;
 
 var
@@ -159,17 +206,18 @@ function TMedEcareDB.getShifts(startDate, endDate: TDateTime;
   AList: TActivityList): Boolean;
 var
   xhr: TJSXMLHttpRequest;
-  response,startString,endString: string;
+  response, startString, endString: string;
   shiftList: TActivityList;
 begin
-  startString := FormatDateTime('yyyy-mm-dd',startDate);
-  endString := FormatDateTime('yyyy-mm-dd',endDate);
+  startString := FormatDateTime('yyyy-mm-dd', startDate);
+  endString := FormatDateTime('yyyy-mm-dd', endDate);
   reqGetShiftsByPeriod.URL := baseUrl +
     Format('admin/activities/period/shifts?startDate=%s&endDate=%s',
     [startString, endString]);
   try
 
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(reqGetShiftsByPeriod));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetShiftsByPeriod));
 
     shiftList := TActivity.ToList(xhr.responseText, true);
 
@@ -193,21 +241,58 @@ begin
   end;
 end;
 
+function TMedEcareDB.getShiftTypes(AList: TList<TShiftType>): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response, startString, endString: string;
+  shiftTypeList: TList<TShiftType>;
+begin
+  reqGetShiftsByPeriod.URL := baseUrl + Format('admin/shift-types',
+    [startString, endString]);
+  try
+
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetShiftsByPeriod));
+
+    shiftTypeList := TActivity.ToList(xhr.responseText, true);
+
+    try
+      if Assigned(AList) then
+      begin
+        AList.Clear;
+        AList.AddRange(shiftTypeList);
+      end;
+    finally
+      shiftTypeList.Free;
+    end;
+    Exit(true);
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+
+end;
+
 function TMedEcareDB.getVerlof(startDate, endDate: TDateTime;
   AList: TActivityList): Boolean;
 var
   xhr: TJSXMLHttpRequest;
-  response,startString,endString: string;
+  response, startString, endString: string;
   verlofList: TActivityList;
 begin
-  startString := FormatDateTime('yyyy-mm-dd',startDate);
-  endString := FormatDateTime('yyyy-mm-dd',endDate);
+  startString := FormatDateTime('yyyy-mm-dd', startDate);
+  endString := FormatDateTime('yyyy-mm-dd', endDate);
   reqGetVerlofByPeriod.URL := baseUrl +
     Format('admin/activities/period/verlof?startDate=%s&endDate=%s',
     [startString, endString]);
   try
 
-    xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(reqGetVerlofByPeriod));
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetVerlofByPeriod));
 
     verlofList := TActivity.ToList(xhr.responseText, true);
 
@@ -256,6 +341,27 @@ begin
     on e: exception do
       TAppManager.GetInstance.ShowToast(e.Message);
   end;
+end;
+
+function TMedEcareDB.PostShiftType(AStartHour, AStartMinute, ADurationMinutes
+  : integer; ActiveFrom, ActiveUntil: TDateTime; AName: string): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+begin
+  reqPostVerlof.URL := baseUrl + 'admin/shift-types';
+  postData :=
+    Format('{"name": "%s","startHour": %i,"startMinute": %i,"durationMinutes": %i,"activeFrom" : %i"activeUntil" : %i }',
+    [AName, AStartHour, AStartMinute, ADurationMinutes,ActiveFrom,ActiveUntil]);
+  reqPostVerlof.postData := postData;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPostVerlof));
+  except
+    on e: exception do
+      TAppManager.GetInstance.ShowToast(e.Message);
+  end;
+
 end;
 
 function TMedEcareDB.PutActivity(AActivityID, AActivityStatus,
@@ -314,6 +420,402 @@ end;
 function TMedEcareDB.Test: string;
 begin
   Result := 'medecaredb';
+end;
+
+function TMedEcareDB.getRoles(AList: TList<TRole>): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+  roleList: TList<TRole>;
+begin
+  reqGetRoles.URL := baseUrl + 'admin/roles';
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetRoles));
+
+    roleList := TRole.ToList(xhr.responseText, true);
+
+    try
+      if Assigned(AList) then
+      begin
+        AList.Clear;
+        AList.AddRange(roleList);
+      end;
+    finally
+      roleList.Free;
+    end;
+    Exit(true);
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getRoleById(ARoleId: string; out ARole: TRole): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+begin
+  reqGetRoles.URL := baseUrl + 'admin/roles/' + ARoleId;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetRoles));
+    
+    if (xhr.Status = 200) then
+    begin
+      response := xhr.responseText;
+      ARole := TRole.FromJSON(response);
+      Exit(true);
+    end
+    else if (xhr.Status = 404) then
+    begin
+      TAppManager.GetInstance.ShowToast('Role niet gevonden');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PostRole(AName: string): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+begin
+  reqPostRoles.URL := baseUrl + 'admin/roles';
+  postData := Format('{"name": "%s"}', [AName.ToUpper]);
+  reqPostRoles.postData := postData;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPostRoles));
+    if (xhr.Status = 201) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PutRole(ARoleId, AName: string): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+begin
+  JSON := TJSONObject.Create;
+  try
+    reqPutRoles.URL := baseUrl + 'admin/roles/' + ARoleId;
+    
+    if AName <> '' then
+      JSON.AddPair('name', AName.ToUpper);
+
+    postData := JSON.ToString;
+    reqPutRoles.postData := postData;
+  finally
+    JSON.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPutRoles));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.DeleteRole(ARoleId: string): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+begin
+  reqDeleteRoles.URL := baseUrl + 'admin/roles/' + ARoleId;
+
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqDeleteRoles));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getPersons(AList: TList<TPerson>): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+  personList: TList<TPerson>;
+begin
+  reqGetPersons.URL := baseUrl + 'admin/persons';
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetPersons));
+
+    personList := TPerson.ToList(xhr.responseText, true);
+
+    try
+      if Assigned(AList) then
+      begin
+        AList.Clear;
+        AList.AddRange(personList);
+      end;
+    finally
+      personList.Free;
+    end;
+    Exit(true);
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getPersonById(APersonId: string; out APerson: TPerson): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+begin
+  reqGetPersons.URL := baseUrl + 'admin/persons/' + APersonId;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetPersons));
+    
+    if (xhr.Status = 200) then
+    begin
+      response := xhr.responseText;
+      APerson := TPerson.FromJSON(response);
+      Exit(true);
+    end
+    else if (xhr.Status = 404) then
+    begin
+      TAppManager.GetInstance.ShowToast('Persoon niet gevonden');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PostPerson(AFirstName, ALastName: string; ADateOfBirth: TDateTime): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  dateOfBirth: string;
+begin
+  reqPostPersons.URL := baseUrl + 'admin/persons';
+  dateOfBirth := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', ADateOfBirth);
+  postData := Format('{"firstName": "%s", "lastName": "%s", "dateOfBirth": "%s"}', 
+    [AFirstName, ALastName, dateOfBirth]);
+  reqPostPersons.postData := postData;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPostPersons));
+    if (xhr.Status = 201) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PutPerson(APersonId, AFirstName, ALastName: string): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+begin
+  JSON := TJSONObject.Create;
+  try
+    reqPutPersons.URL := baseUrl + 'admin/persons/' + APersonId;
+    
+    if AFirstName <> '' then
+      JSON.AddPair('firstName', AFirstName);
+    
+    if ALastName <> '' then
+      JSON.AddPair('lastName', ALastName);
+
+    postData := JSON.ToString;
+    reqPutPersons.postData := postData;
+  finally
+    JSON.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPutPersons));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.DeletePerson(APersonId: string): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+begin
+  reqDeletePersons.URL := baseUrl + 'admin/persons/' + APersonId;
+
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqDeletePersons));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getAllActivities(AList: TActivityList): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+  activityList: TActivityList;
+begin
+  reqGetActivities.URL := baseUrl + 'admin/activities';
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetActivities));
+
+    activityList := TActivity.ToList(xhr.responseText, true);
+
+    try
+      if Assigned(AList) then
+      begin
+        AList.Clear;
+        AList.AddRange(activityList);
+      end;
+    finally
+      activityList.Free;
+    end;
+    Exit(true);
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getActivityById(AActivityId: string; out AActivity: TActivity): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+begin
+  reqGetActivities.URL := baseUrl + 'admin/activities/' + AActivityId;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetActivities));
+    
+    if (xhr.Status = 200) then
+    begin
+      response := xhr.responseText;
+      AActivity := TActivity.FromJSON(response);
+      Exit(true);
+    end
+    else if (xhr.Status = 404) then
+    begin
+      TAppManager.GetInstance.ShowToast('Activiteit niet gevonden');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.filterActivitiesPeriod(startDate, endDate: TDateTime; AActivityType: string; AList: TActivityList): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response, startString, endString, endpoint: string;
+  activityList: TActivityList;
+begin
+  startString := FormatDateTime('yyyy-mm-dd', startDate);
+  endString := FormatDateTime('yyyy-mm-dd', endDate);
+  
+  if AActivityType <> '' then
+    endpoint := Format('admin/activities/period?startDate=%s&endDate=%s&activityType=%s', [startString, endString, AActivityType])
+  else
+    endpoint := Format('admin/activities/period?startDate=%s&endDate=%s', [startString, endString]);
+    
+  reqGetActivities.URL := baseUrl + endpoint;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetActivities));
+
+    activityList := TActivity.ToList(xhr.responseText, true);
+
+    try
+      if Assigned(AList) then
+      begin
+        AList.Clear;
+        AList.AddRange(activityList);
+      end;
+    finally
+      activityList.Free;
+    end;
+    Exit(true);
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
 end;
 
 end.
