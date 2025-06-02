@@ -164,14 +164,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="MTR\uTransFixed.pas"/>
-        <DCCReference Include="MTR\uTransRecords.pas"/>
-        <DCCReference Include="MTR\uPrestatieModel.pas"/>
-        <DCCReference Include="MTR\uMtrBuilderIntf.pas"/>
-        <DCCReference Include="MTR\uMtrBuildersSpoed.pas"/>
-        <DCCReference Include="MTR\uMtrBuilderFactory.pas"/>
-        <DCCReference Include="MTR\uMtrWriter.pas"/>
-        <DCCReference Include="MTR\uPrestatieRestClient.pas"/>
         <DCCReference Include="Views\Forms.registerUser.pas">
             <Form>FormRegisterUser</Form>
             <FormType>dfm</FormType>

@@ -5,27 +5,31 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Dialogs, view.base, System.Generics.Collections,
+  System.Generics.Defaults,
   orm.Person, orm.Activity, model.AppManager,
   WEBLib.REST, WEBLib.Actions, System.DateUtils, WEBLib.WebTools,
   WEBLib.DataGrid.Common, Vcl.Controls, Vcl.Grids, WEBLib.DataGrid,
   WEBLib.DataGrid.Options, WEBLib.WebCtrls, orm.Doctor, Vcl.StdCtrls,
-  WEBLib.StdCtrls;
+  WEBLib.StdCtrls, libdatagrid, WEBLib.DataGrid.DataAdapter.Base, WEBLib.DataGrid.DataAdapter.Custom, Types, WEBLib.Grids;
 
 type
   TGridHeader = record
     Id: string;
     Caption: string;
-    HeaderID: integer;
-    constructor Create(const AId, ACaption: string; AHeaderID: integer = -1);
+    constructor Create(const AId, ACaption: string);
   end;
 
   TFormPlanning = class(TViewBase)
-    dgDataGrid: TWebDataGrid;
     WebHTMLDiv1: TWebHTMLDiv;
-    [async]
+
+    WebHTMLDiv2: TWebHTMLDiv;
+    WebButton1: TWebButton;
+     [async]
     procedure WebFormCreate(Sender: TObject);
     procedure WebFormDestroy(Sender: TObject);
     function DateColumnFormatter(Value: string): string;
+//    procedure dgDataGridCellEditingStarted(Params: TJSCellEditingEvent);
+    procedure WebButton1Click(Sender: TObject);
 
   private
     FShiftList: TList<TActivity>;
@@ -38,8 +42,8 @@ type
     FDaysAfter: word;
     FGrid: TStringList;
     FAppManager: TAppManager;
-    procedure RenderCalendar;
     procedure getHeaders;
+    procedure initHeaders;
     [async]
     procedure getDoctors;
     [async]
@@ -83,7 +87,6 @@ begin
     FGrid.Add(row);
     date := IncDay(date, 1);
   end;
-  dgDataGrid.LoadFromStrings(FGrid, ',', '"', false);
 end;
 
 { TForm2 }
@@ -96,32 +99,32 @@ begin
   result := FormatDateTime('dd-mm-yyy ddd', dt);
 end;
 
+
 procedure TFormPlanning.getDoctors;
 begin
   await(FAppManager.DB.getDoctors(FDoctorsList));
+  FDoctorsList.Sort(TComparer<TDoctor>.Construct(
+    function(const Left, Right: TDoctor): integer
+    begin
+      result := CompareText(Left.Person.LastName, Right.Person.LastName);
+    end));
 end;
 
 procedure TFormPlanning.getHeaders;
 var
-  cd: TDGColumnDefsCollectionItem;
+  mockGridHeader: TGridHeader;
 begin
-  dgDataGrid.ColumnDefs.Clear;
-  cd := dgDataGrid.ColumnDefs.Add;
-  cd.CellDataType := cdtDate;
-  cd.Field := 'Datum';
-  cd.ValueFormatter := DateColumnFormatter;
-  dgDataGrid.ColumnDefs.Add.Field := 'Array Potter';
-  dgDataGrid.ColumnDefs.Add.Field := 'Bananakin Skywalker';
-  dgDataGrid.ColumnDefs.Add.Field := 'Obi Juan Kenobi';
-  dgDataGrid.ColumnDefs.Add.Field := 'Count Broekoe';
-  dgDataGrid.ColumnDefs.Add.Field := 'Darth Veester';
-  dgDataGrid.ColumnDefs.Add.Field := 'General Tyfus';
-  FGridHeaders.Add(TGridHeader.Create('1', '"Array Potter"'));
-  FGridHeaders.Add(TGridHeader.Create('2', '"Bananakin Skywalker"'));
-  FGridHeaders.Add(TGridHeader.Create('3', '"Obi Juan Kenobi"'));
-  FGridHeaders.Add(TGridHeader.Create('4', '"Count Broekoe"'));
-  FGridHeaders.Add(TGridHeader.Create('5', '"Darth Veester"'));
-  FGridHeaders.Add(TGridHeader.Create('6', '"General Tyfus"'));
+  FGridHeaders.Clear;
+  mockGridHeader := TGridHeader.Create(TGUID.NewGuid.ToString, 'Dag 1');
+  FGridHeaders.Add(mockGridHeader);
+  mockGridHeader := TGridHeader.Create(TGUID.NewGuid.ToString, 'Nacht 1');
+  FGridHeaders.Add(mockGridHeader);
+  mockGridHeader := TGridHeader.Create(TGUID.NewGuid.ToString, 'Dag 2');
+  FGridHeaders.Add(mockGridHeader);
+  mockGridHeader := TGridHeader.Create(TGUID.NewGuid.ToString, 'Nacht 2');
+  FGridHeaders.Add(mockGridHeader);
+  mockGridHeader := TGridHeader.Create(TGUID.NewGuid.ToString, 'Arts3');
+  FGridHeaders.Add(mockGridHeader);
 end;
 
 procedure TFormPlanning.getShiftList;
@@ -148,9 +151,56 @@ begin
   await(FAppManager.DB.getVerlof(startdate, endDate, FVerlofList));
 end;
 
-procedure TFormPlanning.RenderCalendar;
+procedure TFormPlanning.initHeaders;
+var
+  colDef: TDGColumnDefsCollectionItem;
+  gridHeader: TGridHeader;
+  selOpt: TDGSelectCellEditorCollectionItem;
+  // doctor: TDoctor;
 begin
+  try
+//    // op deze manier de kolommen definiëren anders heb je geen controle over de cellen
+//    // *********************************************
+//    dgDataGrid.ColumnDefs.Clear;
+//    colDef := dgDataGrid.ColumnDefs.Add;
+//    colDef.CellDataType := cdtDate;
+//    colDef.Field := 'Datum';
+//    colDef.ValueFormatter := DateColumnFormatter;
+//    // *************************************************
+//
+//    for gridHeader in FGridHeaders do
+//    begin
+//      colDef := dgDataGrid.ColumnDefs.Add;
+//      colDef.CellDataType := cdtText;
+//      colDef.EditModeType := cetCombobox;
+//      colDef.Editable := true;
+//      colDef.Sortable := false;
+//      colDef.Field := gridHeader.Caption;
+//      // for doctor in FDoctorsList do
+//      // begin
+//      // selopt := colDef.SelectOptions.Add();
+//      // selopt.Text := doctor.Person.LastName;
+//      // selopt.Value := doctor.PersonId;
+//      // end;
+//    end;
+//    // fix for empty combobox in last column
+//    colDef := dgDataGrid.ColumnDefs.Add;
+//    colDef.Visible := false;
+  finally
+  end;
 
+end;
+
+procedure TFormPlanning.WebButton1Click(Sender: TObject);
+var curSelected : TJSRowNode;
+i: integer;
+begin
+  inherited;
+//  curselected := dgDataGrid.FindFirstSelectedRowNode;
+//  i := dgDataGrid.FindFirstSelectedRowIndex;
+//  dgDataGrid.id
+//ShowMessage(curSelected.Data.toString);
+//showMessage(dgDataGrid.AGGrid.getFocusedCell.Column.ColId );
 end;
 
 procedure TFormPlanning.WebFormCreate(Sender: TObject);
@@ -165,10 +215,11 @@ begin
   FMonth := MonthOf(now);
   FDaysBefore := 5;
   FDaysAfter := 5;
-  getHeaders;
   await(getDoctors);
   await(getShiftList);
   await(getVerlofList);
+  getHeaders;
+  initHeaders;
   buildGrid;
 end;
 
@@ -183,11 +234,10 @@ end;
 
 { TGridHeader }
 
-constructor TGridHeader.Create(const AId, ACaption: string; AHeaderID: integer);
+constructor TGridHeader.Create(const AId, ACaption: string);
 begin
   Id := AId;
   Caption := ACaption;
-  HeaderID := AHeaderID;
 end;
 
 end.

@@ -1,11 +1,45 @@
-<html>
+﻿<html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>TMS Web Project</title>
     <style>
-    </style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    /* Container is flex zodat beide panelen 100% hoogte vullen */
+    #container {
+      display: flex;
+      height: 100%;
+      overflow: hidden;
+    }
+    /* Linker paneel */
+    #left-panel {
+      width: 60%;
+      min-width: 100px;
+      background-color: #f8f9fa; /* lichtgrijs ter indicatie */
+      overflow: auto; /* scroll indien inhoud te groot is */
+    }
+    /* Rechter paneel */
+    #right-panel {
+      width: 40%;
+      min-width: 100px;
+      background-color: #ffffff;
+      overflow: auto;
+    }
+  </style>
   </head>
-  <body>
-  <div class="container-fluid" id="grid" style="height:100%"></div>
-  </body>
+<body>
+  <div id="container">
+    <!-- Linker paneel: hier komt de tabel met dagen van de maand -->
+    <div id="left-panel">
+      <!-- TODO: Plaats hier de tabel (per rij alle dagen van de maand) -->
+    </div>
+
+    <!-- Rechter paneel: hier komen de controls/formulieren -->
+    <div id="right-panel">
+      <!-- TODO: Plaats hier de formulierelementen/controls om de info in de tabel aan te passen -->
+    </div>
+  </div>
+</body>
 </html>

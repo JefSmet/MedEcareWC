@@ -254,7 +254,7 @@ begin
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(reqGetShiftsByPeriod));
 
-    shiftTypeList := TActivity.ToList(xhr.responseText, true);
+    shiftTypeList := TShiftType.ToList(xhr.responseText, true);
 
     try
       if Assigned(AList) then
@@ -468,7 +468,7 @@ begin
     if (xhr.Status = 200) then
     begin
       response := xhr.responseText;
-      ARole := TRole.FromJSON(response);
+      ARole := TRole.FromJSON(response,true);
       Exit(true);
     end
     else if (xhr.Status = 404) then
@@ -611,7 +611,7 @@ begin
     if (xhr.Status = 200) then
     begin
       response := xhr.responseText;
-      APerson := TPerson.FromJSON(response);
+      APerson := TPerson.ToObject(response,true);
       Exit(true);
     end
     else if (xhr.Status = 404) then
@@ -760,7 +760,7 @@ begin
     if (xhr.Status = 200) then
     begin
       response := xhr.responseText;
-      AActivity := TActivity.FromJSON(response);
+      AActivity := TActivity.FromJSON(response,true);
       Exit(true);
     end
     else if (xhr.Status = 404) then

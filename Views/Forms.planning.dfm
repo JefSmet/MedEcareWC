@@ -8,49 +8,34 @@ inherited FormPlanning: TFormPlanning
     Top = 0
     Width = 577
     Height = 465
-    ElementID = 'grid'
+    ElementID = 'left-panel'
     HeightStyle = ssPercent
-    WidthStyle = ssAuto
+    WidthStyle = ssPercent
     ChildOrder = 1
     ElementPosition = epIgnore
     Role = ''
-    object dgDataGrid: TWebDataGrid
-      AlignWithMargins = True
-      Left = 1
-      Top = 1
-      Width = 575
-      Height = 463
-      Margins.Left = 1
-      Margins.Top = 1
-      Margins.Right = 1
-      Margins.Bottom = 1
-      Banding.Enabled = False
-      Banding.OddRowsColor = 16777215
-      Banding.EvenRowsColor = 16777215
-      MaxBlocksInCache = 0
-      TabOrder = 0
-      RowMultiSelectWithClick = False
-      EnableClickSelection = True
-      BidiMode = bdLeftToRight
-      SuppressMoveWhenColumnDragging = False
-      Align = alClient
-      MultilevelHeaders = <>
-      ColumnDefs = <
-        item
-          Field = 'column1'
-          CellDataType = cdtDateString
-          EditModeType = cetCombobox
-          CheckboxSelection = False
-          Width = 0
-          SelectOptions = <>
-        end
-        item
-          Field = 'column2'
-          CellDataType = cdtText
-          CheckboxSelection = False
-          Width = 0
-          SelectOptions = <>
-        end>
+  end
+  object WebHTMLDiv2: TWebHTMLDiv
+    Left = 608
+    Top = 240
+    Width = 177
+    Height = 97
+    ElementID = 'right-panel'
+    ChildOrder = 1
+    Role = ''
+    object WebButton1: TWebButton
+      Left = 32
+      Top = 32
+      Width = 96
+      Height = 25
+      Caption = 'WebButton1'
+      ElementFont = efCSS
+      ElementPosition = epIgnore
+      HeightStyle = ssAuto
+      HeightPercent = 100.000000000000000000
+      WidthStyle = ssAuto
+      WidthPercent = 100.000000000000000000
+      OnClick = WebButton1Click
     end
   end
 end
