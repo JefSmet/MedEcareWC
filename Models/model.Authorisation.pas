@@ -131,6 +131,8 @@ begin
   FcurrentPerson.firstName := string(jsObj['firstName']);
   FcurrentPerson.lastName := string(jsObj['lastName']);
   FcurrentPerson.personId := string(jsObj['personId']);
+  FcurrentPerson.dateofBirth := TWebRESTClient.IsoToDateTime(((string(jsObj['dateOfBirth']))));
+  FcurrentPerson.email := string(jsObj['email']);
   Roles := toArray(jsObj['roles']);
   for i := 0 to Roles.Length - 1 do
   begin

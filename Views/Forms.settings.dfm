@@ -1,0 +1,134 @@
+inherited FormSettings: TFormSettings
+  OnCreate = WebFormCreate
+  object firstName: TWebEdit
+    Left = 8
+    Top = 152
+    Width = 96
+    Height = 25
+    ElementID = 'firstName'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object lastName: TWebEdit
+    Left = 8
+    Top = 200
+    Width = 96
+    Height = 25
+    ChildOrder = 1
+    ElementID = 'lastName'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object email: TWebEdit
+    Left = 8
+    Top = 264
+    Width = 96
+    Height = 25
+    ChildOrder = 2
+    ElementID = 'email'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object confirmPassword: TWebEdit
+    Left = 413
+    Top = 240
+    Width = 96
+    Height = 25
+    ChildOrder = 3
+    ElementID = 'confirmPassword'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object oldPassword: TWebEdit
+    Left = 413
+    Top = 112
+    Width = 96
+    Height = 25
+    ChildOrder = 4
+    ElementID = 'oldPassword'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object dateOfBirth: TWebDateTimePicker
+    Left = 8
+    Top = 318
+    Width = 96
+    Height = 25
+    ElementID = 'dateOfBirth'
+    HeightStyle = ssAuto
+    WidthStyle = ssAuto
+    BorderStyle = bsSingle
+    ChildOrder = 5
+    Color = clWhite
+    Date = 45810.760116076390000000
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    Role = ''
+    Text = ''
+  end
+  object newPassword: TWebEdit
+    Left = 413
+    Top = 190
+    Width = 96
+    Height = 25
+    ChildOrder = 6
+    ElementID = 'newPassword'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+  object changePassword: TWebButton
+    Left = 221
+    Top = 216
+    Width = 96
+    Height = 25
+    Caption = 'Change Password'
+    ChildOrder = 7
+    ElementID = 'changePassword'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+    OnClick = changePasswordClick
+  end
+  object updateProfile: TWebButton
+    Left = 221
+    Top = 151
+    Width = 96
+    Height = 25
+    Caption = 'Update Profile'
+    ChildOrder = 8
+    ElementID = 'updateProfile'
+    ElementFont = efCSS
+    ElementPosition = epIgnore
+    HeightStyle = ssAuto
+    HeightPercent = 100.000000000000000000
+    WidthStyle = ssAuto
+    WidthPercent = 100.000000000000000000
+  end
+end

@@ -30,7 +30,8 @@ uses
   middleware.httponly in 'middleware.httponly.pas',
   Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html},
   Forms.planning in 'Views\Forms.planning.pas' {FormPlanning: TWebForm} {*.html},
-  orm.Doctor in 'ORM\orm.Doctor.pas';
+  orm.Doctor in 'ORM\orm.Doctor.pas',
+  Forms.settings in 'Views\Forms.settings.pas' {FormSettings: TWebForm} {*.html};
 
 {$R *.res}
 
@@ -41,6 +42,7 @@ begin
   Application.CreateForm(TFormMain, FormMain);
   Application.CreateForm(TViewBase, ViewBase);
   Application.CreateForm(TFormPlanning, FormPlanning);
+  Application.CreateForm(TFormSettings, FormSettings);
   Application.Run;
 
 end.
