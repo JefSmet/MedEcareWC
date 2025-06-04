@@ -45,7 +45,7 @@ begin
   if isMatchingPassword(newPassword.Text,confirmPassword.Text) then
   begin
   try
-     await(FAppMananger.DB.ChangePassword(oldPassword.Text,newPassword.Text);
+     await(FAppMananger.DB.ChangePassword(oldPassword.Text,newPassword.Text));
      FAppMananger.ShowToast('Uw wachtwoord is veranderd.');
   except on e:exception do
   FAppMananger.ShowToast('Er ging iets mis: '+e.Message)
