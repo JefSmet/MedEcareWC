@@ -145,7 +145,7 @@ object MedEcareDB: TMedEcareDB
       'Content-Type=application/json')
     ResponseType = rtText
     Left = 448
-    Top = 592
+    Top = 496
   end
   object reqPutPersons: TWebHttpRequest
     Command = httpPUT
@@ -153,7 +153,7 @@ object MedEcareDB: TMedEcareDB
       'Content-Type=application/json')
     ResponseType = rtText
     Left = 336
-    Top = 592
+    Top = 496
   end
   object reqPostPersons: TWebHttpRequest
     Command = httpPOST
@@ -161,13 +161,29 @@ object MedEcareDB: TMedEcareDB
       'Content-Type:application/json')
     ResponseType = rtText
     Left = 224
-    Top = 592
+    Top = 496
   end
   object reqGetPersons: TWebHttpRequest
     Headers.Strings = (
       'Content-Type:application/json')
     ResponseType = rtText
     Left = 112
-    Top = 592
+    Top = 496
+  end
+  object reqPutUser: TWebHttpRequest
+    Command = httpPUT
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 112
+    Top = 576
+  end
+  object reqPutChangePassword: TWebHttpRequest
+    Command = httpPUT
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 224
+    Top = 576
   end
 end

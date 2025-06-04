@@ -27,7 +27,7 @@ type
     function isMatchingPassword(APassword, AConfirmPassword: string): Boolean;
     [async]
     procedure handleUpdateProfile(AFirstName, ALastName, AEmail: string;
-      dateOfBirth: TDateTime);
+      ADateOfBirth: TDateTime);
   public
     { Public declarations }
   end;
@@ -48,11 +48,19 @@ begin
 end;
 
 procedure TFormSettings.handleUpdateProfile(AFirstName, ALastName,
-  AEmail: string; dateOfBirth: TDateTime);
+  AEmail: string; ADateOfBirth: TDateTime);
 begin
   try
     // update user nog implementeren in medecareDB dan data doorgeven via await
-    // laat toast zien wanner succesvol of mislukt
+    if await(FAppMananger.DB.PutUser
+      (FAppMananger.Auth.currentPerson.personId, AEmail, '',
+      FAppMananger.Auth.currentPerson.Roles[0])) and
+      await(FAppMananger.DB.PutPerson
+      (FAppMananger.Auth.currentPerson.personId, AFirstName, ALastName,ADateOfBirth)) then
+    begin
+      FAppMananger.ShowToast('Uw gegevens zijn succesvol veranderd');
+    end;
+
   except
     on e: Exception do
       FAppMananger.ShowToast('Er is iets misgegaan: ' + e.Message);

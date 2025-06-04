@@ -31,6 +31,8 @@ type
     reqPutPersons: TWebHttpRequest;
     reqPostPersons: TWebHttpRequest;
     reqGetPersons: TWebHttpRequest;
+    reqPutUser: TWebHttpRequest;
+    reqPutChangePassword: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -78,7 +80,7 @@ type
     [async]
     function PostPerson(AFirstName, ALastName: string; ADateOfBirth: TDateTime): Boolean;
     [async]
-    function PutPerson(APersonId, AFirstName, ALastName: string): Boolean;
+    function PutPerson(APersonId, AFirstName, ALastName: string;ADateOfBirth : TDateTime): Boolean;
     [async]
     function DeletePerson(APersonId: string): Boolean;
     [async]
@@ -87,6 +89,10 @@ type
     function getActivityById(AActivityId: string; out AActivity: TActivity): Boolean;
     [async]
     function filterActivitiesPeriod(startDate, endDate: TDateTime; AActivityType: string; AList: TActivityList): Boolean;
+    [async]
+    function PutUser(AUserId, AEmail, APassword, ARole: string): Boolean;
+    [async]
+    function ChangePassword(AOldPassword, ANewPassword: string): Boolean;
   end;
 
 var
@@ -655,7 +661,7 @@ begin
   end;
 end;
 
-function TMedEcareDB.PutPerson(APersonId, AFirstName, ALastName: string): Boolean;
+function TMedEcareDB.PutPerson(APersonId, AFirstName, ALastName: string;ADateOfBirth : TDateTime): Boolean;
 var
   postData: string;
   xhr: TJSXMLHttpRequest;
@@ -670,6 +676,9 @@ begin
     
     if ALastName <> '' then
       JSON.AddPair('lastName', ALastName);
+
+    if ADateOfBirth > 0 then
+      JSON.AddPair('dateOfBirth', ADateOfBirth);
 
     postData := JSON.ToString;
     reqPutPersons.postData := postData;
@@ -809,6 +818,91 @@ begin
     end;
     Exit(true);
 
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PutUser(AUserId, AEmail, APassword, ARole: string): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+begin
+  JSON := TJSONObject.Create;
+  try
+    reqPutUser.URL := baseUrl + 'admin/users/' + AUserId;
+    
+    if AEmail <> '' then
+      JSON.AddPair('email', AEmail);
+    
+    if APassword <> '' then
+      JSON.AddPair('password', APassword);
+      
+    if ARole <> '' then
+      JSON.AddPair('role', ARole);
+
+    postData := JSON.ToString;
+    reqPutUser.postData := postData;
+  finally
+    JSON.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPutUser));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.ChangePassword(AOldPassword, ANewPassword: string): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+begin
+  JSON := TJSONObject.Create;
+  try
+    reqPutChangePassword.URL := baseUrl + 'change-password';
+    
+    JSON.AddPair('oldPassword', AOldPassword);
+    JSON.AddPair('newPassword', ANewPassword);
+
+    postData := JSON.ToString;
+    reqPutChangePassword.postData := postData;
+  finally
+    JSON.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPutChangePassword));
+    if (xhr.Status = 200) then
+    begin
+      TAppManager.GetInstance.ShowToast('Wachtwoord succesvol gewijzigd');
+      Exit(true);
+    end
+    else if (xhr.Status = 401) then
+    begin
+      TAppManager.GetInstance.ShowToast('Oud wachtwoord is incorrect');
+      Exit(False);
+    end
+    else if (xhr.Status = 400) then
+    begin
+      TAppManager.GetInstance.ShowToast('Beide wachtwoorden zijn vereist of nieuw wachtwoord voldoet niet aan de vereisten');
+      Exit(False);
+    end;
   except
     on e: exception do
     begin
