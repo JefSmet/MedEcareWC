@@ -57,7 +57,6 @@ procedure TFormMain.SetNavElementActive(Element: TJSHTMLElementRecord);
 begin
 Element.element.classList.remove('link-dark');
 Element.element.classList.add('active');
-//anakin skywalker
 end;
 
 procedure TFormMain.acShowVerlofUserExecute(Sender: TObject; Element: TJSHTMLElementRecord;

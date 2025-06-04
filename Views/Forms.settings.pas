@@ -20,7 +20,7 @@ type
     changePassword: TWebButton;
     updateProfile: TWebButton;
     procedure WebFormCreate(Sender: TObject);
-    procedure changePasswordClick(Sender: TObject);
+   [async] procedure changePasswordClick(Sender: TObject);
   private
     FAppMananger: TAppManager;
     function IsValidEmail(const AEmail: string): Boolean;

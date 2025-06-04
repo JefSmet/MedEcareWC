@@ -38,4 +38,15 @@ inherited FormPlanning: TFormPlanning
       OnClick = WebButton1Click
     end
   end
+  object acl: TWebElementActionList
+    Actions = <
+      item
+        ID = ''
+        Name = 'acSetActiveCell'
+        Selector = '.shift-cell'
+        OnExecute = aclacSetActiveCellExecute
+      end>
+    Left = 584
+    Top = 544
+  end
 end

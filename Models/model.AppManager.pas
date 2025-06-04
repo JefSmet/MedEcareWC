@@ -117,8 +117,8 @@ end;
 procedure TAppManager.ShowHome;
 begin
 //  ShowForm(TFormHome);
-//ShowForm(TFormPlanning);
-ShowForm(TFormSettings);
+ShowForm(TFormPlanning);
+//ShowForm(TFormSettings);
 end;
 
 

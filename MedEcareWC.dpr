@@ -32,7 +32,8 @@ uses
   Forms.planning in 'Views\Forms.planning.pas' {FormPlanning: TWebForm} {*.html},
   orm.Doctor in 'ORM\orm.Doctor.pas',
   Forms.settings in 'Views\Forms.settings.pas' {FormSettings: TWebForm} {*.html},
-  Forms.shiftTypes in 'Views\Forms.shiftTypes.pas' {FormShiftTypes: TWebForm} {*.html};
+  Forms.shiftTypes in 'Views\Forms.shiftTypes.pas' {FormShiftTypes: TWebForm} {*.html},
+  utils.SchoolVakanties in 'Utils\utils.SchoolVakanties.pas';
 
 {$R *.res}
 

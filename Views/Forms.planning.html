@@ -3,43 +3,107 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>TMS Web Project</title>
     <style>
-    html, body {
+        html, body {
       height: 100%;
       margin: 0;
     }
-    /* Container is flex zodat beide panelen 100% hoogte vullen */
+
     #container {
       display: flex;
       height: 100%;
+      width: 100%;
       overflow: hidden;
     }
-    /* Linker paneel */
+
     #left-panel {
       width: 60%;
       min-width: 100px;
-      background-color: #f8f9fa; /* lichtgrijs ter indicatie */
-      overflow: auto; /* scroll indien inhoud te groot is */
+      background-color: #f8f9fa;
+      overflow: auto;
     }
-    /* Rechter paneel */
+
+    #resizer {
+      width: 5px;
+      background: #ccc;
+      cursor: col-resize;
+      user-select: none;
+    }
+
     #right-panel {
       width: 40%;
       min-width: 100px;
       background-color: #ffffff;
       overflow: auto;
     }
-  </style>
+
+    /* Ter illustratie */
+    #left-panel, #right-panel {
+      padding: 10px;
+    }
+    .weekend {
+  background-color: #db544b;
+  color: #ffffff;
+}
+    .today {
+  background-color: #007bff;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+ .active-cell{
+    background-color: #007bff;
+    color: #ffffff;
+    font-weight: bold;
+ }
+    </style>
   </head>
 <body>
   <div id="container">
-    <!-- Linker paneel: hier komt de tabel met dagen van de maand -->
-    <div id="left-panel">
-      <!-- TODO: Plaats hier de tabel (per rij alle dagen van de maand) -->
-    </div>
 
-    <!-- Rechter paneel: hier komen de controls/formulieren -->
-    <div id="right-panel">
-      <!-- TODO: Plaats hier de formulierelementen/controls om de info in de tabel aan te passen -->
-    </div>
+    <div id="left-panel"></div>
+
+    <div id="resizer"></div>
+
+    <div id="right-panel"></div>
+
   </div>
+
+<script>
+    const resizer = document.getElementById("resizer");
+    const leftPanel = document.getElementById("left-panel");
+    const rightPanel = document.getElementById("right-panel");
+    const container = document.getElementById("container");
+
+    let isResizing = false;
+
+    resizer.addEventListener("mousedown", function (e) {
+      isResizing = true;
+      document.body.style.cursor = 'col-resize';
+      e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", function (e) {
+      if (!isResizing) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const offsetLeft = e.clientX - containerRect.left;
+      const totalWidth = containerRect.width;
+
+      if (offsetLeft > 100 && offsetLeft < totalWidth - 100) {
+        const leftPercent = (offsetLeft / totalWidth) * 100;
+        leftPanel.style.width = leftPercent + "%";
+        rightPanel.style.width = (100 - leftPercent) + "%";
+      }
+    });
+
+    document.addEventListener("mouseup", function () {
+      if (isResizing) {
+        isResizing = false;
+        document.body.style.cursor = 'default';
+      }
+    });
+  </script>
+
+
 </body>
 </html>
