@@ -31,7 +31,8 @@ uses
   Forms.verlof.user in 'Views\Forms.verlof.user.pas' {FormVerlofUser: TWebForm} {*.html},
   Forms.planning in 'Views\Forms.planning.pas' {FormPlanning: TWebForm} {*.html},
   orm.Doctor in 'ORM\orm.Doctor.pas',
-  Forms.settings in 'Views\Forms.settings.pas' {FormSettings: TWebForm} {*.html};
+  Forms.settings in 'Views\Forms.settings.pas' {FormSettings: TWebForm} {*.html},
+  Forms.shiftTypes in 'Views\Forms.shiftTypes.pas' {FormShiftTypes: TWebForm} {*.html};
 
 {$R *.res}
 
@@ -43,6 +44,7 @@ begin
   Application.CreateForm(TViewBase, ViewBase);
   Application.CreateForm(TFormPlanning, FormPlanning);
   Application.CreateForm(TFormSettings, FormSettings);
+  Application.CreateForm(TFormShiftTypes, FormShiftTypes);
   Application.Run;
 
 end.

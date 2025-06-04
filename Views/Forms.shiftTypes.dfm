@@ -1,0 +1,2 @@
+inherited FormShiftTypes: TFormShiftTypes
+end
