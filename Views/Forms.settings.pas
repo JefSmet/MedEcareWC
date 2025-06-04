@@ -42,8 +42,20 @@ implementation
 
 procedure TFormSettings.changePasswordClick(Sender: TObject);
 begin
-  inherited;
-  // maak nog een authenticatie route die oud password authenticate en dan nieuw wachtwoord in plek stelt
+  if isMatchingPassword(newPassword.Text,confirmPassword.Text) then
+  begin
+  try
+     await(FAppMananger.DB.ChangePassword(oldPassword.Text,newPassword.Text);
+     FAppMananger.ShowToast('Uw wachtwoord is veranderd.');
+  except on e:exception do
+  FAppMananger.ShowToast('Er ging iets mis: '+e.Message)
+
+  end;
+  end
+  else
+  begin
+    FAppMananger.ShowToast('De wachtwoorden komen niet overeen.');
+  end;
   // laat toast zien wanner succesvol of mislukt
 end;
 
