@@ -3,7 +3,7 @@ inherited FormPlanning: TFormPlanning
   Height = 650
   OnCreate = WebFormCreate
   OnDestroy = WebFormDestroy
-  object WebHTMLDiv1: TWebHTMLDiv
+  object Calendar: TWebHTMLDiv
     Left = 8
     Top = 0
     Width = 577
@@ -15,27 +15,21 @@ inherited FormPlanning: TFormPlanning
     ElementPosition = epIgnore
     Role = ''
   end
-  object WebHTMLDiv2: TWebHTMLDiv
-    Left = 608
-    Top = 240
-    Width = 177
-    Height = 97
+  object RightPanel: TWebHTMLDiv
+    Left = 584
+    Top = 0
+    Width = 303
+    Height = 465
     ElementID = 'right-panel'
     ChildOrder = 1
     Role = ''
-    object WebButton1: TWebButton
-      Left = 32
-      Top = 32
-      Width = 96
-      Height = 25
-      Caption = 'WebButton1'
-      ElementFont = efCSS
-      ElementPosition = epIgnore
-      HeightStyle = ssAuto
-      HeightPercent = 100.000000000000000000
-      WidthStyle = ssAuto
-      WidthPercent = 100.000000000000000000
-      OnClick = WebButton1Click
+    object AvailableDoctors: TWebHTMLDiv
+      Left = 16
+      Top = 23
+      Width = 265
+      Height = 42
+      ElementID = 'availableDoctors'
+      Role = ''
     end
   end
   object acl: TWebElementActionList
@@ -45,6 +39,23 @@ inherited FormPlanning: TFormPlanning
         Name = 'acSetActiveCell'
         Selector = '.shift-cell'
         OnExecute = aclacSetActiveCellExecute
+      end
+      item
+        ID = ''
+        Name = 'acCalendarButton'
+        Selector = '#calendar-prev, #calendar-next'
+        OnExecute = aclacCalendarButtonExecute
+      end
+      item
+        ID = ''
+        Name = 'acDoctorButton'
+        Selector = '.available-doctor-button'
+        OnExecute = aclacDoctorButtonExecute
+      end
+      item
+        ID = 'deleteActivity'
+        Name = 'acDeleteActivity'
+        OnExecute = aclacDeleteActivityExecute
       end>
     Left = 584
     Top = 544

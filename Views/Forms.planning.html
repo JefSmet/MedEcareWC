@@ -64,7 +64,33 @@
 
     <div id="resizer"></div>
 
-    <div id="right-panel"></div>
+    <div id="right-panel">
+        <div aria-label="Right aligned tab" class="d-flex align-items-center">
+            <button
+              id="calendar-prev"
+              class="btn btn-sm btn-outline-secondary"
+              aria-label="Vorige maand"
+            >
+              &laquo;
+            </button>
+            <span
+              id="calendar-month"
+              class="mx-2 fs-6"
+              style="display: inline-block; width: 150px; text-align: center"
+            >
+             <!-- month  year -->
+            </span>
+            <button
+              id="calendar-next"
+              class="btn btn-sm btn-outline-secondary"
+              aria-label="Volgende maand"
+            >
+              &raquo;
+            </button>
+          </div>
+          <div id="availableDoctors"></div>
+          <button id="deleteActivity" class="btn btn-danger" type="button" >Delete</button>
+    </div>
 
   </div>
 

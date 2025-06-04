@@ -1,5 +1,5 @@
 object MedEcareDB: TMedEcareDB
-  Height = 711
+  Height = 833
   Width = 946
   object reqGetActivities: TWebHttpRequest
     Headers.Strings = (
@@ -185,5 +185,12 @@ object MedEcareDB: TMedEcareDB
     ResponseType = rtText
     Left = 224
     Top = 576
+  end
+  object reqGetRoster: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 112
+    Top = 664
   end
 end

@@ -33,7 +33,8 @@ uses
   orm.Doctor in 'ORM\orm.Doctor.pas',
   Forms.settings in 'Views\Forms.settings.pas' {FormSettings: TWebForm} {*.html},
   Forms.shiftTypes in 'Views\Forms.shiftTypes.pas' {FormShiftTypes: TWebForm} {*.html},
-  utils.SchoolVakanties in 'Utils\utils.SchoolVakanties.pas';
+  utils.SchoolVakanties in 'Utils\utils.SchoolVakanties.pas',
+  orm.Roster in 'ORM\orm.Roster.pas';
 
 {$R *.res}
 

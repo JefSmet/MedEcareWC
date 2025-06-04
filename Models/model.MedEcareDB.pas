@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.REST,
   orm.Activity, System.Generics.Collections, orm.Person, orm.Doctor,
-  orm.ShiftType, orm.Role;
+  orm.ShiftType, orm.Role, orm.Roster;
 
 type
   TMedEcareDB = class(TWebDataModule)
@@ -33,6 +33,7 @@ type
     reqGetPersons: TWebHttpRequest;
     reqPutUser: TWebHttpRequest;
     reqPutChangePassword: TWebHttpRequest;
+    reqGetRoster: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -93,6 +94,8 @@ type
     function PutUser(AUserId, AEmail, APassword, ARole: string): Boolean;
     [async]
     function ChangePassword(AOldPassword, ANewPassword: string): Boolean;
+    [async]
+    function getRosters(AList: TList<TRoster>): Boolean;
   end;
 
 var
@@ -673,7 +676,7 @@ begin
     
     if AFirstName <> '' then
       JSON.AddPair('firstName', AFirstName);
-    
+
     if ALastName <> '' then
       JSON.AddPair('lastName', ALastName);
 
@@ -903,6 +906,42 @@ begin
       TAppManager.GetInstance.ShowToast('Beide wachtwoorden zijn vereist of nieuw wachtwoord voldoet niet aan de vereisten');
       Exit(False);
     end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getRosters(AList: TList<TRoster>): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+  rosterList: TList<TRoster>;
+begin
+  reqGetRoster.URL := baseUrl + 'admin/rosters';
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetRoster));
+
+    if (xhr.Status = 200) then
+    begin
+      rosterList := TRoster.ToList(xhr.responseText, true);
+      
+      try
+        if Assigned(AList) then
+        begin
+          AList.Clear;
+          AList.AddRange(rosterList);
+        end;
+      finally
+        rosterList.Free;
+      end;
+      Exit(true);
+    end;
+
   except
     on e: exception do
     begin

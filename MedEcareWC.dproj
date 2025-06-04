@@ -205,6 +205,7 @@
             <DesignClass>TWebForm</DesignClass>
         </DCCReference>
         <DCCReference Include="Utils\utils.SchoolVakanties.pas"/>
+        <DCCReference Include="ORM\orm.Roster.pas"/>
         <None Include="MedEcare.html"/>
         <None Include="Manifest.json"/>
         <None Include="serviceworker.js"/>
