@@ -34,6 +34,8 @@ type
     [async]
     procedure aclacEditExecute(Sender: TObject; Element: TJSHTMLElementRecord;
       Event: TJSEventParameter);
+    [async] procedure aclacSaveExecute(Sender: TObject; Element: TJSHTMLElementRecord;
+      Event: TJSEventParameter);
   private
     { Private declarations }
     FAppManager: TAppManager;
@@ -63,7 +65,7 @@ begin
 
   FFormSection.classList.remove('d-none');
   shiftTypeId := Element.Element.id;
-  FFormSection.setAttribute('id',shiftTypeId);
+  FFormSection.setAttribute('id', shiftTypeId);
   await(FAppManager.db.getShiftTypeById(shiftTypeId, toUpdateShiftType));
   edtName.Text := toUpdateShiftType.Name;
   edtStartHour.Text := toUpdateShiftType.StartHour.ToString;
@@ -106,6 +108,42 @@ begin
     on e: exception do
     begin
       FAppManager.ShowToast('Er ging iets mis:' + e.Message);
+    end;
+
+  end;
+end;
+
+procedure TFormShiftTypes.aclacSaveExecute(Sender: TObject;
+  Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+var
+  shiftTypeId: string;
+begin
+  try
+    if FFormSection.getAttribute('method') = 'put' then
+    begin
+      shiftTypeId := FFormSection.id;
+      FAppManager.db.PutShiftType(shiftTypeId, edtName.Text,
+        strToInt(edtStartHour.Text), strToInt(edtStartMinute.Text),
+        strToInt(edtDurationMinutes.Text), dpActiveFrom.Date,
+        dpActiveUntil.Date);
+      await(GetShiftTypes);
+      buildShiftTypesTable;
+    end
+    else
+    begin
+
+      FAppManager.db.PostShiftType(strToInt(edtStartHour.Text),
+        strToInt(edtStartMinute.Text), strToInt(edtDurationMinutes.Text),
+        dpActiveFrom.DateTime, dpActiveUntil.DateTime, edtName.Text);
+
+      await(GetShiftTypes);
+      buildShiftTypesTable;
+
+    end;
+  except
+    on e: exception do
+    begin
+
     end;
 
   end;

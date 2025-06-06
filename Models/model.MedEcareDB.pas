@@ -68,6 +68,10 @@ type
     [async]
     function getShiftTypeById(AShiftTypeId: string; out AShiftType: TShiftType): Boolean;
     [async]
+    function PutShiftType(AShiftTypeId, AName: string; AStartHour, AStartMinute, ADurationMinutes: integer; AActiveFrom, AActiveUntil: TDateTime): Boolean;
+    [async]
+    function DeleteShiftType(AShiftTypeId: string): Boolean;
+    [async]
     function getRoles(AList: TList<TRole>): Boolean;
     [async]
     function getRoleById(ARoleId: string; out ARole: TRole): Boolean;
@@ -984,4 +988,74 @@ begin
   end;
 end;
 
+function TMedEcareDB.PutShiftType(AShiftTypeId, AName: string; AStartHour, AStartMinute, ADurationMinutes: integer; AActiveFrom, AActiveUntil: TDateTime): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+begin
+  JSON := TJSONObject.Create;
+  try
+    reqPutShiftTypes.URL := baseUrl + 'admin/shift-types/' + AShiftTypeId;
+    
+    if AName <> '' then
+      JSON.AddPair('name', AName);
+      
+    if AStartHour >= 0 then
+      JSON.AddPair('startHour', AStartHour);
+      
+    if AStartMinute >= 0 then
+      JSON.AddPair('startMinute', AStartMinute);
+      
+    if ADurationMinutes > 0 then
+      JSON.AddPair('durationMinutes', ADurationMinutes);
+      
+    if AActiveFrom > 0 then
+      JSON.AddPair('activeFrom', FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AActiveFrom));
+      
+    if AActiveUntil > 0 then
+      JSON.AddPair('activeUntil', FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', AActiveUntil));
+
+    postData := JSON.ToString;
+    reqPutShiftTypes.postData := postData;
+  finally
+    JSON.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPutShiftTypes));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.DeleteShiftType(AShiftTypeId: string): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+begin
+  reqDeleteShiftTypes.URL := baseUrl + 'admin/shift-types/' + AShiftTypeId;
+
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqDeleteShiftTypes));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
 end.

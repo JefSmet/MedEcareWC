@@ -84,6 +84,7 @@ inherited FormShiftTypes: TFormShiftTypes
       item
         ID = 'btnSave'
         Name = 'acSave'
+        OnExecute = aclacSaveExecute
       end
       item
         ID = ''
