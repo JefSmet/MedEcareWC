@@ -364,20 +364,49 @@ function TMedEcareDB.PostShiftType(AStartHour, AStartMinute, ADurationMinutes
 var
   postData: string;
   xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
 begin
-  reqPostVerlof.URL := baseUrl + 'admin/shift-types';
-  postData :=
-    Format('{"name": "%s","startHour": %i,"startMinute": %i,"durationMinutes": %i,"activeFrom" : %i"activeUntil" : %i }',
-    [AName, AStartHour, AStartMinute, ADurationMinutes,ActiveFrom,ActiveUntil]);
-  reqPostVerlof.postData := postData;
+  JSON := TJSONObject.Create;
+  try
+    reqPostShiftTypes.URL := baseUrl + 'admin/shift-types';
+    
+    if AName <> '' then
+      JSON.AddPair('name', AName);
+      
+    if AStartHour >= 0 then
+      JSON.AddPair('startHour', AStartHour);
+      
+    if AStartMinute >= 0 then
+      JSON.AddPair('startMinute', AStartMinute);
+      
+    if ADurationMinutes > 0 then
+      JSON.AddPair('durationMinutes', ADurationMinutes);
+      
+    if ActiveFrom > 0 then
+      JSON.AddPair('activeFrom', FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', ActiveFrom));
+      
+    if ActiveUntil > 0 then
+      JSON.AddPair('activeUntil', FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', ActiveUntil));
+
+    postData := JSON.ToString;
+    reqPostShiftTypes.postData := postData;
+  finally
+    JSON.Free;
+  end;
   try
     xhr := await(TJSXMLHttpRequest,
-      PerformRequestWithCredentials(reqPostVerlof));
+      PerformRequestWithCredentials(reqPostShiftTypes));
+    if (xhr.Status = 201) then
+    begin
+      Exit(true);
+    end;
   except
     on e: exception do
-      TAppManager.GetInstance.ShowToast(e.Message);
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
   end;
-
 end;
 
 function TMedEcareDB.PutActivity(AActivityID, AActivityStatus,
