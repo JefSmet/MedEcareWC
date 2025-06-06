@@ -44,6 +44,7 @@ type
     procedure aclacDoctorButtonExecute(Sender: TObject;
       Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     [async]procedure aclacDeleteActivityExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure filterDoctors;
 
   private
     FShiftList: TList<TActivity>;
@@ -354,6 +355,19 @@ procedure TFormPlanning.fillCell(AActivity: TActivity);
 begin
 
 end;
+
+procedure TFormPlanning.filterDoctors;
+var
+verlof : TActivity;
+begin
+  for verlof in FVerlofList  do
+  begin
+    if (verlof.Start = FSelectedDate) or (verlof.EndTime = FselectedDate) then
+    begin
+    //
+    end;
+  end;
+  end;
 
 procedure TFormPlanning.getDoctors;
 begin

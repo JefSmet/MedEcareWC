@@ -1,60 +1,107 @@
 inherited FormShiftTypes: TFormShiftTypes
   Width = 931
   Height = 625
-  object WebHTMLDiv1: TWebHTMLDiv
+  OnCreate = WebFormCreate
+  OnDestroy = WebFormDestroy
+  object edtStartHour: TWebEdit
     Left = 8
-    Top = 8
-    Width = 473
-    Height = 353
-    ChildOrder = 1
-    Role = ''
-    object WebDataGrid1: TWebDataGrid
-      Left = 3
-      Top = 3
-      Width = 454
-      Height = 334
-      Banding.Enabled = False
-      Banding.OddRowsColor = 16777215
-      Banding.EvenRowsColor = 16777215
-      MaxBlocksInCache = 0
-      TabOrder = 0
-      RowMultiSelectWithClick = False
-      EnableClickSelection = True
-      BidiMode = bdLeftToRight
-      SuppressMoveWhenColumnDragging = False
-      MultilevelHeaders = <>
-      ColumnDefs = <
-        item
-          Field = 'column1'
-          CellDataType = cdtText
-          CheckboxSelection = False
-          Width = 0
-          SelectOptions = <>
-        end
-        item
-          Field = 'column2'
-          CellDataType = cdtText
-          CheckboxSelection = False
-          Width = 0
-          SelectOptions = <>
-        end>
-    end
+    Top = 384
+    Width = 121
+    Height = 22
+    ChildOrder = 2
+    ElementID = 'edtStartHour'
+    HeightPercent = 100.000000000000000000
+    WidthPercent = 100.000000000000000000
   end
-  object WebHTMLDiv2: TWebHTMLDiv
-    Left = 487
-    Top = 8
-    Width = 394
-    Height = 353
-    ChildOrder = 1
+  object edtName: TWebEdit
+    Left = 248
+    Top = 384
+    Width = 121
+    Height = 22
+    ChildOrder = 2
+    ElementID = 'edtName'
+    HeightPercent = 100.000000000000000000
+    WidthPercent = 100.000000000000000000
+  end
+  object edtDurationMinutes: TWebEdit
+    Left = 8
+    Top = 512
+    Width = 121
+    Height = 22
+    ChildOrder = 2
+    ElementID = 'edtDurationMinutes'
+    HeightPercent = 100.000000000000000000
+    WidthPercent = 100.000000000000000000
+  end
+  object edtStartMinute: TWebEdit
+    Left = 8
+    Top = 472
+    Width = 121
+    Height = 22
+    ChildOrder = 2
+    ElementID = 'edtStartMinute'
+    HeightPercent = 100.000000000000000000
+    WidthPercent = 100.000000000000000000
+  end
+  object dpActiveUntil: TWebDateTimePicker
+    Left = 376
+    Top = 248
+    Width = 170
+    Height = 22
+    ElementID = 'edtActiveUntil'
+    BorderStyle = bsSingle
+    ChildOrder = 5
+    Color = clWhite
+    Date = 45814.706769108790000000
     Role = ''
-    object WebButton1: TWebButton
-      Left = 152
-      Top = 296
-      Width = 96
-      Height = 25
-      Caption = 'WebButton1'
-      HeightPercent = 100.000000000000000000
-      WidthPercent = 100.000000000000000000
-    end
+    Text = ''
+  end
+  object dpActiveFrom: TWebDateTimePicker
+    Left = 112
+    Top = 248
+    Width = 170
+    Height = 22
+    ElementID = 'edtActiveFrom'
+    BorderStyle = bsSingle
+    ChildOrder = 5
+    Color = clWhite
+    Date = 45814.706769108790000000
+    Role = ''
+    Text = ''
+  end
+  object acl: TWebElementActionList
+    Actions = <
+      item
+        ID = 'btnNew'
+        Name = 'acShowNewShiftType'
+        OnExecute = showNewShiftType
+      end
+      item
+        ID = 'btnCancel'
+        Name = 'acHideNewShiftType'
+        OnExecute = aclacHideNewShiftTypeExecute
+      end
+      item
+        ID = 'btnSave'
+        Name = 'acSave'
+      end
+      item
+        ID = ''
+        Name = 'acShowUpdateShiftType'
+        OnExecute = aclacShowUpdateShiftTypeExecute
+      end
+      item
+        ID = ''
+        Name = 'acEdit'
+        Selector = '.update-button'
+        OnExecute = aclacEditExecute
+      end
+      item
+        ID = ''
+        Name = 'acDelete'
+        Selector = '.btn-danger'
+      end>
+    Left = 816
+    Top = 488
   end
 end

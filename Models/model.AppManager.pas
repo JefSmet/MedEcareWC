@@ -44,7 +44,7 @@ implementation
 uses
   System.Classes, Vcl.Dialogs, Forms.home,
   Forms.forgotPassword, Forms.login, Forms.resetPassword,
-  Forms.wachtlijst.readOnly, Forms.registerUser, Forms.verlof.user, Forms.planning, Forms.settings;
+  Forms.wachtlijst.readOnly, Forms.registerUser, Forms.verlof.user, Forms.planning, Forms.settings, Forms.shiftTypes;
 
 { TAppManager }
 
@@ -117,8 +117,9 @@ end;
 procedure TAppManager.ShowHome;
 begin
 //  ShowForm(TFormHome);
-ShowForm(TFormPlanning);
+//ShowForm(TFormPlanning);
 //ShowForm(TFormSettings);
+ShowForm(TFormShiftTypes);
 end;
 
 

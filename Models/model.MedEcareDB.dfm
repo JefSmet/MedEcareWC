@@ -193,4 +193,11 @@ object MedEcareDB: TMedEcareDB
     Left = 112
     Top = 664
   end
+  object reqGetShiftTypeById: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 120
+    Top = 240
+  end
 end

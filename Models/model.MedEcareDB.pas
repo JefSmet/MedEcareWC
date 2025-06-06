@@ -34,6 +34,7 @@ type
     reqPutUser: TWebHttpRequest;
     reqPutChangePassword: TWebHttpRequest;
     reqGetRoster: TWebHttpRequest;
+    reqGetShiftTypeById: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -64,6 +65,8 @@ type
       AList: TActivityList): Boolean;
     [async]
     function getShiftTypes(AList: TList<TShiftType>): Boolean;
+    [async]
+    function getShiftTypeById(AShiftTypeId: string; out AShiftType: TShiftType): Boolean;
     [async]
     function getRoles(AList: TList<TRole>): Boolean;
     [async]
@@ -942,6 +945,36 @@ begin
       Exit(true);
     end;
 
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getShiftTypeById(AShiftTypeId: string; out AShiftType: TShiftType): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+begin
+  reqGetShiftTypeById.URL := baseUrl + 'admin/shift-types/' + AShiftTypeId;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetShiftTypeById));
+    
+    if (xhr.Status = 200) then
+    begin
+      response := xhr.responseText;
+      AShiftType := TShiftType.ToObject(response, true);
+      Exit(true);
+    end
+    else if (xhr.Status = 404) then
+    begin
+      TAppManager.GetInstance.ShowToast('ShiftType niet gevonden');
+      Exit(False);
+    end;
   except
     on e: exception do
     begin
