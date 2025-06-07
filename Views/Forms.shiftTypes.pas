@@ -36,6 +36,7 @@ type
       Event: TJSEventParameter);
     [async] procedure aclacSaveExecute(Sender: TObject; Element: TJSHTMLElementRecord;
       Event: TJSEventParameter);
+      procedure hideFormSection;
   private
     { Private declarations }
     FAppManager: TAppManager;
@@ -77,22 +78,9 @@ end;
 
 procedure TFormShiftTypes.aclacHideNewShiftTypeExecute(Sender: TObject;
   Element: TJSHTMLElementRecord; Event: TJSEventParameter);
-var
-  newShiftTypeForm: TJSElement;
 begin
-  inherited;
-  newShiftTypeForm := document.getElementById('formSection');
-  FFormSection.classList.add('d-none');
-  if not FFormSection.getAttribute('method').Equals('') then
-    FFormSection.setAttribute('method', '');
 
-  edtStartHour.Text := '';
-  edtName.Text := '';
-  edtDurationMinutes.Text := '';
-  edtStartMinute.Text := '';
-  dpActiveUntil.Date := 0;
-  dpActiveFrom.Date := 0;
-  dpActiveUntil.Text := defaultDateText;
+hideFormSection;
 
 end;
 
@@ -113,6 +101,26 @@ begin
   end;
 end;
 
+procedure TFormShiftTypes.hideFormSection;
+var
+  newShiftTypeForm: TJSElement;
+begin
+  inherited;
+  newShiftTypeForm := document.getElementById('formSection');
+  FFormSection.classList.add('d-none');
+  if not FFormSection.getAttribute('method').Equals('') then
+    FFormSection.setAttribute('method', '');
+
+  edtStartHour.Text := '';
+  edtName.Text := '';
+  edtDurationMinutes.Text := '';
+  edtStartMinute.Text := '';
+  dpActiveUntil.Date := 0;
+  dpActiveFrom.Date := 0;
+  dpActiveUntil.Text := defaultDateText;
+
+end;
+
 procedure TFormShiftTypes.aclacSaveExecute(Sender: TObject;
   Element: TJSHTMLElementRecord; Event: TJSEventParameter);
 var
@@ -122,31 +130,29 @@ begin
     if FFormSection.getAttribute('method') = 'put' then
     begin
       shiftTypeId := FFormSection.id;
-      FAppManager.db.PutShiftType(shiftTypeId, edtName.Text,
+      await(FAppManager.db.PutShiftType(shiftTypeId, edtName.Text,
         strToInt(edtStartHour.Text), strToInt(edtStartMinute.Text),
         strToInt(edtDurationMinutes.Text), dpActiveFrom.Date,
-        dpActiveUntil.Date);
-      await(GetShiftTypes);
-      buildShiftTypesTable;
+        dpActiveUntil.Date));
+
     end
     else
     begin
 
-      FAppManager.db.PostShiftType(strToInt(edtStartHour.Text),
+      await(FAppManager.db.PostShiftType(strToInt(edtStartHour.Text),
         strToInt(edtStartMinute.Text), strToInt(edtDurationMinutes.Text),
-        dpActiveFrom.DateTime, dpActiveUntil.DateTime, edtName.Text);
-
-      await(GetShiftTypes);
-      buildShiftTypesTable;
-
+        dpActiveFrom.DateTime, dpActiveUntil.DateTime, edtName.Text));
     end;
+    await(GetShiftTypes);
+    buildShiftTypesTable;
+    hideFormSection;
   except
     on e: exception do
     begin
 
     end;
-
   end;
+
 end;
 
 procedure TFormShiftTypes.aclacShowUpdateShiftTypeExecute(Sender: TObject;
