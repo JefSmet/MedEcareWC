@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.REST,
   orm.Activity, System.Generics.Collections, orm.Person, orm.Doctor,
-  orm.ShiftType, orm.Role, orm.Roster;
+  orm.ShiftType, orm.Role, orm.Roster, orm.User;
 
 type
   TMedEcareDB = class(TWebDataModule)
@@ -35,6 +35,8 @@ type
     reqPutChangePassword: TWebHttpRequest;
     reqGetRoster: TWebHttpRequest;
     reqGetShiftTypeById: TWebHttpRequest;
+    reqGetUsers: TWebHttpRequest;
+    reqGetDoctorById: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -103,6 +105,10 @@ type
     function ChangePassword(AOldPassword, ANewPassword: string): Boolean;
     [async]
     function getRosters(AList: TList<TRoster>): Boolean;
+    [async]
+    function getUsers(AList: TList<TUser>): Boolean;
+    [async]
+    function getDoctorById(ADoctorId: string; out ADoctor: TDoctor): Boolean;
   end;
 
 var
@@ -1087,4 +1093,71 @@ begin
     end;
   end;
 end;
+
+function TMedEcareDB.getUsers(AList: TList<TUser>): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+  userList: TList<TUser>;
+begin
+  reqGetUsers.URL := baseUrl + 'admin/users';
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetUsers));
+
+    if (xhr.Status = 200) then
+    begin
+      userList := TUser.ToList(xhr.responseText, true);
+      
+      try
+        if Assigned(AList) then
+        begin
+          AList.Clear;
+          AList.AddRange(userList);
+        end;
+      finally
+        userList.Free;
+      end;
+      Exit(true);
+    end;
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getDoctorById(ADoctorId: string; out ADoctor: TDoctor): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+begin
+  reqGetDoctorById.URL := baseUrl + 'admin/persons/doctors/' + ADoctorId;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetDoctorById));
+    
+    if (xhr.Status = 200) then
+    begin
+      response := xhr.responseText;
+      ADoctor := TDoctor.ToObject(response, true);
+      Exit(true);
+    end
+    else if (xhr.Status = 404) then
+    begin
+      TAppManager.GetInstance.ShowToast('Doctor niet gevonden');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
 end.

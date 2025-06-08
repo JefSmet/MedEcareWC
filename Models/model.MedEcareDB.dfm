@@ -200,4 +200,18 @@ object MedEcareDB: TMedEcareDB
     Left = 120
     Top = 240
   end
+  object reqGetUsers: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 224
+    Top = 664
+  end
+  object reqGetDoctorById: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 320
+    Top = 664
+  end
 end

@@ -44,7 +44,7 @@ class function TUser.FromJSON(const AJsonObj: TJSONObject;
   ADateTimeIsUTC: Boolean): TUser;
 begin
   Result := Default(TUser);
-  Result.Id := AJsonObj.GetJSONValue('id');
+  Result.Id := AJsonObj.GetJSONValue('personId');
   Result.Email := AJsonObj.GetJSONValue('email');
   Result.Password := AJsonObj.GetJSONValue('password');
   Result.CreatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('createdAt'), ADateTimeIsUTC);

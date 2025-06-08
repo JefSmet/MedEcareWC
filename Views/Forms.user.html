@@ -1,0 +1,193 @@
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>User Management</title>
+    <style>
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .form-section {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .form-group {
+        flex: 1;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .form-group input, .form-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .btn {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .btn-success {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .btn-warning {
+        background-color: #ffc107;
+        color: black;
+      }
+
+      .btn-danger {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      #gridShiftTypes {
+        width: 100%;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #e9ecef;
+      }
+
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Gebruikers Beheer</h1>
+        <button id="btnNew" class="btn btn-primary">Nieuwe Gebruiker</button>
+      </div>
+
+      <div id="formSection" class="form-section d-none">
+        <h3 id="formTitle">Gebruiker</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edtEmail">Email:</label>
+            <input type="email" id="edtEmail" placeholder="gebruiker@example.com">
+            <label for="edtPassword">Email:</label>
+            <input type="password" id="edtPassword" placeholder="thisIsARandomPassword">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edtVoornaam">Voornaam:</label>
+            <input type="text" id="edtVoornaam" placeholder="Voornaam">
+          </div>
+          <div class="form-group">
+            <label for="edtAchternaam">Achternaam:</label>
+            <input type="text" id="edtAchternaam" placeholder="Achternaam">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edtGeboorteDatum">GeboorteDatum:</label>
+            <input type="date" id="edtGeboorteDatum">
+          </div>
+          <div class="form-group">
+            <label for="edtRiziv">Riziv:</label>
+            <input type="text" id="edtRiziv" placeholder="RIZIV nummer">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edtIsActiefStafflid">Is actief stafflid:</label>
+            <select id="edtIsActiefStafflid">
+              <option value="true">Ja</option>
+              <option value="false">Nee</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <button id="btnSave" class="btn btn-success">Opslaan</button>
+          <button id="btnCancel" class="btn btn-secondary">Annuleren</button>
+          <button id="btnDelete" class="btn btn-danger" style="display: none">Verwijderen</button>
+        </div>
+      </div>
+
+      <div id="gridShiftTypes">
+        <h3>Bestaande Gebruikers</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <thead>
+            <tr style="background-color: #e9ecef;">
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">ID</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Email</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Password</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Voornaam</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Achternaam</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">GeboorteDatum</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Riziv</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Is actief stafflid</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Acties</th>
+            </tr>
+          </thead>
+          <tbody id="shiftTypesTableBody">
+            <!-- Shift types worden hier dynamisch toegevoegd -->
+            <tr>
+              <td colspan="7" style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #666;">
+                Geen gebruikers gevonden. Voeg een nieuwe toe met het formulier hierboven.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

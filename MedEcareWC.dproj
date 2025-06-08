@@ -206,6 +206,11 @@
         </DCCReference>
         <DCCReference Include="Utils\utils.SchoolVakanties.pas"/>
         <DCCReference Include="ORM\orm.Roster.pas"/>
+        <DCCReference Include="Views\Forms.user.pas">
+            <Form>FormUser</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TWebForm</DesignClass>
+        </DCCReference>
         <None Include="MedEcare.html"/>
         <None Include="Manifest.json"/>
         <None Include="serviceworker.js"/>
