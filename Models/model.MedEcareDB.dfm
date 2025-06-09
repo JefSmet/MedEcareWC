@@ -214,4 +214,59 @@ object MedEcareDB: TMedEcareDB
     Left = 320
     Top = 664
   end
+  object reqGetUserRole: TWebHttpRequest
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 112
+    Top = 736
+  end
+  object reqPostUser: TWebHttpRequest
+    Command = httpPOST
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 224
+    Top = 736
+  end
+  object reqPostDoctor: TWebHttpRequest
+    Command = httpPOST
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 328
+    Top = 736
+  end
+  object reqPutDoctor: TWebHttpRequest
+    Command = httpPUT
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 440
+    Top = 736
+  end
+  object reqDeleteDoctor: TWebHttpRequest
+    Command = httpDELETE
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 528
+    Top = 736
+  end
+  object reqDeleteUser: TWebHttpRequest
+    Command = httpDELETE
+    Headers.Strings = (
+      'Content-Type=application/json')
+    ResponseType = rtText
+    Left = 432
+    Top = 664
+  end
+  object reqPostRegister: TWebHttpRequest
+    Command = httpPOST
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 680
+    Top = 464
+  end
 end

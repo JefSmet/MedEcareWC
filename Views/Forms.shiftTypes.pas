@@ -34,9 +34,10 @@ type
     [async]
     procedure aclacEditExecute(Sender: TObject; Element: TJSHTMLElementRecord;
       Event: TJSEventParameter);
-    [async] procedure aclacSaveExecute(Sender: TObject; Element: TJSHTMLElementRecord;
+    [async]
+    procedure aclacSaveExecute(Sender: TObject; Element: TJSHTMLElementRecord;
       Event: TJSEventParameter);
-      procedure hideFormSection;
+    procedure hideFormSection;
   private
     { Private declarations }
     FAppManager: TAppManager;
@@ -60,27 +61,34 @@ procedure TFormShiftTypes.aclacEditExecute(Sender: TObject;
   Element: TJSHTMLElementRecord; Event: TJSEventParameter);
 var
   shiftTypeId: string;
-  toUpdateShiftType: TShiftType;
+  ShiftType: TShiftType;
 begin
   FFormSection.setAttribute('method', 'put');
 
   FFormSection.classList.remove('d-none');
   shiftTypeId := Element.Element.id;
   FFormSection.setAttribute('id', shiftTypeId);
-  await(FAppManager.db.getShiftTypeById(shiftTypeId, toUpdateShiftType));
-  edtName.Text := toUpdateShiftType.Name;
-  edtStartHour.Text := toUpdateShiftType.StartHour.ToString;
-  edtStartMinute.Text := toUpdateShiftType.StartMinute.ToString;
-  edtDurationMinutes.Text := toUpdateShiftType.DurationMinutes.ToString;
-  dpActiveUntil.DateTime := toUpdateShiftType.ActiveUntil;
-  dpActiveFrom.DateTime := toUpdateShiftType.ActiveFrom;
+  for ShiftType in FShiftTypes do
+  begin
+    if ShiftType.id = shiftTypeId then
+    begin
+      edtName.Text := ShiftType.Name;
+      edtStartHour.Text := ShiftType.StartHour.ToString;
+      edtStartMinute.Text := ShiftType.StartMinute.ToString;
+      edtDurationMinutes.Text := ShiftType.DurationMinutes.ToString;
+      dpActiveUntil.DateTime := ShiftType.ActiveUntil;
+      dpActiveFrom.DateTime := ShiftType.ActiveFrom;
+      exit
+    end;
+  end;
+
 end;
 
 procedure TFormShiftTypes.aclacHideNewShiftTypeExecute(Sender: TObject;
   Element: TJSHTMLElementRecord; Event: TJSEventParameter);
 begin
 
-hideFormSection;
+  hideFormSection;
 
 end;
 
@@ -175,7 +183,7 @@ var
 begin
   tableBody := document.getElementById('shiftTypesTableBody');
   if not Assigned(tableBody) then
-    Exit;
+    exit;
 
   sb := TStringBuilder.Create;
   try

@@ -181,6 +181,7 @@ begin
   FSelectedDate := strToInt(Element.Element.getAttribute('dateTime'));
   FSelectedColumnIndex := strToInt(Element.Element.getAttribute('colindex'));
   Element.Element.classList.add('active-cell');
+  renderAvailableDoctors;
 end;
 
 procedure TFormPlanning.buildGrid;
@@ -358,16 +359,28 @@ end;
 
 procedure TFormPlanning.filterDoctors;
 var
-verlof : TActivity;
+  AvailableDoctors: TList<TDoctor>;
+  sb: TStringBuilder;
+  Doctor: TDoctor;
 begin
-  for verlof in FVerlofList  do
-  begin
-    if (verlof.Start = FSelectedDate) or (verlof.EndTime = FselectedDate) then
+  AvailableDoctors := TList<TDoctor>.Create;
+  sb := TStringBuilder.Create;
+  try
+    // filter
+    AvailableDoctors.AddRange(FDoctorsList);
+    for Doctor in AvailableDoctors do
     begin
-    //
+      sb.AppendLine
+        (Format('<button doctor-id="%s" type="button" class ="available-doctor-button btn btn-success">%s</button>',
+        [Doctor.PersonId, Doctor.Person.LastName]));
     end;
+    document.getElementById('availableDoctors').innerHTML := sb.ToString;
+    acl.BindActions;
+  finally
+    AvailableDoctors.Free;
+    sb.Free;
   end;
-  end;
+end;
 
 procedure TFormPlanning.getDoctors;
 begin
@@ -468,26 +481,48 @@ end;
 
 procedure TFormPlanning.renderAvailableDoctors;
 var
-  AvailableDoctors: TList<TDoctor>;
   sb: TStringBuilder;
   Doctor: TDoctor;
+  Act: TActivity;
+  IsOnLeave: Boolean;
 begin
-  AvailableDoctors := TList<TDoctor>.Create;
   sb := TStringBuilder.Create;
   try
-    // filter
-    AvailableDoctors.AddRange(FDoctorsList);
-    for Doctor in AvailableDoctors do
+    for Doctor in FDoctorsList do
     begin
-      sb.AppendLine
-        (Format('<button doctor-id="%s" type="button" class ="available-doctor-button btn btn-success">%s</button>',
-        [Doctor.PersonId, Doctor.Person.LastName]));
+      // 1) Check of deze dokter verlof heeft op FSelectedDate
+      IsOnLeave := False;
+      for Act in FVerlofList do
+      begin
+        if (Act.PersonId = Doctor.PersonId) and
+           // let op: Act.Start en Act.EndTime bevatten mogelijk
+           // begin- en eindtijd van de verlof-periode
+           (DateOf(Act.Start) <= FSelectedDate) and
+           (FSelectedDate <= DateOf(Act.EndTime)) then
+        begin
+          IsOnLeave := True;
+          Break;
+        end;
+      end;
+
+      // 2) Alleen als hij/zij niet op verlof is, maak je een knop
+      if not IsOnLeave then
+      begin
+        sb.AppendLine(
+          Format(
+            '<button doctor-id="%s" type="button" class="available-doctor-button btn btn-success">%s</button>',
+            [ Doctor.PersonId,
+              Doctor.Person.LastName
+            ]
+          )
+        );
+      end;
     end;
+
+    // 3) Render de buttons
     document.getElementById('availableDoctors').innerHTML := sb.ToString;
     acl.BindActions;
   finally
-
-    AvailableDoctors.Free;
     sb.Free;
   end;
 end;

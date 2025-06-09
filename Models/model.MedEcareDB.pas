@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Modules, WEBLib.REST,
   orm.Activity, System.Generics.Collections, orm.Person, orm.Doctor,
-  orm.ShiftType, orm.Role, orm.Roster, orm.User;
+  orm.ShiftType, orm.Role, orm.Roster, orm.User, orm.UserRole;
 
 type
   TMedEcareDB = class(TWebDataModule)
@@ -37,6 +37,13 @@ type
     reqGetShiftTypeById: TWebHttpRequest;
     reqGetUsers: TWebHttpRequest;
     reqGetDoctorById: TWebHttpRequest;
+    reqGetUserRole: TWebHttpRequest;
+    reqPostUser: TWebHttpRequest;
+    reqPostDoctor: TWebHttpRequest;
+    reqPutDoctor: TWebHttpRequest;
+    reqDeleteDoctor: TWebHttpRequest;
+    reqDeleteUser: TWebHttpRequest;
+    reqPostRegister: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -88,7 +95,7 @@ type
     [async]
     function getPersonById(APersonId: string; out APerson: TPerson): Boolean;
     [async]
-    function PostPerson(AFirstName, ALastName: string; ADateOfBirth: TDateTime): Boolean;
+    function PostPerson(AFirstName, ALastName: string; ADateOfBirth: TDateTime): TPerson;
     [async]
     function PutPerson(APersonId, AFirstName, ALastName: string;ADateOfBirth : TDateTime): Boolean;
     [async]
@@ -109,6 +116,22 @@ type
     function getUsers(AList: TList<TUser>): Boolean;
     [async]
     function getDoctorById(ADoctorId: string; out ADoctor: TDoctor): Boolean;
+    [async]
+    function getUserRoles(AList: TList<TUserRole>): Boolean;
+    [async]
+    function PostDoctor(APersonId, ARizivNumber: string; AIsEnabledInShifts: Boolean): Boolean;
+    [async]
+    function PutDoctor(ADoctorId, ARizivNumber: string; AIsEnabledInShifts: Boolean): Boolean;
+    [async]
+    function DeleteDoctor(ADoctorId: string): Boolean;
+//    [async]
+//    function PostUser(AEmail, APassword, ARole: string): Boolean;
+//    [async]
+//    function getUserById(AUserId: string; out AUser: TUser): Boolean;
+    [async]
+    function DeleteUser(AUserId: string): Boolean;
+    [async]
+    function PostRegister(AEmail, APassword, ARole, AFirstName, ALastName: string; ADateOfBirth: TDateTime; ARizivNumber: string; AIsEnabledInShifts: Boolean = true): Boolean;
   end;
 
 var
@@ -197,7 +220,7 @@ var
   doctorList: TList<TDoctor>;
 begin
 
-  reqGetStaff.URL := baseUrl + 'admin/persons/staff';
+  reqGetStaff.URL := baseUrl + 'admin/doctors';
   try
 
     xhr := await(TJSXMLHttpRequest, PerformRequestWithCredentials(reqGetStaff));
@@ -679,11 +702,13 @@ begin
   end;
 end;
 
-function TMedEcareDB.PostPerson(AFirstName, ALastName: string; ADateOfBirth: TDateTime): Boolean;
+function TMedEcareDB.PostPerson(AFirstName, ALastName: string; ADateOfBirth: TDateTime): TPerson;
 var
   postData: string;
   xhr: TJSXMLHttpRequest;
   dateOfBirth: string;
+  returnPerson: TPerson;
+  jo: TJSONObject;
 begin
   reqPostPersons.URL := baseUrl + 'admin/persons';
   dateOfBirth := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', ADateOfBirth);
@@ -695,13 +720,15 @@ begin
       PerformRequestWithCredentials(reqPostPersons));
     if (xhr.Status = 201) then
     begin
-      Exit(true);
+      jo := TJSONObject(xhr.response);
+      returnPerson := TPerson.ToObject(jo,true);
+      Exit(returnPerson);
     end;
   except
     on e: exception do
     begin
       TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
-      Exit(False);
+      Exit;
     end;
   end;
 end;
@@ -723,7 +750,7 @@ begin
       JSON.AddPair('lastName', ALastName);
 
     if ADateOfBirth > 0 then
-      JSON.AddPair('dateOfBirth', ADateOfBirth);
+      JSON.AddPair('dateOfBirth', WEBLib.REST.TWebRESTClient.DateTimeToWL(ADateOfBirth));
 
     postData := JSON.ToString;
     reqPutPersons.postData := postData;
@@ -1135,7 +1162,7 @@ var
   xhr: TJSXMLHttpRequest;
   response: string;
 begin
-  reqGetDoctorById.URL := baseUrl + 'admin/persons/doctors/' + ADoctorId;
+  reqGetDoctorById.URL := baseUrl + 'admin/doctors/' + ADoctorId;
   try
     xhr := await(TJSXMLHttpRequest,
       PerformRequestWithCredentials(reqGetDoctorById));
@@ -1149,6 +1176,237 @@ begin
     else if (xhr.Status = 404) then
     begin
       TAppManager.GetInstance.ShowToast('Doctor niet gevonden');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.getUserRoles(AList: TList<TUserRole>): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+  response: string;
+  userRoleList: TList<TUserRole>;
+begin
+  reqGetUserRole.URL := baseUrl + 'admin/user-roles';
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqGetUserRole));
+
+    if (xhr.Status = 200) then
+    begin
+      userRoleList := TUserRole.ToList(xhr.responseText, true);
+      
+      try
+        if Assigned(AList) then
+        begin
+          AList.Clear;
+          AList.AddRange(userRoleList);
+        end;
+      finally
+        userRoleList.Free;
+      end;
+      Exit(true);
+    end;
+
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PostDoctor(APersonId, ARizivNumber: string; AIsEnabledInShifts: Boolean): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+begin
+  JSON := TJSONObject.Create;
+  try
+    reqPostDoctor.URL := baseUrl + 'admin/doctors';
+    
+    JSON.AddPair('personId', APersonId);
+    
+    if ARizivNumber <> '' then
+      JSON.AddPair('rizivNumber', ARizivNumber);
+      
+    JSON.AddPair('isEnabledInShifts', AIsEnabledInShifts.ToInteger);
+
+    postData := JSON.ToString;
+    reqPostDoctor.postData := postData;
+  finally
+    JSON.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPostDoctor));
+    if (xhr.Status = 201) then
+    begin
+      Exit(true);
+    end
+    else if (xhr.Status = 400) then
+    begin
+      TAppManager.GetInstance.ShowToast('Persoon niet gevonden of validatiefout');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PutDoctor(ADoctorId, ARizivNumber: string; AIsEnabledInShifts: Boolean): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+begin
+  JSON := TJSONObject.Create;
+  try
+    reqPutDoctor.URL := baseUrl + 'admin/doctors/' + ADoctorId;
+    
+    if ARizivNumber <> '' then
+      JSON.AddPair('rizivNumber', ARizivNumber);
+      
+    JSON.AddPair('isEnabledInShifts', TJSONBool.Create(AIsEnabledInShifts));
+
+    postData := JSON.ToString;
+    reqPutDoctor.postData := postData;
+  finally
+    JSON.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPutDoctor));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end
+    else if (xhr.Status = 404) then
+    begin
+      TAppManager.GetInstance.ShowToast('Doctor niet gevonden');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.DeleteDoctor(ADoctorId: string): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+begin
+  reqDeleteDoctor.URL := baseUrl + 'admin/doctors/' + ADoctorId;
+
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqDeleteDoctor));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end
+    else if (xhr.Status = 404) then
+    begin
+      TAppManager.GetInstance.ShowToast('Doctor niet gevonden');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.DeleteUser(AUserId: string): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+begin
+  reqDeleteUser.URL := baseUrl + 'admin/users/' + AUserId;
+
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqDeleteUser));
+    if (xhr.Status = 200) then
+    begin
+      Exit(true);
+    end
+    else if (xhr.Status = 404) then
+    begin
+      TAppManager.GetInstance.ShowToast('Gebruiker niet gevonden');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PostRegister(AEmail, APassword, ARole, AFirstName, ALastName: string; ADateOfBirth: TDateTime; ARizivNumber: string; AIsEnabledInShifts: Boolean = true): Boolean;
+var
+  postData: string;
+  xhr: TJSXMLHttpRequest;
+  JSON: TJSONObject;
+  dateOfBirth: string;
+begin
+  JSON := TJSONObject.Create;
+  try
+    reqPostRegister.URL := baseUrl + 'auth/register';
+    
+    JSON.AddPair('email', AEmail);
+    JSON.AddPair('password', APassword);
+    
+    if ARole <> '' then
+      JSON.AddPair('role', ARole);
+      
+    JSON.AddPair('firstName', AFirstName);
+    JSON.AddPair('lastName', ALastName);
+    
+    dateOfBirth := FormatDateTime('yyyy-mm-dd"T"hh:mm:ss".000Z"', ADateOfBirth);
+    JSON.AddPair('dateOfBirth', dateOfBirth);
+    
+    JSON.AddPair('rizivNumber', ARizivNumber);
+    JSON.AddPair('isEnabledInShifts',TJSONBool.Create(AIsEnabledInShifts));
+//    if AIsEnabledInShifts then
+//    JSON.AddPair('isEnabledInShifts', 'true')
+//    else
+//    JSON.AddPair('isEnabledInShifts', 'false');
+
+    postData := JSON.ToString;
+    reqPostRegister.postData := postData;
+  finally
+    JSON.Free;
+  end;
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPostRegister));
+    if (xhr.Status = 201) then
+    begin
+      TAppManager.GetInstance.ShowToast('Registratie succesvol voltooid');
+      Exit(true);
+    end
+    else if (xhr.Status = 400) then
+    begin
+      TAppManager.GetInstance.ShowToast('Validatiefout: controleer alle velden en wachtwoordvereisten');
       Exit(False);
     end;
   except

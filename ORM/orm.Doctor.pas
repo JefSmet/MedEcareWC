@@ -67,6 +67,9 @@ begin
 end;
 
 class function TDoctor.ToObject(const AJsonObj: TJSONObject; ADateTimeIsUTC: Boolean): TDoctor;
+var
+  tempPerson : string;
+  jsv: TJSONValue ;
 begin
   Result := Default(TDoctor);
   Result.PersonId := AJsonObj.GetJSONValue('personId');
@@ -74,9 +77,10 @@ begin
   Result.IsEnabledInShifts := AJsonObj.GetJSONValue('isEnabledInShifts') = 'true';
   Result.CreatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('createdAt'), ADateTimeIsUTC);
   Result.UpdatedAt := TWebRESTClient.IsoToDateTime(AJsonObj.GetJSONValue('updatedAt'), ADateTimeIsUTC);
-
-  // Parse embedded Person object if present
-  if AJsonObj.GetJSONValue('person') <> '' then
+  tempPerson := AJsonObj.GetJSONValue('person');
+//   Parse embedded Person object if present
+  jsv := AJsonObj.getValue('person');
+  if Assigned(jsv) then
     Result.Person := TPerson.ToObject(TJSONObject(AJsonObj.GetValue('person')), ADateTimeIsUTC);
 end;
 

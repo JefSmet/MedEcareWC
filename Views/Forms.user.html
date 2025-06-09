@@ -118,7 +118,7 @@
           <div class="form-group">
             <label for="edtEmail">Email:</label>
             <input type="email" id="edtEmail" placeholder="gebruiker@example.com">
-            <label for="edtPassword">Email:</label>
+            <label for="edtPassword">Password:</label>
             <input type="password" id="edtPassword" placeholder="thisIsARandomPassword">
           </div>
         </div>
@@ -147,8 +147,13 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="edtIsActiefStafflid">Is actief stafflid:</label>
-            <select id="edtIsActiefStafflid">
+            <label for="cbIsActiefStafflid">Is actief stafflid:</label>
+            <select id="cbIsActiefStafflid">
+              <option value="true">Ja</option>
+              <option value="false">Nee</option>
+            </select>
+            <label for="cbRole">Rol</label>
+            <select id="cbRole">
               <option value="true">Ja</option>
               <option value="false">Nee</option>
             </select>
@@ -170,6 +175,7 @@
               <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">ID</th>
               <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Email</th>
               <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Password</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Role</th>
               <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Voornaam</th>
               <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Achternaam</th>
               <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">GeboorteDatum</th>
