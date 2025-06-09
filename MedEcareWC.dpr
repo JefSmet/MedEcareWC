@@ -35,7 +35,8 @@ uses
   Forms.shiftTypes in 'Views\Forms.shiftTypes.pas' {FormShiftTypes: TWebForm} {*.html},
   utils.SchoolVakanties in 'Utils\utils.SchoolVakanties.pas',
   orm.Roster in 'ORM\orm.Roster.pas',
-  Forms.user in 'Views\Forms.user.pas' {FormUser: TWebForm} {*.html};
+  Forms.user in 'Views\Forms.user.pas' {FormUser: TWebForm} {*.html},
+  Forms.roster in 'Views\Forms.roster.pas' {FormRoster: TWebForm} {*.html};
 
 {$R *.res}
 
@@ -49,6 +50,7 @@ begin
   Application.CreateForm(TFormSettings, FormSettings);
   Application.CreateForm(TFormShiftTypes, FormShiftTypes);
   Application.CreateForm(TFormUser, FormUser);
+  Application.CreateForm(TFormRoster, FormRoster);
   Application.Run;
 
 end.
