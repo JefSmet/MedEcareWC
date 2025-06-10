@@ -269,4 +269,12 @@ object MedEcareDB: TMedEcareDB
     Left = 680
     Top = 464
   end
+  object reqPostRoster: TWebHttpRequest
+    Command = httpPOST
+    Headers.Strings = (
+      'Content-Type:application/json')
+    ResponseType = rtText
+    Left = 672
+    Top = 568
+  end
 end

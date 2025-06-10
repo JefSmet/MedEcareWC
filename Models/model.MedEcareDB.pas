@@ -8,6 +8,11 @@ uses
   orm.ShiftType, orm.Role, orm.Roster, orm.User, orm.UserRole;
 
 type
+  TShiftTypeNameAndId = record
+    id: string;
+    name: string;
+  end;
+
   TMedEcareDB = class(TWebDataModule)
     reqGetActivities: TWebHttpRequest;
     reqPostVerlof: TWebHttpRequest;
@@ -44,6 +49,7 @@ type
     reqDeleteDoctor: TWebHttpRequest;
     reqDeleteUser: TWebHttpRequest;
     reqPostRegister: TWebHttpRequest;
+    reqPostRoster: TWebHttpRequest;
   private
     { Private declarations }
   public
@@ -132,6 +138,8 @@ type
     function DeleteUser(AUserId: string): Boolean;
     [async]
     function PostRegister(AEmail, APassword, ARole, AFirstName, ALastName: string; ADateOfBirth: TDateTime; ARizivNumber: string; AIsEnabledInShifts: Boolean = true): Boolean;
+    [async]
+    function PostRoster(ARosters: string): Boolean;
   end;
 
 var
@@ -141,7 +149,7 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
-uses middleware.httponly, DateUtils, model.AppManager, WEBLib.JSON;
+uses middleware.httponly, DateUtils, model.AppManager, WEBLib.JSON, Forms.roster;
 {$R *.dfm}
 
 const
@@ -1407,6 +1415,35 @@ begin
     else if (xhr.Status = 400) then
     begin
       TAppManager.GetInstance.ShowToast('Validatiefout: controleer alle velden en wachtwoordvereisten');
+      Exit(False);
+    end;
+  except
+    on e: exception do
+    begin
+      TAppManager.GetInstance.ShowToast('Er ging iets mis: ' + e.Message);
+      Exit(False);
+    end;
+  end;
+end;
+
+function TMedEcareDB.PostRoster(ARosters: string): Boolean;
+var
+  xhr: TJSXMLHttpRequest;
+begin
+  reqPostRoster.URL := baseUrl + 'admin/rosters';
+  reqPostRoster.postData := ARosters;
+  
+  try
+    xhr := await(TJSXMLHttpRequest,
+      PerformRequestWithCredentials(reqPostRoster));
+    if (xhr.Status = 201) then
+    begin
+      TAppManager.GetInstance.ShowToast('Roster succesvol aangemaakt');
+      Exit(true);
+    end
+    else if (xhr.Status = 400) then
+    begin
+      TAppManager.GetInstance.ShowToast('Validatiefout: controleer roster data structuur');
       Exit(False);
     end;
   except

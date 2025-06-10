@@ -30,6 +30,11 @@
       overflow: auto;
     }
 
+    .active-cell{
+    background-color:blue;
+    color:white;
+    }
+
     /* Ter illustratie */
     #left-panel, #right-panel {
       padding: 10px;
@@ -49,12 +54,24 @@
           <tbody id="sourceListTableBody">
           </tbody>
         </table>
-        <button id="buttonAdd" class="btn btn-success">Toevoegen</button>
+        <button type="button" id="buttonAdd" class="btn btn-success">Toevoegen</button>
     </div>
 
     <div id="right-panel">
+    <table id="rosterListTable" class="table table-striped">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Shift Type</th>
+            </tr>
+          </thead>
+          <tbody id="rosterListTableBody">
+          </tbody>
+        </table>
+        <button type ="button" id="moveUp" class="btn btn-primary">Naar Boven</button>
+        <button type ="button" id="moveDown" class ="btn btn-primary">Naar Beneden</button>
+        <button type ="button" id="delete" class ="btn btn-danger">Verwijderen</button>
+        <button type="button" id="save" class="btn btn-success">Opslaan</button>
     </div>
-
   </div>
   </body>
 </html>
