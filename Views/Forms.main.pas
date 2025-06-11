@@ -22,6 +22,9 @@ type
     procedure acShowVerlofUserExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure aclocLogoutExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure aclocBrandExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure aclacRoosterExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure aclacUsersExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure aclacRolesExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
   private
     FAppManager: TAppManager;
     FActiveNavLink : TJSElement;
@@ -68,12 +71,30 @@ FAppManager.ShowVerlofUser;
 SetNavElementActive(element);
 end;
 
+procedure TFormMain.aclacRolesExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+begin
+FAppManager.showRoles;
+SetNavElementActive(element);
+end;
+
+procedure TFormMain.aclacRoosterExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+begin
+FAppManager.showRoster;
+SetNavElementActive(element);
+end;
+
+procedure TFormMain.aclacUsersExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+begin
+FAppManager.showUser;
+SetNavElementActive(element);
+end;
+
 procedure TFormMain.aclocBrandExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
 var
   homeElement : TJSElement;
 begin
 FAppManager.ShowHome;
-homeElement := document.getElementById('nav-home');
+homeElement := document.getElementById('nav-planning');
 FActiveNavLink.classList.remove('active');
 FActiveNavLink.classList.add('link-dark');
 homeElement.classList.remove('link-dark');
@@ -100,7 +121,7 @@ var
 begin
   FAppManager := TAppManager.GetInstance;
   FAppManager.SetFormContainerID('main-content');
-  FActiveNavLink := document.getElementById('nav-home');
+  FActiveNavLink := document.getElementById('nav-planning');
   // check op password reset
   if HasQueryParam('resetToken', resetToken) then
   begin

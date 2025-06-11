@@ -23,7 +23,7 @@ object FormMain: TFormMain
         OnExecute = aclocBrandExecute
       end
       item
-        ID = 'nav-home'
+        ID = 'nav-planning'
         Name = 'ocHome'
         OnExecute = acShowHomeExecute
       end
@@ -40,6 +40,21 @@ object FormMain: TFormMain
       item
         ID = ''
         Name = 'Action4'
+      end
+      item
+        ID = 'nav-roster'
+        Name = 'acRooster'
+        OnExecute = aclacRoosterExecute
+      end
+      item
+        ID = 'nav-user'
+        Name = 'acUsers'
+        OnExecute = aclacUsersExecute
+      end
+      item
+        ID = 'nav-roles'
+        Name = 'acRoles'
+        OnExecute = aclacRolesExecute
       end>
     Left = 217
     Top = 96

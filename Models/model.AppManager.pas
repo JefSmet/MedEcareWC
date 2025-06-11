@@ -37,6 +37,9 @@ type
     procedure ShowToast(AMessage: string; AOnFinished: TProc; ACaption: string = ''; ADelay: integer = 5000); overload;
     procedure ToggleSidebar(AVisible : boolean);
     procedure SayHi;
+    procedure showRoster;
+    procedure showUser;
+    procedure showRoles;
   end;
 
 implementation
@@ -118,12 +121,12 @@ end;
 procedure TAppManager.ShowHome;
 begin
 //  ShowForm(TFormHome);
-//ShowForm(TFormPlanning);
+ShowForm(TFormPlanning);
 //ShowForm(TFormSettings);
 //ShowForm(TFormShiftTypes);
 //ShowForm(TFormUser);
 //ShowForm(TFormRoster);
-ShowForm(TFormRoles);
+//ShowForm(TFormRoles);
 end;
 
 
@@ -140,6 +143,16 @@ end;
 procedure TAppManager.ShowResetPassword;
 begin
   ShowForm(TFormResetPassword);
+end;
+
+procedure TAppManager.showRoles;
+begin
+ShowForm(TFormRoles);
+end;
+
+procedure TAppManager.showRoster;
+begin
+ShowForm(TFormRoster);
 end;
 
 procedure TAppManager.ShowToast(AMessage: string; AOnFinished: TProc; ACaption: string; ADelay: integer);
@@ -190,6 +203,11 @@ begin
     bsToast.show();
     }
   end;
+end;
+
+procedure TAppManager.showUser;
+begin
+showForm(TFormUser);
 end;
 
 procedure TAppManager.ShowVerlofUser;
