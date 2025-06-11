@@ -45,7 +45,7 @@ uses
   System.Classes, Vcl.Dialogs, Forms.home,
   Forms.forgotPassword, Forms.login, Forms.resetPassword, Forms.user,
   Forms.wachtlijst.readOnly, Forms.registerUser, Forms.verlof.user, Forms.planning, Forms.settings, Forms.shiftTypes,
-  Forms.roster;
+  Forms.roster, Forms.roles;
 
 { TAppManager }
 
@@ -122,7 +122,8 @@ begin
 //ShowForm(TFormSettings);
 //ShowForm(TFormShiftTypes);
 //ShowForm(TFormUser);
-ShowForm(TFormRoster);
+//ShowForm(TFormRoster);
+ShowForm(TFormRoles);
 end;
 
 
