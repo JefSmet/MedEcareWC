@@ -24,6 +24,7 @@ type
     procedure renderLists;
     procedure aclacAddExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure aclacSelectCellExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure aclacSetActiveCellExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure aclacMoveUpExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure aclacMoveDownExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure aclacDeleteExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
@@ -35,6 +36,7 @@ type
     FAppManager: TAppManager;
     FCurrentShiftType: TShiftType;
     FCurrentShiftTypeNameAndId: TShiftTypeNameAndId;
+    FActiveCell: TJSHTMLElement;
     [async]
     procedure GetShiftTypes;
     procedure MoveUp;
@@ -123,6 +125,21 @@ begin
 end;
 end;
 
+procedure TFormRoster.aclacSetActiveCellExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+begin
+  inherited;
+  // Remove active class from previous cell
+  if Assigned(FActiveCell) then
+    FActiveCell.classList.remove('active');
+    
+  // Set new active cell
+  FActiveCell := Element.element;
+  FActiveCell.classList.add('active');
+  
+  // Call existing select cell logic
+  aclacSelectCellExecute(Sender, Element, Event);
+end;
+
 procedure TFormRoster.AddToRoster;
 var
  emptyShiftType : TShiftType;
@@ -145,7 +162,7 @@ begin
   try
     for ShiftType in FShiftTypes do
     begin
-      sb.AppendFormat('<tr><td id="%s" class="cell sourceTableCell">%s</td></tr>',
+      sb.AppendFormat('<tr><td id="%s" class="cell sourceTableCell shift-cell">%s</td></tr>',
         [ShiftType.id, ShiftType.name]).AppendLine;
     end;
     document.getElementById('sourceListTableBody').innerHTML := sb.ToString;
@@ -189,7 +206,7 @@ begin
   try
     for ShiftTypeNameAndId in FAddToRosterShiftTypes do
     begin
-      sb.AppendFormat('<tr><td id="%s" class="cell">%s</td></tr>',
+      sb.AppendFormat('<tr><td id="%s" class="cell shift-cell">%s</td></tr>',
         [ShiftTypeNameAndId.id, ShiftTypeNameAndId.name]).AppendLine;
     end;
     document.getElementById('rosterListTableBody').innerHTML := sb.ToString;
@@ -204,6 +221,15 @@ begin
   FAppManager := TAppManager.GetInstance;
   FShiftTypes := TList<TShiftType>.Create;
   FAddToRosterShiftTypes := TList<TShiftTypeNameAndId>.Create;
+  
+  // Add CSS for active cell styling
+  document.head.insertAdjacentHTML('beforeend', 
+    '<style>' +
+    '.shift-cell { cursor: pointer; padding: 8px; border: 1px solid #ddd; }' +
+    '.shift-cell:hover { background-color: #f5f5f5; }' +
+    '.shift-cell.active { background-color: #007bff; color: white; }' +
+    '</style>');
+    
   renderLists;
   // record met shifttypeId en naam voor toAddList
   // Source list

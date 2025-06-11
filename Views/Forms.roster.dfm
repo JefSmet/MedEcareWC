@@ -6,6 +6,12 @@ inherited FormRoster: TFormRoster
   object acl: TWebElementActionList
     Actions = <
       item
+        ID = ''
+        Name = 'acSetActiveCell'
+        Selector = '.shift-cell'
+        OnExecute = aclacSetActiveCellExecute
+      end
+      item
         ID = 'buttonAdd'
         Name = 'acAdd'
         OnExecute = aclacAddExecute
