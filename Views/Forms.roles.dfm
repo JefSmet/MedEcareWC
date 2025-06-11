@@ -1,0 +1,2 @@
+inherited FormRoles: TFormRoles
+end
