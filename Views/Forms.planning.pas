@@ -43,7 +43,9 @@ type
     [async]
     procedure aclacDoctorButtonExecute(Sender: TObject;
       Element: TJSHTMLElementRecord; Event: TJSEventParameter);
-    [async]procedure aclacDeleteActivityExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    [async]
+    procedure aclacDeleteActivityExecute(Sender: TObject;
+      Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure filterDoctors;
 
   private
@@ -113,18 +115,19 @@ begin
   doUpdateShiftList;
 end;
 
-procedure TFormPlanning.aclacDeleteActivityExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+procedure TFormPlanning.aclacDeleteActivityExecute(Sender: TObject;
+  Element: TJSHTMLElementRecord; Event: TJSEventParameter);
 var
-  id: string;
+  Id: string;
 begin
   inherited;
-if FSelectedCell.classList.contains('empty') then
-exit;
-id:=FSelectedCell.getAttribute('activityId');
-await(Boolean,FAppManager.DB.DeleteActivity(id));
-await(getShiftList);
-buildGrid;
-FSelectedCell := TJSHTMLElement(document.querySelector('.active-cell'));
+  if FSelectedCell.classList.contains('empty') then
+    exit;
+  Id := FSelectedCell.getAttribute('activityId');
+  await(Boolean, FAppManager.DB.DeleteActivity(Id));
+  await(getShiftList);
+  buildGrid;
+  FSelectedCell := TJSHTMLElement(document.querySelector('.active-cell'));
 end;
 
 procedure TFormPlanning.aclacDoctorButtonExecute(Sender: TObject;
@@ -208,7 +211,8 @@ begin
   FirstOfMonth := EncodeDate(FYear, FMonth, 1);
   LastOfMonth := EncodeDate(FYear, FMonth, DaysInAMonth(FYear, FMonth));
   StartDate := IncDay(FirstOfMonth, -FDaysBefore);
-  EndDate := IncDay(LastOfMonth, FDaysAfter);
+  // EndDate := IncDay(LastOfMonth, FDaysAfter);
+  EndDate := LastOfMonth;
   TotalDays := Trunc(EndDate) - Trunc(StartDate) + 1;
 
   // 3) Begin HTML-opbouw
@@ -483,47 +487,45 @@ procedure TFormPlanning.renderAvailableDoctors;
 var
   sb: TStringBuilder;
   Doctor: TDoctor;
-  Act: TActivity;
+  act: TActivity;
   IsOnLeave: Boolean;
 begin
-  sb := TStringBuilder.Create;
-  try
-    for Doctor in FDoctorsList do
-    begin
-      // 1) Check of deze dokter verlof heeft op FSelectedDate
-      IsOnLeave := False;
-      for Act in FVerlofList do
+  if LowerCase(FAppManager.Auth.currentPerson.Roles[0]) = 'admin' then
+  begin
+    sb := TStringBuilder.Create;
+    try
+      for Doctor in FDoctorsList do
       begin
-        if (Act.PersonId = Doctor.PersonId) and
-           // let op: Act.Start en Act.EndTime bevatten mogelijk
-           // begin- en eindtijd van de verlof-periode
-           (DateOf(Act.Start) <= FSelectedDate) and
-           (FSelectedDate <= DateOf(Act.EndTime)) then
+        // 1) Check of deze dokter verlof heeft op FSelectedDate
+        IsOnLeave := False;
+        for act in FVerlofList do
         begin
-          IsOnLeave := True;
-          Break;
+          if (act.PersonId = Doctor.PersonId) and
+          // let op: Act.Start en Act.EndTime bevatten mogelijk
+          // begin- en eindtijd van de verlof-periode
+            (DateOf(act.Start) <= FSelectedDate) and
+            (FSelectedDate <= DateOf(act.EndTime)) then
+          begin
+            IsOnLeave := True;
+            Break;
+          end;
+        end;
+
+        // 2) Alleen als hij/zij niet op verlof is, maak je een knop
+        if not IsOnLeave then
+        begin
+          sb.AppendLine
+            (Format('<button doctor-id="%s" type="button" class="available-doctor-button btn btn-success">%s</button>',
+            [Doctor.PersonId, Doctor.Person.LastName]));
         end;
       end;
 
-      // 2) Alleen als hij/zij niet op verlof is, maak je een knop
-      if not IsOnLeave then
-      begin
-        sb.AppendLine(
-          Format(
-            '<button doctor-id="%s" type="button" class="available-doctor-button btn btn-success">%s</button>',
-            [ Doctor.PersonId,
-              Doctor.Person.LastName
-            ]
-          )
-        );
-      end;
+      // 3) Render de buttons
+      document.getElementById('availableDoctors').innerHTML := sb.ToString;
+      acl.BindActions;
+    finally
+      sb.Free;
     end;
-
-    // 3) Render de buttons
-    document.getElementById('availableDoctors').innerHTML := sb.ToString;
-    acl.BindActions;
-  finally
-    sb.Free;
   end;
 end;
 
@@ -540,17 +542,17 @@ begin
       // Vergelijk eerst op datum (zonder tijd)
       result := CompareDateTime(DateOf(A.Start), DateOf(B.Start));
       if result <> 0 then
-        Exit;
+        exit;
 
       // Daarna op ShiftTypeId
       result := CompareText(A.ShiftTypeId, B.ShiftTypeId);
       if result <> 0 then
-        Exit;
+        exit;
 
       // Daarna UpdatedAt DESC
       result := CompareDateTime(B.UpdatedAt, A.UpdatedAt);
       if result <> 0 then
-        Exit;
+        exit;
 
       // Tenslotte CreatedAt DESC
       result := CompareDateTime(B.CreatedAt, A.CreatedAt);
