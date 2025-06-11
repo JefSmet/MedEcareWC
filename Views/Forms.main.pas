@@ -20,14 +20,13 @@ type
     procedure btnLogoutClick(Sender: TObject);
     procedure acShowHomeExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
     procedure acShowVerlofUserExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
-    procedure aclocBrandUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
-      TargetElement: TJSHTMLElementRecord);
-    procedure aclocVerlofUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
-      TargetElement: TJSHTMLElementRecord);
     procedure aclocLogoutExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+    procedure aclocBrandExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
   private
     FAppManager: TAppManager;
+    FActiveNavLink : TJSElement;
     procedure SetNavElementActive(Element: TJSHTMLElementRecord);
+
 
   public
     { Public declarations }
@@ -55,20 +54,31 @@ end;
 
 procedure TFormMain.SetNavElementActive(Element: TJSHTMLElementRecord);
 begin
+FActiveNavLink.classList.remove('active');
+FActiveNavLink.classList.add('link-dark');
 Element.element.classList.remove('link-dark');
 Element.element.classList.add('active');
+FActiveNavLink := element.element;
 end;
 
 procedure TFormMain.acShowVerlofUserExecute(Sender: TObject; Element: TJSHTMLElementRecord;
   Event: TJSEventParameter);
 begin
 FAppManager.ShowVerlofUser;
+SetNavElementActive(element);
 end;
 
-procedure TFormMain.aclocBrandUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
-  TargetElement: TJSHTMLElementRecord);
+procedure TFormMain.aclocBrandExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
+var
+  homeElement : TJSElement;
 begin
- SetNavElementActive(Element);
+FAppManager.ShowHome;
+homeElement := document.getElementById('nav-home');
+FActiveNavLink.classList.remove('active');
+FActiveNavLink.classList.add('link-dark');
+homeElement.classList.remove('link-dark');
+homeElement.classList.add('active');
+FActiveNavLink := element.element;
 end;
 
 procedure TFormMain.aclocLogoutExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
@@ -77,15 +87,10 @@ FAppManager.Auth.DoLogout;
 FAppManager.ShowLogin;
 end;
 
-procedure TFormMain.aclocVerlofUpdate(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter;
-  TargetElement: TJSHTMLElementRecord);
-begin
-SetNavElementActive(Element);
-end;
-
 procedure TFormMain.acShowHomeExecute(Sender: TObject; Element: TJSHTMLElementRecord; Event: TJSEventParameter);
 begin
 FAppManager.ShowHome;
+SetNavElementActive(element);
 end;
 
 procedure TFormMain.WebFormCreate(Sender: TObject);
@@ -95,6 +100,7 @@ var
 begin
   FAppManager := TAppManager.GetInstance;
   FAppManager.SetFormContainerID('main-content');
+  FActiveNavLink := document.getElementById('nav-home');
   // check op password reset
   if HasQueryParam('resetToken', resetToken) then
   begin

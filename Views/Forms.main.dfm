@@ -20,36 +20,26 @@ object FormMain: TFormMain
       item
         ID = 'sidebar-brand'
         Name = 'ocBrand'
-        TargetAction = actAddRemoveClass
-        TargetSelector = '.nav-link.active'
-        TargetClassAdd = 'link-dark'
-        TargetClassRemove = 'active'
-        OnExecute = acShowHomeExecute
-        OnUpdate = aclocBrandUpdate
+        OnExecute = aclocBrandExecute
       end
       item
         ID = 'nav-home'
         Name = 'ocHome'
-        TargetAction = actAddRemoveClass
-        TargetSelector = '.nav-link.active'
-        TargetClassAdd = 'link-dark'
-        TargetClassRemove = 'active'
         OnExecute = acShowHomeExecute
       end
       item
         ID = 'nav-verlof'
         Name = 'ocVerlof'
-        TargetAction = actAddRemoveClass
-        TargetSelector = '.nav-link.active'
-        TargetClassAdd = 'link-dark'
-        TargetClassRemove = 'active'
         OnExecute = acShowVerlofUserExecute
-        OnUpdate = aclocVerlofUpdate
       end
       item
         ID = 'dropdown-signout'
         Name = 'ocLogout'
         OnExecute = aclocLogoutExecute
+      end
+      item
+        ID = ''
+        Name = 'Action4'
       end>
     Left = 217
     Top = 96
